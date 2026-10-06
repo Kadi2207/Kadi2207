@@ -105,6 +105,15 @@ Also: matplotlib, TF-IDF + Random Forest, AWS (Cloud Foundations).
 
 Interview at VivaTech (Orbite Média) · asked by OMNES Education for an interview on AI · 1st place in a team robotics project.
 
+## ▪ Activity
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake-dark.svg">
+    <img src="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake.svg" alt="Decorative animation: a gold snake moves across the GitHub contribution graph." width="100%">
+  </picture>
+</p>
+
 ## ▪ Contact
 
 I am looking for a work-study placement in Data & AI starting October 2026, with 3 weeks at the company and 2 weeks at school.

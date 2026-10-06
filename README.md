@@ -103,6 +103,15 @@ Aussi : matplotlib, TF-IDF + Random Forest, AWS (Cloud Foundations).
 
 Interview à VivaTech (Orbite Média) · sollicitée par OMNES Education pour une interview sur l'IA · 1ère place au projet robotique en équipe.
 
+## ▪ Activité
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake-dark.svg">
+    <img src="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake.svg" alt="Animation décorative : un serpent doré parcourt le graphe de contributions GitHub." width="100%">
+  </picture>
+</p>
+
 ## ▪ Contact
 
 Je recherche une alternance en Data & IA à partir d'octobre 2026, au rythme de 3 semaines en entreprise et 2 semaines à l'école.

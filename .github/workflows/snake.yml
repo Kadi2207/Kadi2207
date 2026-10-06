@@ -10,7 +10,6 @@ on:
   push:
     branches:
       - main
-      - apercu # temporaire : test avant fusion, à retirer
 
 permissions:
   contents: write
