@@ -1,0 +1,39 @@
+# Snake de contributions (décoratif). Calqué sur l'exemple officiel de Platane/snk.
+# Aucun secret à créer : GITHUB_TOKEN est fourni automatiquement par GitHub.
+# Actions tierces épinglées sur un SHA de commit (le job a la permission contents: write).
+name: Generate snake
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 1 fois par 24 h
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Platane/snk v3.5.0 (variante SVG seul, plus rapide)
+      - name: Generate snake SVGs
+        uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/github-snake.svg?color_snake=#c8901a&color_dots=#e6edf5,#b9cbe3,#7fa3d1,#2c5282,#1e3a5f
+            dist/github-snake-dark.svg?color_snake=#c8901a&color_dots=#161b22,#26416b,#2c5282,#4f7fc0,#8fb4e6
+
+      # crazy-max/ghaction-github-pages v5.0.0 : publie dist/ sur la branche « output »
+      - name: Publish to the output branch
+        uses: crazy-max/ghaction-github-pages@1d6ee9b181a81033a16bd707a1401afa978daab4
+        with:
+          target_branch: output
+          build_dir: dist
+          jekyll: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
