@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 364" width="1200" height="364" role="img" aria-labelledby="t d">
+<title id="t">Du besoin à la solution</title>
+<desc id="d">Schéma en quatre étapes, avec des particules qui circulent entre elles. 1, Données : 397 884 lignes de transactions (e-commerce), 5 234 contacts (RevOps). 2, Nettoyage : fiabilisation des données (Consulat du Mali), audit qualité avant migration (RevOps). 3, Modèle ou analyse : TF-IDF + Random Forest (TCIM), analyse des processus (Consulat du Mali), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction.</desc>
+<style>.nd{animation:lit 10s linear infinite}@keyframes lit{0%{fill:#fff;stroke:#1e3a5f}2%,12%{fill:#fbf2de;stroke:#c8901a}16%,100%{fill:#fff;stroke:#1e3a5f}}.p{opacity:0}@media (prefers-reduced-motion: reduce){.p{display:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>
+<rect width="1200" height="364" rx="14" fill="#f5f8fc"/>
+<path d="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z" fill="none" stroke="#2c5282" stroke-width="2" stroke-dasharray="6 6" opacity=".55"/>
+<line x1="147" y1="264" x2="147" y2="292" stroke="#2c5282" stroke-width="2"/><circle cx="147" cy="292" r="5" fill="#2c5282"/>
+<rect class="nd" style="animation-delay:0.2s" x="18" y="24" width="258" height="240" rx="12" fill="#ffffff" stroke="#1e3a5f" stroke-width="2"/>
+<circle cx="52" cy="58" r="16" fill="#c8901a"/><text x="52" y="64" font-size="18" font-weight="700" fill="#1e3a5f" text-anchor="middle" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">1</text><text x="76" y="64" font-size="18" font-weight="700" fill="#1e3a5f" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Données</text><rect x="38" y="84" width="40" height="3" fill="#c8901a"/>
+<text x="38" y="114" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">397 884 lignes de transactions</text>
+<text x="38" y="131" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">(e-commerce)</text>
+<text x="38" y="156" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">5 234 contacts (RevOps)</text>
+<line x1="449" y1="264" x2="449" y2="292" stroke="#2c5282" stroke-width="2"/><circle cx="449" cy="292" r="5" fill="#2c5282"/>
+<rect class="nd" style="animation-delay:1.5s" x="320" y="24" width="258" height="240" rx="12" fill="#ffffff" stroke="#1e3a5f" stroke-width="2"/>
+<circle cx="354" cy="58" r="16" fill="#c8901a"/><text x="354" y="64" font-size="18" font-weight="700" fill="#1e3a5f" text-anchor="middle" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">2</text><text x="378" y="64" font-size="18" font-weight="700" fill="#1e3a5f" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Nettoyage</text><rect x="340" y="84" width="40" height="3" fill="#c8901a"/>
+<text x="340" y="114" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Fiabilisation des données</text>
+<text x="340" y="131" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">(Consulat du Mali)</text>
+<text x="340" y="156" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Audit qualité avant migration</text>
+<text x="340" y="173" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">(RevOps)</text>
+<line x1="751" y1="264" x2="751" y2="292" stroke="#2c5282" stroke-width="2"/><circle cx="751" cy="292" r="5" fill="#2c5282"/>
+<rect class="nd" style="animation-delay:2.8s" x="622" y="24" width="258" height="240" rx="12" fill="#ffffff" stroke="#1e3a5f" stroke-width="2"/>
+<circle cx="656" cy="58" r="16" fill="#c8901a"/><text x="656" y="64" font-size="18" font-weight="700" fill="#1e3a5f" text-anchor="middle" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">3</text><text x="680" y="64" font-size="18" font-weight="700" fill="#1e3a5f" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Modèle ou analyse</text><rect x="642" y="84" width="40" height="3" fill="#c8901a"/>
+<text x="642" y="114" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">TF-IDF + Random Forest</text>
+<text x="642" y="131" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">(TCIM)</text>
+<text x="642" y="156" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Analyse des processus</text>
+<text x="642" y="173" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">(Consulat du Mali)</text>
+<text x="642" y="198" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">LLMs via l'API Hugging Face</text>
+<text x="642" y="215" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">(WMDP)</text>
+<line x1="1053" y1="264" x2="1053" y2="292" stroke="#2c5282" stroke-width="2"/><circle cx="1053" cy="292" r="5" fill="#2c5282"/>
+<rect class="nd" style="animation-delay:4.1s" x="924" y="24" width="258" height="240" rx="12" fill="#ffffff" stroke="#1e3a5f" stroke-width="2"/>
+<circle cx="958" cy="58" r="16" fill="#c8901a"/><text x="958" y="64" font-size="18" font-weight="700" fill="#1e3a5f" text-anchor="middle" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">4</text><text x="982" y="64" font-size="18" font-weight="700" fill="#1e3a5f" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Dashboard</text><rect x="944" y="84" width="40" height="3" fill="#c8901a"/>
+<text x="944" y="114" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">Streamlit + Plotly</text>
+<text x="944" y="139" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">KPIs et reporting pour la</text>
+<text x="944" y="156" font-size="14" fill="#2c3e50" style="font-family:'Segoe UI', Calibri, Arial, sans-serif">direction</text>
+<g class="p"><circle r="5.5" fill="#c8901a" stroke="#1e3a5f" stroke-width="1.5"/><set attributeName="opacity" to="1" begin="0s"/><animateMotion dur="10s" begin="-0.00s" repeatCount="indefinite" path="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"/></g>
+<g class="p"><circle r="5.5" fill="#c8901a" stroke="#1e3a5f" stroke-width="1.5"/><set attributeName="opacity" to="1" begin="0s"/><animateMotion dur="10s" begin="-1.43s" repeatCount="indefinite" path="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"/></g>
+<g class="p"><circle r="5.5" fill="#c8901a" stroke="#1e3a5f" stroke-width="1.5"/><set attributeName="opacity" to="1" begin="0s"/><animateMotion dur="10s" begin="-2.86s" repeatCount="indefinite" path="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"/></g>
+<g class="p"><circle r="5.5" fill="#c8901a" stroke="#1e3a5f" stroke-width="1.5"/><set attributeName="opacity" to="1" begin="0s"/><animateMotion dur="10s" begin="-4.29s" repeatCount="indefinite" path="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"/></g>
+<g class="p"><circle r="5.5" fill="#c8901a" stroke="#1e3a5f" stroke-width="1.5"/><set attributeName="opacity" to="1" begin="0s"/><animateMotion dur="10s" begin="-5.71s" repeatCount="indefinite" path="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"/></g>
+<g class="p"><circle r="5.5" fill="#c8901a" stroke="#1e3a5f" stroke-width="1.5"/><set attributeName="opacity" to="1" begin="0s"/><animateMotion dur="10s" begin="-7.14s" repeatCount="indefinite" path="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"/></g>
+<g class="p"><circle r="5.5" fill="#c8901a" stroke="#1e3a5f" stroke-width="1.5"/><set attributeName="opacity" to="1" begin="0s"/><animateMotion dur="10s" begin="-8.57s" repeatCount="indefinite" path="M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"/></g>
+</svg>

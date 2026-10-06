@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" width="1200" height="120" role="img" aria-labelledby="t d">
+  <title id="t">Pied de page</title>
+  <desc id="d">Bandeau décoratif bleu nuit avec un filet doré ondulé.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#1e3a5f"/>
+      <stop offset="1" stop-color="#2c5282"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .w1{animation:drift 24s linear infinite reverse}
+    .w2{animation:drift 18s linear infinite}
+    @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-600px)}}
+    @media (prefers-reduced-motion: reduce){.w1,.w2{animation:none}}
+  </style>
+  <rect width="1200" height="120" fill="url(#bg)"/>
+  <path class="w2" d="M0 18 q150 -40 300 0 t300 0 t300 0 t300 0 t300 0 t300 0 t300 0 t300 0 " fill="none" stroke="#c8901a" stroke-opacity="0.45" stroke-width="2"/>
+  <path class="w1" d="M0 32 q150 -40 300 0 t300 0 t300 0 t300 0 t300 0 t300 0 t300 0 t300 0 " fill="none" stroke="#c8901a" stroke-width="3"/>
+</svg>

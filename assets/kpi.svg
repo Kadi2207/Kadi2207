@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 396" width="1200" height="396" role="img" aria-labelledby="t d">
+  <title id="t">Chiffres clés</title>
+  <desc id="d">50 % de réduction des déplacements des usagers, Consulat du Mali (stage, avril–juin 2026) ; +30 % d&#x27;engagement, Femmes Audacieuses (juin–septembre 2025) ; 82,5 % d&#x27;accuracy, classification de données de santé, TCIM (en cours, depuis avril 2026) ; 397 884 lignes de transactions analysées, Dashboard e-commerce (janvier 2026) ; 5 234 contacts audités, Audit CRM RevOps (données synthétiques) ; 250 prompts adversariaux conçus, Hackathon WMDP (mars 2026)</desc>
+  <style>
+    .tile{animation:fi .7s ease-out both}
+    @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion: reduce){.tile{animation:none}}
+  </style>
+  <rect width="1200" height="396" rx="14" fill="#f5f8fc"/>
+  <g font-family="'Segoe UI', Calibri, Arial, sans-serif">
+  <g class="tile" style="animation-delay:0.15s">
+    <rect x="24" y="24" width="368" height="164" rx="10" fill="#ffffff" stroke="#d3deec"/>
+    <rect x="44" y="42" width="36" height="4" fill="#c8901a"/>
+    <text x="44" y="96" font-size="44" font-weight="700" fill="#1e3a5f">50 %</text>
+    <text x="44" y="128" font-size="16" fill="#2c3e50">de réduction des déplacements des</text><text x="44" y="150" font-size="16" fill="#2c3e50">usagers</text><text x="44" y="172" font-size="14" fill="#52647b">Consulat du Mali (stage, avril–juin 2026)</text>
+  </g>
+  <g class="tile" style="animation-delay:0.33s">
+    <rect x="416" y="24" width="368" height="164" rx="10" fill="#ffffff" stroke="#d3deec"/>
+    <rect x="436" y="42" width="36" height="4" fill="#c8901a"/>
+    <text x="436" y="96" font-size="44" font-weight="700" fill="#1e3a5f">+30 %</text>
+    <text x="436" y="128" font-size="16" fill="#2c3e50">d&#x27;engagement</text><text x="436" y="150" font-size="14" fill="#52647b">Femmes Audacieuses (juin–septembre 2025)</text>
+  </g>
+  <g class="tile" style="animation-delay:0.51s">
+    <rect x="808" y="24" width="368" height="164" rx="10" fill="#ffffff" stroke="#d3deec"/>
+    <rect x="828" y="42" width="36" height="4" fill="#c8901a"/>
+    <text x="828" y="96" font-size="44" font-weight="700" fill="#1e3a5f">82,5 %</text>
+    <text x="828" y="128" font-size="16" fill="#2c3e50">d&#x27;accuracy, classification de données de</text><text x="828" y="150" font-size="16" fill="#2c3e50">santé</text><text x="828" y="172" font-size="14" fill="#52647b">TCIM (en cours, depuis avril 2026)</text>
+  </g>
+  <g class="tile" style="animation-delay:0.69s">
+    <rect x="24" y="208" width="368" height="164" rx="10" fill="#ffffff" stroke="#d3deec"/>
+    <rect x="44" y="226" width="36" height="4" fill="#c8901a"/>
+    <text x="44" y="280" font-size="44" font-weight="700" fill="#1e3a5f">397 884</text>
+    <text x="44" y="312" font-size="16" fill="#2c3e50">lignes de transactions analysées</text><text x="44" y="334" font-size="14" fill="#52647b">Dashboard e-commerce (janvier 2026)</text>
+  </g>
+  <g class="tile" style="animation-delay:0.87s">
+    <rect x="416" y="208" width="368" height="164" rx="10" fill="#ffffff" stroke="#d3deec"/>
+    <rect x="436" y="226" width="36" height="4" fill="#c8901a"/>
+    <text x="436" y="280" font-size="44" font-weight="700" fill="#1e3a5f">5 234</text>
+    <text x="436" y="312" font-size="16" fill="#2c3e50">contacts audités</text><text x="436" y="334" font-size="14" fill="#52647b">Audit CRM RevOps (données synthétiques)</text>
+  </g>
+  <g class="tile" style="animation-delay:1.05s">
+    <rect x="808" y="208" width="368" height="164" rx="10" fill="#ffffff" stroke="#d3deec"/>
+    <rect x="828" y="226" width="36" height="4" fill="#c8901a"/>
+    <text x="828" y="280" font-size="44" font-weight="700" fill="#1e3a5f">250</text>
+    <text x="828" y="312" font-size="16" fill="#2c3e50">prompts adversariaux conçus</text><text x="828" y="334" font-size="14" fill="#52647b">Hackathon WMDP (mars 2026)</text>
+  </g>
+  </g>
+</svg>
