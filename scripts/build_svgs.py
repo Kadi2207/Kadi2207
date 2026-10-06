@@ -47,7 +47,7 @@ def hero():
         ("cmd", "whoami"),
         ("out", "Kadidiatou Bagayoko · Data & AI Solutions Builder", "#ffffff"),
         ("cmd", "cat recherche.txt"),
-        ("out", "Alternance septembre 2026, 3 semaines en entreprise, 2 semaines à l'école", "#e6edf5"),
+        ("out", "Alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école", "#e6edf5"),
         ("cmd", "cat consulat_du_mali.txt"),
         ("out", "Analyse des processus, fiabilisation des données, réduction de 50 % des déplacements", "#e6edf5"),
         ("cmd", "cat tcim.txt"),
@@ -122,7 +122,7 @@ def idcard():
     rows = [
         ("RÔLE", "Data & AI Solutions Builder"),
         ("FORMATION", "Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024–2027"),
-        ("RECHERCHE", "Alternance septembre 2026, 3 semaines en entreprise, 2 semaines à l'école"),
+        ("RECHERCHE", "Alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école"),
         ("EN COURS", "Partie IA du projet TCIM, portfolio avec assistant IA"),
     ]
     css = "@keyframes in{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}@keyframes ring{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}.r{animation:in .5s ease-out backwards}.ring{stroke-dasharray:300;animation:ring 1.2s ease-out .2s backwards}"

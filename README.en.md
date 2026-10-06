@@ -1,7 +1,7 @@
 <p align="right"><a href="README.md">Version française</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Animated terminal window (text in French). whoami: Kadidiatou Bagayoko, Data &amp; AI Solutions Builder. Looking for: work-study placement from September 2026, 3 weeks at the company, 2 weeks at school. Process analysis, data reliability, 50% reduction in trips. AI part of TCIM: health data classification, 82.5% accuracy. Data tells a story, I translate it." width="100%">
+  <img src="assets/hero.svg" alt="Animated terminal window (text in French). whoami: Kadidiatou Bagayoko, Data &amp; AI Solutions Builder. Looking for: work-study placement starting October 2026, 3 weeks at the company, 2 weeks at school. Process analysis, data reliability, 50% reduction in trips. AI part of TCIM: health data classification, 82.5% accuracy. Data tells a story, I translate it." width="100%">
 </p>
 
 <p align="center">
@@ -19,10 +19,10 @@
 ## ▪ About
 
 <p align="center">
-  <img src="assets/card.svg" alt="Identity card. Role: Data &amp; AI Solutions Builder. Degree: Bachelor in Artificial Intelligence (Licence level), ECE Paris, 2024–2027. Looking for: work-study (alternance) from September 2026, 3 weeks at the company, 2 weeks at school. Ongoing: AI part of the TCIM project, portfolio with an AI assistant." width="100%">
+  <img src="assets/card.svg" alt="Identity card. Role: Data &amp; AI Solutions Builder. Degree: Bachelor in Artificial Intelligence (Licence level), ECE Paris, 2024–2027. Looking for: work-study (alternance) starting October 2026, 3 weeks at the company, 2 weeks at school. Ongoing: AI part of the TCIM project, portfolio with an AI assistant." width="100%">
 </p>
 
-I am a student in the Bachelor in Artificial Intelligence at ECE Paris, specialising in Data & AI, and I am looking for a work-study placement starting in September 2026. At the Consulate of Mali, I analysed processes, made data more reliable and presented optimisation recommendations to the Consul, which led to a 50% reduction in users' trips. Since April 2026, I have been developing the AI part of the TCIM project, an automatic classification of health data.
+I am a student in the Bachelor in Artificial Intelligence at ECE Paris, specialising in Data & AI, and I am looking for a work-study placement starting October 2026. At the Consulate of Mali, I analysed processes, made data more reliable and presented optimisation recommendations to the Consul, which led to a 50% reduction in users' trips. Since April 2026, I have been developing the AI part of the TCIM project, an automatic classification of health data.
 
 ## ▪ Experience
 
@@ -107,7 +107,7 @@ Interview at VivaTech (Orbite Média) · asked by OMNES Education for an intervi
 
 ## ▪ Contact
 
-I am looking for a work-study placement in Data & AI starting in September 2026, with 3 weeks at the company and 2 weeks at school.
+I am looking for a work-study placement in Data & AI starting October 2026, with 3 weeks at the company and 2 weeks at school.
 
 [LinkedIn](https://linkedin.com/in/kadi-bagayoko) · [kadibaga22@gmail.com](mailto:kadibaga22@gmail.com) · Portfolio: link coming soon
 

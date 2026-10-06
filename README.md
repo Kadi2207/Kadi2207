@@ -1,7 +1,7 @@
 <p align="right"><a href="README.en.md">English version</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Fenêtre de terminal animée. whoami : Kadidiatou Bagayoko, Data &amp; AI Solutions Builder. Recherche : alternance septembre 2026, 3 semaines en entreprise, 2 semaines à l'école. Analyse des processus, fiabilisation des données, réduction de 50 % des déplacements. Partie IA de TCIM : classification de données de santé, accuracy 82,5 %. Les données racontent une histoire, je la traduis." width="100%">
+  <img src="assets/hero.svg" alt="Fenêtre de terminal animée. whoami : Kadidiatou Bagayoko, Data &amp; AI Solutions Builder. Recherche : alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école. Analyse des processus, fiabilisation des données, réduction de 50 % des déplacements. Partie IA de TCIM : classification de données de santé, accuracy 82,5 %. Les données racontent une histoire, je la traduis." width="100%">
 </p>
 
 <p align="center">
@@ -17,10 +17,10 @@
 ## ▪ À propos
 
 <p align="center">
-  <img src="assets/card.svg" alt="Carte d'identité. Rôle : Data &amp; AI Solutions Builder. Formation : Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024–2027. Recherche : alternance septembre 2026, 3 semaines en entreprise, 2 semaines à l'école. En cours : partie IA du projet TCIM, portfolio avec assistant IA." width="100%">
+  <img src="assets/card.svg" alt="Carte d'identité. Rôle : Data &amp; AI Solutions Builder. Formation : Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024–2027. Recherche : alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école. En cours : partie IA du projet TCIM, portfolio avec assistant IA." width="100%">
 </p>
 
-Étudiante en Bachelor en Intelligence Artificielle à l'ECE Paris, spécialisation Data & IA, je cherche une alternance à partir de septembre 2026. Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. Depuis avril 2026, je développe la partie IA du projet TCIM, une classification automatique de données de santé.
+Étudiante en Bachelor en Intelligence Artificielle à l'ECE Paris, spécialisation Data & IA, je cherche une alternance à partir d'octobre 2026. Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. Depuis avril 2026, je développe la partie IA du projet TCIM, une classification automatique de données de santé.
 
 ## ▪ Expériences
 
@@ -105,7 +105,7 @@ Interview à VivaTech (Orbite Média) · sollicitée par OMNES Education pour un
 
 ## ▪ Contact
 
-Je recherche une alternance en Data & IA à partir de septembre 2026, au rythme de 3 semaines en entreprise et 2 semaines à l'école.
+Je recherche une alternance en Data & IA à partir d'octobre 2026, au rythme de 3 semaines en entreprise et 2 semaines à l'école.
 
 [LinkedIn](https://linkedin.com/in/kadi-bagayoko) · [kadibaga22@gmail.com](mailto:kadibaga22@gmail.com) · Portfolio : lien à venir
 
