@@ -1,0 +1,10 @@
+dataset,field,distinct_before,distinct_after
+Companies,Contract_Status,8,3
+Companies,Company_Size,6,3
+Companies,Campaign_Type,22,17
+Companies,Payment_Behavior,8,3
+Companies,Preferred_Channel,7,4
+Employees,Active_Flag,6,2
+Employees,Decision_Maker_Flag,6,2
+Employees,Seniority_Level,12,5
+Employees,Newsletter_Subscription,6,2
