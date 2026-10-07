@@ -1,359 +1,798 @@
-"""Génère les SVG animés du profil : hero, carte d'identité, stack, cartes de projets, bloc en construction, schéma.
+"""Génère les SVG animés du profil (charte chaude) et l'en-tête des README des 3 dépôts de projets.
 
-Usage, depuis la racine du dépôt : python scripts/build_svgs.py
-Les SVG sont servis via <img> : pas de script, pas de ressource externe. Les images des cartes
-sont intégrées en base64. L'état de base de chaque SVG est son état final (lisible sans animation).
+Usage, depuis la racine du dépôt :
+    python scripts/build_svgs.py --fonts <dossier>                   (tout le profil)
+    python scripts/build_svgs.py --fonts <dossier> hero footer       (cibles choisies)
+    python scripts/build_svgs.py --fonts <dossier> entetes           (assets/header.svg des 3 dépôts voisins)
+Cibles : hero disponibilite footer kpi flow idcard stack cards building entetes.
+Lancer scripts/make_charts.py avant « cards » : les cartes WMDP et RevOps intègrent les graphiques.
+
+Polices (licence SIL Open Font License 1.1, voir assets/POLICES.md) :
+- Playfair Display (Claus Eggers Sørensen) : titres, nom, chiffres ; paquet npm @fontsource/playfair-display 5.3.0
+- Source Sans 3 (Paul D. Hunt, Adobe) : texte courant ; paquet npm @fontsource/source-sans-3 5.3.0
+Pour les obtenir, dans un dossier vide : npm pack <paquet> --ignore-scripts, puis tar -xzf du .tgz ;
+regrouper les .woff des deux dossiers package/files dans <dossier>. Le texte est converti en tracés :
+les SVG ne chargent aucune police et ne contiennent pas les fichiers de police.
+
+Les SVG sont servis via <img> : pas de script, pas de ressource externe. Chacun porte son fond beige
+(rendu identique en clair et sombre). Animations jouées une seule fois, finies avant 4 s ; l'état de
+base de chaque SVG est son état final (lisible sans animation) et prefers-reduced-motion les coupe.
+Lisibilité mobile : largeur de 1000 unités, affichée vers 328 px sur un téléphone de 360 px (x 0,33).
 """
+import argparse
 import base64
 import io
+import math
 import re
 from html import escape
 from pathlib import Path
 
-from PIL import Image
-
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
-NAVY, NAVY2, GOLD = "#1e3a5f", "#2c5282", "#c8901a"
-TEXT, LIGHT, LINE = "#2c3e50", "#f5f8fc", "#c9d6e6"
-SANS = "'Segoe UI', Calibri, Arial, sans-serif"
-MONO = "Consolas, 'Courier New', monospace"
+# Bande de disponibilité (assets/disponibilite.svg), seul endroit où vit ce texte. Pour régénérer uniquement ce fichier :
+#   python scripts/build_svgs.py --fonts <dossier des .woff> disponibilite
+STATUT = ("Disponible pour une alternance dès octobre 2026", "Analyse de données, science des données, IA")
+
+# Charte chaude (refonte v2)
+INK, BAND, AMP, FIL = "#14284B", "#10285A", "#C58B1C", "#C9953B"
+BEIGE, BEIGE_LIGHT = "#F6E8CC", "#FBF4E4"
+MUTED = "#47556D"  # INK à 78 % sur beige clair : texte secondaire, contraste > 6:1
 NOMOTION = "@media (prefers-reduced-motion: reduce){*{animation:none!important}}"
+W = 1000
+
+# Animations : une seule fois, rien d'infini. Sans animation, l'état de base est l'état final.
+ANIM = (
+    "@keyframes up{from{opacity:0;transform:translateY(18px)}}"
+    "@keyframes fade{from{opacity:0}}"
+    "@keyframes draw{from{stroke-dashoffset:1}}"
+    "@keyframes lz{from{opacity:0;transform:scale(.2) rotate(-90deg)}60%{opacity:1;transform:scale(1.35)}}"
+    ".up{animation:up 1s cubic-bezier(.2,.7,.2,1) backwards}"
+    ".fade{animation:fade .9s ease-out backwards}"
+    ".draw{stroke-dasharray:1;animation:draw 1.1s cubic-bezier(.45,0,.2,1) backwards}"
+    ".lz{transform-box:fill-box;transform-origin:center;animation:lz .6s ease-out backwards}"
+)
 
 
 def e(s):
     return escape(s, quote=False)
 
 
-def svg(w, h, title, desc, style, body, extra_ns=""):
+def write(path, content):
+    path = Path(path)
+    path.write_text(content, encoding="utf-8")
+    print("ok", path.relative_to(ROOT.parent), len(content) // 1024, "Ko")
+
+
+# ---------------------------------------------------------------- texte en tracés
+def num(v):
+    s = f"{v:.1f}"
+    s = s.rstrip("0").rstrip(".") if "." in s else s
+    return "0" if s in ("-0", "") else s
+
+
+def xadv(v):
+    return (getattr(v, "XAdvance", 0) or 0) if v is not None else 0
+
+
+class Font:
+    """Lit un .woff avec fontTools : contours, chasses et crénage GPOS (paires, formats 1 et 2)."""
+
+    def __init__(self, path):
+        from fontTools.ttLib import TTFont
+
+        self.f = TTFont(str(path))
+        self.gs = self.f.getGlyphSet()
+        self.cmap = self.f.getBestCmap()
+        self.upm = self.f["head"].unitsPerEm
+        self.hmtx = self.f["hmtx"].metrics
+        self.xh = self.f["OS/2"].sxHeight / self.upm
+        self.cap = self.f["OS/2"].sCapHeight / self.upm
+        self.pairs, self.classes, self.subst = {}, [], {}
+        if "GSUB" in self.f:  # chiffres alignés (lnum) : Playfair a des chiffres elzéviriens par défaut
+            t = self.f["GSUB"].table
+            for i in sorted({i for fr in t.FeatureList.FeatureRecord if fr.FeatureTag == "lnum" for i in fr.Feature.LookupListIndex}):
+                lk = t.LookupList.Lookup[i]
+                for st in lk.SubTable:
+                    typ = lk.LookupType
+                    if typ == 7:
+                        typ, st = st.ExtensionLookupType, st.ExtSubTable
+                    if typ == 1:
+                        self.subst.update(st.mapping)
+        if "GPOS" in self.f:
+            t = self.f["GPOS"].table
+            idx = sorted({i for fr in t.FeatureList.FeatureRecord if fr.FeatureTag == "kern" for i in fr.Feature.LookupListIndex})
+            for i in idx:
+                lk = t.LookupList.Lookup[i]
+                for st in lk.SubTable:
+                    typ = lk.LookupType
+                    if typ == 9:
+                        typ, st = st.ExtensionLookupType, st.ExtSubTable
+                    if typ != 2:
+                        continue
+                    if st.Format == 1:
+                        for g1, ps in zip(st.Coverage.glyphs, st.PairSet):
+                            for r in ps.PairValueRecord:
+                                self.pairs.setdefault((g1, r.SecondGlyph), xadv(r.Value1))
+                    else:
+                        self.classes.append((set(st.Coverage.glyphs), st))
+
+    def kern(self, a, b):
+        if (a, b) in self.pairs:
+            return self.pairs[(a, b)]
+        for cov, st in self.classes:
+            if a in cov:
+                c1 = st.ClassDef1.classDefs.get(a, 0)
+                c2 = st.ClassDef2.classDefs.get(b, 0)
+                v = xadv(st.Class1Record[c1].Class2Record[c2].Value1)
+                if v:
+                    return v
+        return 0
+
+    def glyph(self, ch):
+        g = self.cmap.get(ord(ch))
+        if g is None and ch == "\u00a0":
+            g = self.cmap.get(32)
+        if g is None:
+            raise KeyError(f"caractère absent de la police : {ch!r} (U+{ord(ch):04X})")
+        return self.subst.get(g, g)
+
+    def shape(self, runs, size, tracking=0.0):
+        """runs : [(texte, couleur)]. Renvoie ([(d, couleur)], chasse totale), origine sur la ligne de base."""
+        from fontTools.pens.svgPathPen import SVGPathPen
+        from fontTools.pens.transformPen import TransformPen
+
+        s = size / self.upm
+        x, prev, out = 0.0, None, []
+        for text, color in runs:
+            pen = SVGPathPen(self.gs, ntos=num)
+            for ch in text:
+                g = self.glyph(ch)
+                if prev:
+                    x += self.kern(prev, g) * s
+                self.gs[g].draw(TransformPen(pen, (s, 0, 0, -s, x, 0)))
+                x += self.hmtx[g][0] * s + tracking * size
+                prev = g
+            out.append((pen.getCommands(), color))
+        return out, x - tracking * size
+
+    def width(self, text, size, tracking=0.0):
+        runs = text if isinstance(text, list) else [(text, INK)]
+        return self.shape(runs, size, tracking)[1]
+
+    def fit(self, text, size, max_w, tracking=0.0):
+        w = self.width(text, size, tracking)
+        return size if w <= max_w else size * max_w / w
+
+
+FONTS = {}
+FONT_FILES = {
+    "pf700": "playfair-display-latin-700-normal",
+    "pf600": "playfair-display-latin-600-normal",
+    "pf400i": "playfair-display-latin-400-italic",
+    "ss400": "source-sans-3-latin-400-normal",
+    "ss600": "source-sans-3-latin-600-normal",
+    "ss700": "source-sans-3-latin-700-normal",
+}
+
+
+def font(key):
+    return FONTS[key]
+
+
+def typo(s):
+    """Typographie française : apostrophe courbe, espaces insécables dans les nombres et avant % : ; ! ?"""
+    s = s.replace("'", "\u2019")
+    s = re.sub(r"(\d) (?=\d{3}\b)", "\\1\u00a0", s)
+    return re.sub(r" (?=[%:;!?])", "\u00a0", s)
+
+
+def text_g(fnt, runs, size, x, y, anchor="start", tracking=0.0, cls="", style=""):
+    runs = [(typo(t), c) for t, c in (runs if isinstance(runs, list) else [(runs, INK)])]
+    paths, w = fnt.shape(runs, size, tracking)
+    x0 = x - w / 2 if anchor == "middle" else x - w if anchor == "end" else x
+    attrs = (f' class="{cls}"' if cls else "") + (f' style="{style}"' if style else "")
+    inner = "".join(f'<path fill="{c}" d="{d}"/>' for d, c in paths if d)
+    if attrs:  # une animation CSS sur transform remplacerait l'attribut transform : groupe interne
+        inner = f"<g{attrs}>{inner}</g>"
+    return f'<g transform="translate({num(x0)} {num(y)})">{inner}</g>', w
+
+
+def wrap(fnt, text, size, max_w):
+    lines, cur = [], ""
+    for word in typo(text).split(" "):
+        t = f"{cur} {word}" if cur else word
+        if cur and fnt.width(t, size) > max_w:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = t
+    lines.append(cur)
+    # pas de mot seul en dernière ligne
+    if len(lines) > 1 and " " not in lines[-1] and lines[-2].count(" ") >= 2:
+        head, last = lines[-2].rsplit(" ", 1)
+        if fnt.width(f"{last} {lines[-1]}", size) <= max_w:
+            lines[-2:] = [head, f"{last} {lines[-1]}"]
+    return lines
+
+
+def para(fnt, text, size, x, y, max_w, lh, color=INK, anchor="start"):
+    """Paragraphe à la ligne automatique. Renvoie (svg, ordonnée de la dernière ligne de base)."""
+    lines = wrap(fnt, text, size, max_w)
+    out = [text_g(fnt, [(ln, color)], size, x, y + i * lh, anchor=anchor)[0] for i, ln in enumerate(lines)]
+    return "".join(out), y + (len(lines) - 1) * lh
+
+
+def anim(cls, delay, dur=None):
+    return f' class="{cls}" style="animation-delay:{delay:.2f}s{f";animation-duration:{dur}s" if dur else ""}"'
+
+
+def diamond(cx, cy, r, ry=None):
+    ry = r if ry is None else ry
+    return f"M{num(cx)} {num(cy - ry)}L{num(cx + r)} {num(cy)}L{num(cx)} {num(cy + ry)}L{num(cx - r)} {num(cy)}Z"
+
+
+def lz(cx, cy, r, delay, fill=FIL, ry=None):
+    return f'<path{anim("lz", delay)} fill="{fill}" d="{diamond(cx, cy, r, ry)}"/>'
+
+
+def rule(x1, y, x2, delay, dur=0.8, width=2.5, color=FIL, opacity=1):
+    op = f' stroke-opacity="{opacity}"' if opacity != 1 else ""
+    return f'<path{anim("draw", delay, dur)} pathLength="1" d="M{num(x1)} {num(y)}H{num(x2)}" stroke="{color}" stroke-width="{width}"{op} fill="none"/>'
+
+
+def eyebrow(text, x, y, delay=None, size=25):
+    """Petit intitulé en capitales espacées, précédé d'un losange doré."""
+    f = font("ss700")
+    r = size * 0.24
+    g, w = text_g(f, [(text, MUTED)], size, x + 2 * r + size * 0.45, y, tracking=0.14)
+    d = f'<path fill="{FIL}" d="{diamond(x + r, y - size * f.cap / 2, r)}"/>'
+    inner = d + g
+    if delay is not None:
+        inner = f'<g{anim("fade", delay)}>{inner}</g>'
+    return inner, 2 * r + size * 0.45 + w
+
+
+def smooth(pts):
+    """Catmull-Rom vers Bézier cubiques."""
+    d = f"M{num(pts[0][0])} {num(pts[0][1])}"
+    for i in range(len(pts) - 1):
+        p0 = pts[max(i - 1, 0)]
+        p1, p2 = pts[i], pts[i + 1]
+        p3 = pts[min(i + 2, len(pts) - 1)]
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        d += f"C{num(c1[0])} {num(c1[1])} {num(c2[0])} {num(c2[1])} {num(p2[0])} {num(p2[1])}"
+    return d
+
+
+def frame(Wd, H, gid="bg", cx="50%", cy="45%", border=True):
+    grad = f'<radialGradient id="{gid}" cx="{cx}" cy="{cy}" r="75%"><stop offset="0" stop-color="{BEIGE}"/><stop offset="1" stop-color="{BEIGE_LIGHT}"/></radialGradient>'
+    bg = f'<rect width="{Wd}" height="{num(H)}" rx="20" fill="url(#{gid})"/>'
+    if border:
+        bg += f'<rect x="1" y="1" width="{Wd - 2}" height="{num(H - 2)}" rx="19" fill="none" stroke="{FIL}" stroke-opacity=".45" stroke-width="1.5"/>'
+    return grad, bg
+
+
+def svg_v2(Wd, H, title, desc, defs, body, style=ANIM):
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"{extra_ns} '
-        f'viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-labelledby="t d">\n'
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {Wd} {num(H)}" width="{Wd}" height="{num(H)}" role="img" aria-labelledby="t d">\n'
         f'<title id="t">{e(title)}</title>\n<desc id="d">{e(desc)}</desc>\n'
-        f"<style>{style}\n{NOMOTION}</style>\n{body}\n</svg>\n"
+        "<metadata>Texte converti en tracés depuis Playfair Display et Source Sans 3 (SIL Open Font License 1.1).</metadata>\n"
+        f"<style>{style}\n{NOMOTION}</style>\n<defs>{defs}</defs>\n{body}\n</svg>\n"
     )
 
 
-def write(name, content):
-    (ASSETS / name).write_text(content, encoding="utf-8")
-    print("ok", name, len(content) // 1024, "Ko")
+def ligne_g(fnt, items, size, x, y, anchor, t0, step):
+    """Éléments sur une ligne, séparés par des ◆ dessinés (absents de la police) qui s'allument à tour de rôle."""
+    r, gap = size * 0.17, size * 0.55
+    ws = [fnt.width(m, size) for m in items]
+    total = sum(ws) + (len(items) - 1) * (2 * gap + 2 * r)
+    cx = x - total / 2 if anchor == "middle" else x
+    cy = y - size * fnt.xh / 2
+    parts = []
+    for i, (m, w) in enumerate(zip(items, ws)):
+        parts.append(text_g(fnt, m, size, cx, y, cls="fade", style=f"animation-delay:{t0 + i * step:.2f}s")[0])
+        cx += w
+        if i < len(items) - 1:
+            parts.append(lz(cx + gap + r, cy, r, t0 + i * step + step * .6))
+            cx += 2 * gap + 2 * r
+    return "".join(parts), total
 
 
-# ---------------------------------------------------------------- hero (terminal)
-def hero():
-    fs, cw, x0, step = 21, 12.6, 48, 33
-    rows = [
-        ("cmd", "whoami"),
-        ("out", "Kadidiatou Bagayoko · Data & AI Solutions Builder", "#ffffff"),
-        ("cmd", "cat recherche.txt"),
-        ("out", "Alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école", "#e6edf5"),
-        ("cmd", "cat consulat_du_mali.txt"),
-        ("out", "Analyse des processus, fiabilisation des données, réduction de 50 % des déplacements", "#e6edf5"),
-        ("cmd", "cat tcim.txt"),
-        ("out", "Partie IA de TCIM : classification de données de santé, accuracy 82,5 %.", "#e6edf5"),
-        ("cmd", "cat signature.txt"),
-        ("out", "Les données racontent une histoire, je la traduis.", GOLD),
-        ("prompt", ""),
-    ]
-    y = 100
-    t = 0.7
-    css, body, alltext = [], [], []
-    for i, r in enumerate(rows):
-        kind = r[0]
-        if kind == "cmd":
-            y += 10 if i else 0
-        txt = ("$ " + r[1]) if kind == "cmd" else r[1] if kind == "out" else "$ "
-        n = len(txt)
-        w = n * cw
-        assert x0 + w < 1160, (txt, x0 + w)
-        dur = max(0.4, n * 0.03)
-        if kind == "cmd":
-            tsp = f'<tspan fill="{GOLD}">$ </tspan><tspan fill="#ffffff">{e(r[1])}</tspan>'
-        elif kind == "out":
-            tsp = f'<tspan fill="{r[2]}"{" font-weight=\"700\"" if r[2] == "#ffffff" else ""}>{e(r[1])}</tspan>'
-        else:
-            tsp = f'<tspan fill="{GOLD}">$ </tspan>'
-        if kind != "prompt":
-            body.append(
-                f'<text x="{x0}" y="{y}" font-size="{fs}" textLength="{w:.1f}" lengthAdjust="spacing" xml:space="preserve">{tsp}</text>'
-            )
-            alltext.append(txt)
-            css.append(
-                f"@keyframes c{i}{{from{{transform:scaleX(1)}}to{{transform:scaleX(0)}}}}"
-                f"@keyframes k{i}{{from{{opacity:1;transform:translateX(0)}}to{{opacity:1;transform:translateX({w:.1f}px)}}}}"
-                f".c{i}{{animation:c{i} {dur:.2f}s steps({n},end) {t:.2f}s backwards}}"
-                f".k{i}{{animation:k{i} {dur:.2f}s steps({n},end) {t:.2f}s}}"
-            )
-            body.append(
-                f'<rect class="cv c{i}" x="{x0 - 2}" y="{y - fs}" width="{w + 8:.1f}" height="{fs + 9}" fill="{NAVY}"/>'
-                f'<rect class="cu k{i}" x="{x0}" y="{y - fs + 2}" width="9" height="{fs + 3}" fill="{GOLD}"/>'
-            )
-            t += dur + (0.15 if kind == "cmd" else 0.55)
-        else:
-            cx = x0 + w
-            css.append(
-                f"@keyframes show{{from{{opacity:0}}to{{opacity:1}}}}@keyframes blink{{0%,49%{{opacity:1}}50%,100%{{opacity:0}}}}"
-                f".pw{{animation:show .01s linear {t:.2f}s backwards}}.pb{{animation:blink 1.06s steps(1) {t:.2f}s infinite}}"
-            )
-            body.append(
-                f'<g class="pw"><text x="{x0}" y="{y}" font-size="{fs}" textLength="{w:.1f}" lengthAdjust="spacing" xml:space="preserve">{tsp}</text><rect class="pb" x="{cx:.1f}" y="{y - fs + 2}" width="9" height="{fs + 3}" fill="{GOLD}"/></g>'
-            )
-        y += step
-    h = y + 22
-    style = (
-        f"text{{font-family:{MONO}}}.cv{{transform-box:fill-box;transform-origin:100% 50%;transform:scaleX(0)}}"
-        ".cu{opacity:0}" + "".join(css)
+def ligne_w(fnt, items, size):
+    return sum(fnt.width(m, size) for m in items) + (len(items) - 1) * size * 2 * (0.55 + 0.17)
+
+
+# ---------------------------------------------------------------- bannière (variante A, permanente : ni statut ni date)
+NOM = "Kadidiatou Bagayoko"
+METIERS = ["Analyse de données", "Création de dashboards", "Machine learning"]
+ACC1 = [("Utiliser la data ", INK), ("&", AMP), (" l’IA", INK)]
+ACC2 = [("pour concevoir des solutions innovantes.", INK)]
+
+
+def hero_svg():
+    bold, semi, ital = font("pf700"), font("pf600"), font("pf400i")
+    s_nom = bold.fit(NOM, 100, 840)
+    s_m = min(40, 40 * 860 / ligne_w(semi, METIERS[:2], 40))
+    s_a = ital.fit(ACC2, 38, 860)
+    y_nom, fy, ym = 160, 206, 278
+    ya = ym + s_m * 1.4 + 70
+    H = round(ya + s_a * 1.3 + 92)
+    grad, bg = frame(W, H, border=False)
+    defs = grad + (
+        f'<linearGradient id="fl" gradientUnits="userSpaceOnUse" x1="{W / 2 - 230}" x2="{W / 2 + 230}"><stop offset="0" stop-color="{FIL}" stop-opacity="0"/>'
+        f'<stop offset=".5" stop-color="{FIL}"/><stop offset="1" stop-color="{FIL}" stop-opacity="0"/></linearGradient>'
     )
-    bar = (
-        f'<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="{NAVY2}"/><stop offset="1" stop-color="{GOLD}"/></linearGradient></defs>'
-        f'<rect width="1200" height="{h}" rx="14" fill="{NAVY}"/>'
-        f'<path d="M0 14a14 14 0 0 1 14-14h1172a14 14 0 0 1 14 14v30H0z" fill="#17304f"/>'
-        f'<rect y="44" width="1200" height="3" fill="url(#g)"/>'
-        f'<circle cx="28" cy="23" r="6" fill="{GOLD}"/><circle cx="50" cy="23" r="6" fill="#7fa3d1"/><circle cx="72" cy="23" r="6" fill="#b9cbe3"/>'
-        f'<text x="600" y="28" font-size="14" text-anchor="middle" fill="#b9cbe3" style="font-family:{SANS}">kadidiatou@data-ia : ~</text>'
+    body = [bg, f'<rect x="16" y="16" width="{W - 32}" height="{H - 32}" rx="12" fill="none" stroke="{FIL}" stroke-opacity=".5"/>']
+    for cx, cy in ((16, 16), (W - 16, 16), (16, H - 16), (W - 16, H - 16)):
+        body.append(lz(cx, cy, 5, 2.6))
+    body.append(text_g(bold, NOM, s_nom, W / 2, y_nom, anchor="middle", cls="up", style="animation-delay:.15s")[0])
+    # filet d'or tracé depuis le centre, losanges qui s'allument
+    for x2 in (W / 2 - 230, W / 2 + 230):
+        body.append(f'<path{anim("draw", .7)} pathLength="1" d="M{num(W / 2)} {fy}H{num(x2)}" stroke="url(#fl)" stroke-width="2" fill="none"/>')
+    body.append(lz(W / 2, fy, 9, .65, ry=11))
+    for k, dx in enumerate((-40, 40)):
+        body.append(lz(W / 2 + dx, fy, 4, 1.0 + k * .08))
+    # métiers sur deux lignes (lisibles à 328 px) : le retour à la ligne remplace le second ◆
+    body.append(ligne_g(semi, METIERS[:2], s_m, W / 2, ym, "middle", 1.1, .3)[0])
+    body.append(ligne_g(semi, METIERS[2:], s_m, W / 2, ym + s_m * 1.4, "middle", 1.7, .3)[0])
+    for k, runs in enumerate((ACC1, ACC2)):
+        body.append(text_g(ital, runs, s_a, W / 2, ya + k * s_a * 1.3, anchor="middle", cls="fade", style=f"animation-delay:{2.1 + k * .2:.2f}s")[0])
+    desc = "Kadidiatou Bagayoko. Analyse de données, création de dashboards, machine learning. Utiliser la data & l'IA pour concevoir des solutions innovantes."
+    return svg_v2(W, H, NOM, desc, defs, "\n".join(body)), dict(nom=s_nom, metiers=s_m, accroche=s_a)
+
+
+# ---------------------------------------------------------------- bande de disponibilité
+def disponibilite_svg():
+    f1, f2 = font("ss600"), font("ss400")
+    size, lh, pad = 36, 50, 34
+    r = size * 0.2
+    gap = size * 0.5
+    w1 = f1.width(STATUT[0], size)
+    w2 = f2.width(STATUT[1], size)
+    one_line = w1 + 2 * gap + 2 * r + gap + w2 <= W - 80
+    top = pad + size * f1.cap
+    parts = []
+    if one_line:
+        x = (W - (w1 + 3 * gap + 2 * r + w2)) / 2
+        parts.append(text_g(f1, [(STATUT[0], BEIGE_LIGHT)], size, x, top, cls="up", style="animation-delay:.2s")[0])
+        parts.append(lz(x + w1 + gap + r, top - size * f1.xh / 2, r, .9, fill=FIL))
+        parts.append(text_g(f2, [(STATUT[1], BEIGE_LIGHT)], size, x + w1 + 2 * gap + 2 * r, top, cls="fade", style="animation-delay:1.1s")[0])
+        last = top
+    else:
+        lines1 = wrap(f1, STATUT[0], size, W - 80)
+        for i, ln in enumerate(lines1):
+            parts.append(text_g(f1, [(ln, BEIGE_LIGHT)], size, W / 2, top + i * lh, anchor="middle", cls="up", style=f"animation-delay:{.2 + i * .15:.2f}s")[0])
+        y2 = top + len(lines1) * lh
+        lines2 = wrap(f2, STATUT[1], size, W - 80 - 2 * r - gap)
+        for i, ln in enumerate(lines2):
+            yy = y2 + i * lh
+            w = f2.width(ln, size)
+            x = (W - (2 * r + gap + w)) / 2 if i == 0 else (W - w) / 2
+            if i == 0:
+                parts.append(lz(x + r, yy - size * f2.xh / 2, r, .9, fill=FIL))
+                x += 2 * r + gap
+            parts.append(text_g(f2, [(ln, BEIGE_LIGHT)], size, x, yy, cls="fade", style=f"animation-delay:{1.1 + i * .15:.2f}s")[0])
+        last = y2 + (len(lines2) - 1) * lh
+    H = round(last + pad + size * 0.25)
+    body = [f'<rect width="{W}" height="{H}" rx="14" fill="{BAND}"/>']
+    for x2 in (W / 2 - 160, W / 2 + 160):
+        body.append(f'<path{anim("draw", .3, 1.0)} pathLength="1" d="M{W / 2} {H - 10}H{num(x2)}" stroke="{FIL}" stroke-width="2" stroke-opacity=".8" fill="none"/>')
+    body += parts
+    desc = f"{STATUT[0]}. {STATUT[1]}."
+    return svg_v2(W, H, "Disponibilité", desc, "", "\n".join(body)), dict(texte=size, lignes="1" if one_line else "2")
+
+
+# ---------------------------------------------------------------- pied de page : vague beige, filet doré, losanges
+def footer_svg():
+    H = 130
+
+    def wy(x):
+        return 54 - 18 * math.sin(2 * math.pi * (x - 250) / 1000)
+
+    xs = list(range(0, W + 1, 50))
+    top = smooth([(x, wy(x)) for x in xs])
+    fil_r = smooth([(x, wy(x) + 16) for x in xs if x >= 500])
+    fil_l = smooth([(x, wy(x) + 16) for x in reversed(xs) if x <= 500])
+    defs = (
+        f'<linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="{BEIGE_LIGHT}"/><stop offset=".5" stop-color="{BEIGE}"/>'
+        f'<stop offset="1" stop-color="{BEIGE_LIGHT}"/></linearGradient>'
+        f'<clipPath id="cp"><rect width="{W}" height="{H}" rx="20"/></clipPath>'
     )
-    desc = "Fenêtre de terminal. " + " ".join(alltext)
-    write("hero.svg", svg(1200, h, "Terminal : Kadidiatou Bagayoko", desc, style, bar + "\n".join(body)))
+    body = [f'<g clip-path="url(#cp)"><path d="{top}V{H}H0Z" fill="url(#bg)"/></g>']
+    for d in (fil_l, fil_r):
+        body.append(f'<path{anim("draw", .2, 1.4)} pathLength="1" d="{d}" fill="none" stroke="{FIL}" stroke-width="2"/>')
+    body.append(lz(500, wy(500) + 16, 8, .15, ry=10))
+    for k, x in enumerate((250, 750)):
+        body.append(lz(x, wy(x) + 16, 5, .8 + k * .1))
+    for k, dx in enumerate((-26, 0, 26)):
+        body.append(lz(500 + dx, 104, 4.5 if dx else 6, 1.4 + k * .12, fill=AMP if dx == 0 else FIL))
+    return svg_v2(W, H, "Pied de page", "Bandeau décoratif : vague beige, filet doré et losanges.", defs, "\n".join(body))
+
+
+# ---------------------------------------------------------------- chiffres clés (2 colonnes, trait d'or sous chaque chiffre)
+KPIS = [
+    ("50 %", "de réduction des déplacements des usagers", "Consulat du Mali (stage, avril à juin 2026)"),
+    ("+30 %", "d'engagement", "Femmes Audacieuses (juin à septembre 2025)"),
+    ("82,5 %", "d'accuracy, classification de données de santé", "TCIM (en cours, depuis avril 2026)"),
+    ("397 884", "lignes de transactions analysées", "Dashboard e-commerce (janvier 2026)"),
+    ("5 234", "contacts audités", "Audit CRM RevOps (données synthétiques)"),
+    ("250", "prompts adversariaux conçus", "Hackathon WMDP (mars 2026)"),
+]
+
+
+def kpi_svg():
+    fn, fl, fo = font("pf700"), font("ss400"), font("ss600")
+    m, gap, pad = 24, 20, 30
+    tw = (W - 2 * m - gap) / 2
+    sn, sl, so, lhl, lho = 58, 32, 28, 40, 36
+    tw_in = tw - 2 * pad
+    lay = [(n.replace(" ", "\u00a0"), wrap(fl, l, sl, tw_in), wrap(fo, o, so, tw_in)) for n, l, o in KPIS]
+
+    def tile_h(t):
+        return pad + sn * 0.74 + 64 + (len(t[1]) - 1) * lhl + 44 + (len(t[2]) - 1) * lho + pad - 4
+
+    rows = [max(tile_h(lay[i]), tile_h(lay[i + 1])) for i in (0, 2, 4)]
+    H = m + sum(rows) + gap * 2 + m
+    grad, bg = frame(W, H)
+    body = [bg]
+    y = m
+    for ri, rh in enumerate(rows):
+        for ci in range(2):
+            i = ri * 2 + ci
+            n, ll, ol = lay[i]
+            x = m + ci * (tw + gap)
+            d0 = .1 + i * .12
+            yn = y + pad + sn * 0.74
+            g = [f'<rect x="{num(x)}" y="{num(y)}" width="{num(tw)}" height="{num(rh)}" rx="12" fill="{BEIGE_LIGHT}" fill-opacity=".75" stroke="{FIL}" stroke-opacity=".4"/>']
+            g.append(text_g(fn, n, sn, x + pad, yn)[0])
+            yl = yn + 64
+            for k, ln in enumerate(ll):
+                g.append(text_g(fl, ln, sl, x + pad, yl + k * lhl)[0])
+            yo = yl + (len(ll) - 1) * lhl + 44
+            for k, ln in enumerate(ol):
+                g.append(text_g(fo, [(ln, MUTED)], so, x + pad, yo + k * lho)[0])
+            body.append(f'<g{anim("up", d0)}>{"".join(g)}</g>')
+            body.append(rule(x + pad, yn + 20, x + pad + 64, .55 + i * .12, .7, 3))
+        y += rh + gap
+    desc = "Chiffres clés. " + " ; ".join(f"{n} {l}, {o}" for n, l, o in KPIS) + "."
+    return svg_v2(W, H, "Chiffres clés", desc, grad, "\n".join(body)), dict(chiffre=sn, libelle=sl, origine=so)
+
+
+# ---------------------------------------------------------------- schéma « Du besoin à la solution » (fil d'or vertical)
+ETAPES = [
+    ("Données", ["397 884 lignes de transactions (e-commerce)", "5 234 contacts (RevOps)"]),
+    ("Nettoyage", ["Fiabilisation des données (Consulat du Mali)", "Audit qualité avant migration (RevOps)"]),
+    ("Modèle ou analyse", ["TF-IDF + Random Forest (TCIM)", "Analyse des processus (Consulat du Mali)", "LLMs via l'API Hugging Face (WMDP)"]),
+    ("Dashboard", ["Streamlit + Plotly", "KPIs et reporting pour la direction"]),
+]
+
+
+def flow_svg():
+    ft, fi, fnum = font("pf700"), font("ss400"), font("ss700")
+    xl, xt, top = 84, 140, 52
+    st, si, lh = 40, 31, 41
+    maxw = W - xt - 48
+    y = top
+    nodes, centers = [], []
+    for k, (title, items) in enumerate(ETAPES):
+        yt = y + st * 0.74
+        centers.append(yt - st * ft.cap / 2)
+        parts = [text_g(ft, title, st, xt, yt)[0]]
+        yi = yt + 50
+        for it in items:
+            svg, last = para(fi, it.replace(" (", "\u00a0("), si, xt, yi, maxw, lh)
+            parts.append(svg)
+            yi = last + lh
+        nodes.append(parts)
+        y = yi - lh + 58
+    H = y - 58 + 52
+    grad, bg = frame(W, H)
+    t0, dur = .2, 2.4
+    span = centers[-1] - centers[0]
+    body = [bg, f'<path{anim("draw", t0, dur)} pathLength="1" d="M{xl} {num(centers[0])}V{num(centers[-1])}" stroke="{FIL}" stroke-width="3" fill="none"/>']
+    for k, (c, parts) in enumerate(zip(centers, nodes)):
+        t = t0 + dur * (c - centers[0]) / span
+        body.append(lz(xl, c, 24, t, fill=BAND))
+        body.append(f'<g{anim("fade", t)}>{text_g(fnum, [(str(k + 1), BEIGE_LIGHT)], 24, xl, c + 24 * fnum.cap / 2, anchor="middle")[0]}</g>')
+        body.append(f'<g{anim("fade", t + .1)}>{"".join(parts)}</g>')
+    desc = "Schéma en quatre étapes reliées par un fil d'or. " + " ".join(f"{k + 1}, {t} : " + ", ".join(i) + "." for k, (t, i) in enumerate(ETAPES))
+    return svg_v2(W, H, "Du besoin à la solution", desc, grad, "\n".join(body)), dict(titre=st, texte=si)
 
 
 # ---------------------------------------------------------------- carte d'identité
-def idcard():
-    rows = [
-        ("RÔLE", "Data & AI Solutions Builder"),
-        ("FORMATION", "Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024–2027"),
-        ("RECHERCHE", "Alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école"),
-        ("EN COURS", "Partie IA du projet TCIM, portfolio avec assistant IA"),
-    ]
-    css = "@keyframes in{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}@keyframes ring{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}.r{animation:in .5s ease-out backwards}.ring{stroke-dasharray:300;animation:ring 1.2s ease-out .2s backwards}"
-    for i in range(4):
-        css += f".r{i}{{animation-delay:{0.3 + i * 0.18:.2f}s}}"
-    body = [
-        f'<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{NAVY}"/><stop offset="1" stop-color="{NAVY2}"/></linearGradient></defs>',
-        '<rect width="1200" height="290" rx="14" fill="url(#g)"/>',
-        f'<rect width="8" height="290" fill="{GOLD}"/>',
-        f'<circle cx="150" cy="120" r="48" fill="none" stroke="{GOLD}" stroke-width="4" class="ring" transform="rotate(-90 150 120)"/>',
-        f'<text x="150" y="132" font-size="34" font-weight="700" fill="#ffffff" text-anchor="middle" style="font-family:{SANS}">KB</text>',
-        f'<text x="150" y="212" font-size="19" font-weight="600" fill="#ffffff" text-anchor="middle" style="font-family:{SANS}">Kadidiatou</text>',
-        f'<text x="150" y="236" font-size="19" font-weight="600" fill="#ffffff" text-anchor="middle" style="font-family:{SANS}">Bagayoko</text>',
-        '<rect x="278" y="36" width="1" height="218" fill="#7fa3d1" opacity=".5"/>',
-    ]
-    for i, (k, v) in enumerate(rows):
-        y = 74 + i * 56
-        body.append(
-            f'<g class="r r{i}"><text x="310" y="{y}" font-size="14" font-weight="700" letter-spacing="2" fill="{GOLD}" style="font-family:{SANS}">{k}</text>'
-            f'<text x="310" y="{y + 26}" font-size="22" fill="#ffffff" style="font-family:{SANS}">{e(v)}</text></g>'
-        )
-    desc = "Carte d'identité. " + " ".join(f"{k.capitalize()} : {v}." for k, v in rows)
-    write("card.svg", svg(1200, 290, "Carte d'identité", desc, css, "\n".join(body)))
+IDENTITE = [
+    ("RÔLE", "Data & AI Solutions Builder"),
+    ("FORMATION", "Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024-2027"),
+    ("RECHERCHE", "Alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école"),
+    ("EN COURS", "Partie IA du projet TCIM, portfolio avec assistant IA"),
+]
+
+
+def idcard_svg():
+    fv = font("ss400")
+    pad, xv, sv, lh = 44, 300, 32, 42
+    maxw = W - xv - pad
+    y = pad
+    rows = []
+    for i, (k, v) in enumerate(IDENTITE):
+        lines = wrap(fv, v, sv, maxw)
+        yb = y + 18 + sv * 0.74
+        rows.append((k, lines, yb, y))
+        y = yb + (len(lines) - 1) * lh + 30
+    H = y + pad - 12
+    grad, bg = frame(W, H)
+    body = [bg]
+    for i, (k, lines, yb, ytop) in enumerate(rows):
+        d = .15 + i * .15
+        if i:
+            body.append(rule(pad, ytop, W - pad, d, .8, 1.2, opacity=.5))
+        g = [eyebrow(k, pad, yb, size=26)[0]]
+        g += [text_g(fv, ln, sv, xv, yb + j * lh)[0] for j, ln in enumerate(lines)]
+        body.append(f'<g{anim("up", d)}>{"".join(g)}</g>')
+    desc = "Carte d'identité. " + " ".join(f"{k.capitalize()} : {v}." for k, v in IDENTITE)
+    return svg_v2(W, H, "Carte d'identité", desc, grad, "\n".join(body)), dict(libelle=26, valeur=sv)
 
 
 # ---------------------------------------------------------------- stack à icônes
+STACK = [
+    ("DONNÉES", [("python", "Python"), ("pandas", "pandas"), ("plotly", "Plotly"), ("streamlit", "Streamlit"), ("jupyter", "Notebooks")]),
+    ("IA", [("huggingface", "API Hugging Face"), ("claude", "Claude Code")]),
+    ("OUTILS", [("hubspot", "HubSpot (compte gratuit)"), ("wordpress", "WordPress")]),
+]
+
+
 def icon_path(name):
+    import re
+
     s = (ASSETS / "icons" / f"{name}.svg").read_text(encoding="utf-8")
     return re.search(r'<path d="([^"]+)"', s).group(1)
 
 
-def stack():
-    groups = [
-        ("DONNÉES", [("python", "Python"), ("pandas", "pandas"), ("plotly", "Plotly"), ("streamlit", "Streamlit"), ("jupyter", "Notebooks")]),
-        ("IA", [("huggingface", "API Hugging Face"), ("claude", "Claude Code")]),
-        ("OUTILS", [("hubspot", "HubSpot (compte gratuit)"), ("wordpress", "WordPress")]),
-    ]
-    css = "@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.ch{animation:pop .45s ease-out backwards}"
-    body = [f'<rect width="1200" height="250" rx="14" fill="{LIGHT}" stroke="{LINE}"/>']
-    n = 0
-    descs = []
-    for gi, (g, chips) in enumerate(groups):
-        y = 28 + gi * 74
-        body.append(f'<text x="32" y="{y + 31}" font-size="14" font-weight="700" letter-spacing="2" fill="{NAVY}" style="font-family:{SANS}">{g}</text>')
-        body.append(f'<rect x="32" y="{y + 38}" width="28" height="3" fill="{GOLD}"/>')
-        x = 170
+def stack_svg():
+    fl = font("ss600")
+    pad, sl, ch, cgap = 44, 30, 66, 14
+    y = pad
+    parts, n = [], 0
+    for gname, chips in STACK:
+        yb = y + 26 * 0.74
+        parts.append(eyebrow(gname, pad, yb, delay=.1 + n * .08, size=26)[0])
+        x, yc = pad, yb + 26
         for key, label in chips:
-            w = 54 + int(len(label) * 9.6)
-            css += f".h{n}{{animation-delay:{0.1 + n * 0.09:.2f}s}}"
-            body.append(
-                f'<g class="ch h{n}"><rect x="{x}" y="{y}" width="{w}" height="52" rx="26" fill="#ffffff" stroke="{LINE}"/>'
-                f'<g transform="translate({x + 16} {y + 14}) scale(1)"><path d="{icon_path(key)}" fill="{NAVY}"/></g>'
-                f'<text x="{x + 48}" y="{y + 32}" font-size="17" fill="{TEXT}" style="font-family:{SANS}">{e(label)}</text></g>'
+            lw = fl.width(label, sl)
+            cw = 20 + 30 + 14 + lw + 26
+            if x + cw > W - pad:
+                x, yc = pad, yc + ch + cgap
+            g = (
+                f'<rect x="{num(x)}" y="{num(yc)}" width="{num(cw)}" height="{ch}" rx="{ch / 2}" fill="{BEIGE_LIGHT}" stroke="{FIL}" stroke-opacity=".6"/>'
+                f'<g transform="translate({num(x + 20)} {num(yc + 18)}) scale(1.25)"><path d="{icon_path(key)}" fill="{INK}"/></g>'
+                + text_g(fl, label, sl, x + 64, yc + 44)[0]
             )
-            descs.append(label)
-            x += w + 14
+            parts.append(f'<g{anim("up", .15 + n * .08)}>{g}</g>')
+            x += cw + cgap
             n += 1
+        y = yc + ch + 36
+    H = y - 36 + pad
+    grad, bg = frame(W, H)
     desc = "Stack. Données : Python, pandas, Plotly, Streamlit, notebooks. IA : API Hugging Face, Claude Code. Outils : HubSpot (compte gratuit), WordPress."
-    write("stack.svg", svg(1200, 250, "Stack", desc, css, "\n".join(body)))
+    return svg_v2(W, H, "Stack", desc, grad, bg + "\n" + "\n".join(parts)), dict(libelle=sl)
 
 
 # ---------------------------------------------------------------- cartes de projets
 def data_uri(path, mime, resize_w=None):
     p = ROOT / path
     if resize_w:
+        from PIL import Image
+
         im = Image.open(p).convert("RGB")
         im = im.resize((resize_w, round(im.height * resize_w / im.width)), Image.LANCZOS)
         buf = io.BytesIO()
         im.save(buf, "PNG", optimize=True)
-        raw = buf.getvalue()
+        raw, ratio = buf.getvalue(), im.width / im.height
     else:
         raw = p.read_bytes()
-    return f"data:{mime};base64," + base64.b64encode(raw).decode()
+        import re
+
+        vb = re.search(rb'viewBox="0 0 ([\d.]+) ([\d.]+)"', raw)
+        ratio = float(vb.group(1)) / float(vb.group(2))
+    return f"data:{mime};base64," + base64.b64encode(raw).decode(), ratio
 
 
-def card(fname, title, tag, thumb, bullets, stack_txt, desc):
-    W, H = 600, 470
-    tagw = 28 + int(len(tag) * 7.4)
-    css = (
-        "@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}"
-        ".b{animation:rise .5s ease-out backwards}.th{animation:rise .6s ease-out .15s backwards}.ac{transform-box:fill-box;transform-origin:0 50%;animation:grow .7s ease-out .1s backwards}"
-        + "".join(f".b{i}{{animation-delay:{0.45 + i * 0.15:.2f}s}}" for i in range(3))
+def card_svg(title, tag, thumb, bullets, stack_txt, desc):
+    ft, fb, fs = font("pf700"), font("ss400"), font("ss400")
+    pad, tw = 40, 400
+    xr = pad + tw + 36
+    cw = W - xr - pad
+    sb, lhb, ss = 30, 39, 28
+    y_tag = pad + 22
+    y_title = y_tag + 62
+    ct = y_title + 36
+    uri, ratio = thumb
+    th = tw / ratio
+    parts = [eyebrow(tag.upper(), pad, y_tag, delay=.1, size=24)[0]]
+    parts.append(text_g(ft, title, 46, pad, y_title, cls="up", style="animation-delay:.1s")[0])
+    parts.append(
+        f'<g{anim("fade", .3)}><rect x="{pad}" y="{num(ct)}" width="{tw}" height="{num(th + 16)}" rx="10" fill="#ffffff" stroke="{FIL}" stroke-opacity=".45"/>'
+        f'<image href="{uri}" x="{pad + 8}" y="{num(ct + 8)}" width="{tw - 16}" height="{num(th)}" preserveAspectRatio="xMidYMid meet"/></g>'
     )
-    body = [
-        f'<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="{NAVY}"/><stop offset="1" stop-color="{NAVY2}"/></linearGradient><clipPath id="cp"><rect width="{W}" height="{H}" rx="14"/></clipPath></defs>',
-        f'<g clip-path="url(#cp)"><rect width="{W}" height="{H}" fill="{LIGHT}"/><rect width="{W}" height="58" fill="url(#g)"/></g>',
-        f'<rect x="20" y="55" width="70" height="3" fill="{GOLD}" class="ac"/>',
-        f'<text x="20" y="37" font-size="21" font-weight="700" fill="#ffffff" style="font-family:{SANS}">{e(title)}</text>',
-        f'<rect x="{W - 20 - tagw}" y="17" width="{tagw}" height="26" rx="13" fill="{GOLD}"/>',
-        f'<text x="{W - 20 - tagw / 2}" y="35" font-size="13" font-weight="700" fill="{NAVY}" text-anchor="middle" style="font-family:{SANS}">{e(tag)}</text>',
-        f'<rect x="20" y="74" width="560" height="210" rx="8" fill="#ffffff" stroke="{LINE}"/>',
-    ]
-    if thumb:
-        body.append(
-            f'<image class="th" xlink:href="{thumb}" x="28" y="80" width="544" height="198" preserveAspectRatio="xMidYMid meet"/>'
-        )
+    y = ct + sb * 0.74 + 4
+    r = sb * 0.17
     for i, b in enumerate(bullets):
-        y = 316 + i * 32
-        body.append(
-            f'<g class="b b{i}"><rect x="22" y="{y - 10}" width="8" height="8" fill="{GOLD}"/>'
-            f'<text x="42" y="{y}" font-size="16.5" fill="{TEXT}" style="font-family:{SANS}">{e(b)}</text></g>'
-        )
-    body.append(f'<rect x="20" y="416" width="560" height="1" fill="{LINE}"/>')
-    body.append(
-        f'<text x="20" y="444" font-size="14" fill="{NAVY}" style="font-family:{SANS}"><tspan font-weight="700" letter-spacing="1.5">STACK</tspan><tspan dx="12">{e(stack_txt)}</tspan></text>'
-    )
-    write(fname, svg(W, H, title, desc, css, "\n".join(body)))
+        svg, last = para(fb, b, sb, xr + 2 * r + 14, y, cw - 2 * r - 14, lhb)
+        parts.append(f'<g{anim("fade", .5 + i * .15)}><path fill="{FIL}" d="{diamond(xr + r, y - sb * fb.xh / 2, r)}"/>{svg}</g>')
+        y = last + lhb + 12
+    y += 16
+    ey, _ = eyebrow("STACK", xr, y, size=22)
+    svg, last = para(fs, stack_txt, ss, xr, y + 40, cw, 36, color=MUTED)
+    parts.append(f'<g{anim("fade", 1.0)}>{ey}{svg}</g>')
+    H = max(ct + th + 16, last + 12) + pad
+    grad, bg = frame(W, H)
+    return svg_v2(W, H, title, desc, grad, bg + "\n" + "\n".join(parts)), dict(puces=sb, titre=46)
+
+
+CARTES = [
+    ("card-dashboard.svg", "Dashboard e-commerce", "Janvier 2026", ("assets/screens/dashboard-1.png", "image/png", 800),
+     ["397 884 lignes de transactions (18 532 factures)", "CA de £8,91M, panier moyen de £481", "6 indicateurs et 6 graphiques, Royaume-Uni à 82 %"],
+     "Python, pandas, Streamlit, Plotly",
+     "Dashboard e-commerce, janvier 2026. 397 884 lignes de transactions (18 532 factures). CA de £8,91M, panier moyen de £481. 6 indicateurs et 6 graphiques, Royaume-Uni à 82 %. Python, pandas, Streamlit, Plotly. Vignette : capture du dashboard."),
+    ("card-wmdp.svg", "Hackathon WMDP", "Mars 2026, autrice unique", ("assets/charts/wmdp_danger_by_category.svg", "image/svg+xml", None),
+     ["250 prompts adversariaux, 5 types de reformulation", "6 LLMs, 360 requêtes, 234 réponses non vides", "0 % de refus sur Llama et Qwen (mots-clés)"],
+     "API Hugging Face",
+     "Hackathon WMDP, mars 2026, autrice unique. 250 prompts adversariaux en 5 types de reformulation. 6 LLMs open source, 360 requêtes, 234 réponses non vides. 0 % de refus sur Llama et Qwen, mesuré par mots-clés. API Hugging Face. Vignette : graphique de dangerosité par catégorie."),
+    ("card-revops.svg", "Audit migration CRM", "Données synthétiques", ("assets/charts/revops_field_normalization.svg", "image/svg+xml", None),
+     ["734 comptes et 5 234 contacts (Kaggle)", "Contract_Status : 8 valeurs brutes, 3 après normalisation", "Audit avant migration Salesforce vers HubSpot"],
+     "pandas, matplotlib, notebook",
+     "Audit de qualité de données avant migration Salesforce vers HubSpot, sur données synthétiques Kaggle. 734 comptes et 5 234 contacts. Contract_Status : 8 valeurs brutes, 3 après normalisation. pandas, matplotlib, notebook. Vignette : graphique de normalisation par champ."),
+]
 
 
 def cards():
-    shot = data_uri("assets/screens/dashboard-1.png", "image/png", 1100)
-    wm = data_uri("assets/charts/wmdp_danger_by_category.svg", "image/svg+xml")
-    rv = data_uri("assets/charts/revops_field_normalization.svg", "image/svg+xml")
-    card(
-        "card-dashboard.svg", "Dashboard e-commerce", "Janvier 2026", shot,
-        ["397 884 lignes de transactions (18 532 factures)", "CA de £8,91M, panier moyen de £481", "6 indicateurs et 6 graphiques, Royaume-Uni à 82 %"],
-        "Python, pandas, Streamlit, Plotly",
-        "Dashboard e-commerce, janvier 2026. 397 884 lignes de transactions (18 532 factures). CA de £8,91M, panier moyen de £481. 6 indicateurs et 6 graphiques, Royaume-Uni à 82 %. Python, pandas, Streamlit, Plotly. Vignette : capture du dashboard.",
-    )
-    card(
-        "card-wmdp.svg", "Hackathon WMDP", "Mars 2026, autrice unique", wm,
-        ["250 prompts adversariaux, 5 types de reformulation", "6 LLMs, 360 requêtes, 234 réponses non vides", "0 % de refus sur Llama et Qwen (mots-clés)"],
-        "API Hugging Face",
-        "Hackathon WMDP, mars 2026, autrice unique. 250 prompts adversariaux en 5 types de reformulation. 6 LLMs open source, 360 requêtes, 234 réponses non vides. 0 % de refus sur Llama et Qwen, mesuré par mots-clés. API Hugging Face. Vignette : graphique de dangerosité par catégorie.",
-    )
-    card(
-        "card-revops.svg", "Audit migration CRM", "Données synthétiques", rv,
-        ["734 comptes et 5 234 contacts (Kaggle)", "Contract_Status : 8 valeurs brutes, 3 après normalisation", "Audit avant migration Salesforce vers HubSpot"],
-        "pandas, matplotlib, notebook",
-        "Audit de qualité de données avant migration Salesforce vers HubSpot, sur données synthétiques Kaggle. 734 comptes et 5 234 contacts. Contract_Status : 8 valeurs brutes, 3 après normalisation. pandas, matplotlib, notebook. Vignette : graphique de normalisation par champ.",
-    )
+    out = []
+    for fname, title, tag, (p, mime, rw), bullets, st, desc in CARTES:
+        s, m = card_svg(title, tag, data_uri(p, mime, rw), bullets, st, desc)
+        write(ASSETS / fname, s)
+        out.append((fname, s, m))
+    return out
 
 
 # ---------------------------------------------------------------- en construction
-def building():
-    W, H = 600, 470
-    css = (
-        "@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}@keyframes slide{from{transform:translateX(0)}to{transform:translateX(400px)}}"
-        ".dot{animation:pulse 1.6s ease-in-out infinite}.sg{transform:translateX(200px);animation:slide 2.4s ease-in-out infinite alternate}"
-    )
-    items = [
-        ("TCIM / Skills4Mind", "depuis avril 2026", [
-            "Partie IA : classification automatique de données de santé",
-            "3 couches (règles, ML, arbitre), accuracy de 82,5 %",
-            "RGPD / RBAC, chiffrement Fernet (AES-128 CBC + HMAC-SHA256)",
-            "Présentation du projet sur demande",
-        ]),
-        ("Portfolio + assistant chatbot IA", "en cours", [
-            "Développé avec Claude Code",
-            "Connecté à une API de modèle de langage",
-            "Lien à venir",
-        ]),
-    ]
-    body = [
-        f'<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{NAVY}"/><stop offset="1" stop-color="{NAVY2}"/></linearGradient><clipPath id="tr"><rect width="520" height="6" rx="3"/></clipPath></defs>',
-        f'<rect width="{W}" height="{H}" rx="14" fill="url(#g)"/>',
-        f'<rect width="8" height="{H}" fill="{GOLD}"/>',
-        f'<circle class="dot" cx="38" cy="36" r="6" fill="{GOLD}"/>',
-        f'<text x="54" y="42" font-size="21" font-weight="700" fill="#ffffff" style="font-family:{SANS}">En construction</text>',
-    ]
-    y = 84
-    for name, tag, lines in items:
-        body.append(f'<text x="30" y="{y}" font-size="18" font-weight="700" fill="#ffffff" style="font-family:{SANS}">{e(name)}</text>')
-        body.append(f'<text x="570" y="{y}" font-size="13" font-weight="700" fill="{GOLD}" text-anchor="end" style="font-family:{SANS}">{e(tag)}</text>')
-        body.append(
-            f'<g transform="translate(30 {y + 12})"><rect width="520" height="6" rx="3" fill="#ffffff" opacity=".18"/>'
-            f'<g clip-path="url(#tr)"><rect class="sg" width="120" height="6" rx="3" fill="{GOLD}"/></g></g>'
-        )
-        ly = y + 46
+CHANTIERS = [
+    ("TCIM / Skills4Mind", "depuis avril 2026", [
+        "Partie IA : classification automatique de données de santé",
+        "3 couches (règles, ML, arbitre), accuracy de 82,5 %",
+        "RGPD / RBAC, chiffrement Fernet (AES-128 CBC + HMAC-SHA256)",
+        "Présentation du projet sur demande",
+    ]),
+    ("Portfolio + assistant chatbot IA", "en cours", [
+        "Développé avec Claude Code",
+        "Connecté à une API de modèle de langage",
+        "Lien à venir",
+    ]),
+]
+
+
+def building_svg():
+    ft, fb, fg = font("pf700"), font("ss400"), font("ss600")
+    pad, sb, lhb = 44, 30, 40
+    r = sb * 0.17
+    y = pad + 24 * 0.74
+    parts = [eyebrow("EN CONSTRUCTION", pad, y, delay=.1, size=24)[0]]
+    y += 30
+    d = .25
+    for name, tag, lines in CHANTIERS:
+        yn = y + 38 * 0.74 + 12
+        g = [text_g(ft, name, 38, pad, yn)[0], text_g(fg, [(tag, MUTED)], 26, W - pad, yn, anchor="end")[0]]
+        parts.append(f'<g{anim("up", d)}>{"".join(g)}</g>')
+        parts.append(rule(pad, yn + 20, pad + 90, d + .3, .7, 3))
+        yl = yn + 20 + 48
         for ln in lines:
-            body.append(f'<rect x="30" y="{ly - 9}" width="7" height="7" fill="{GOLD}"/><text x="46" y="{ly}" font-size="15" fill="#e6edf5" style="font-family:{SANS}">{e(ln)}</text>')
-            ly += 26
-        y = ly + 26
-    desc = "En construction. " + " ".join(f"{n} ({t}) : " + ". ".join(ls) + "." for n, t, ls in items)
-    write("building.svg", svg(W, H, "En construction", desc, css, "\n".join(body)))
+            d += .12
+            svg, last = para(fb, ln, sb, pad + 2 * r + 14, yl, W - 2 * pad - 2 * r - 14, lhb)
+            parts.append(f'<g{anim("fade", d + .2)}><path fill="{FIL}" d="{diamond(pad + r, yl - sb * fb.xh / 2, r)}"/>{svg}</g>')
+            yl = last + lhb
+        y = yl - lhb + 26
+        d += .2
+    H = y - 26 + pad + 6
+    grad, bg = frame(W, H)
+    desc = "En construction. " + " ".join(f"{n} ({t}) : " + ". ".join(ls) + "." for n, t, ls in CHANTIERS)
+    return svg_v2(W, H, "En construction", desc, grad, bg + "\n" + "\n".join(parts)), dict(texte=sb, titre=38)
 
 
-# ---------------------------------------------------------------- schéma besoin -> solution
-def flow():
-    nodes = [
-        (18, "1", "Données", ["397 884 lignes de transactions", "(e-commerce)", "", "5 234 contacts (RevOps)"]),
-        (320, "2", "Nettoyage", ["Fiabilisation des données", "(Consulat du Mali)", "", "Audit qualité avant migration", "(RevOps)"]),
-        (622, "3", "Modèle ou analyse", ["TF-IDF + Random Forest", "(TCIM)", "", "Analyse des processus", "(Consulat du Mali)", "", "LLMs via l'API Hugging Face", "(WMDP)"]),
-        (924, "4", "Dashboard", ["Streamlit + Plotly", "", "KPIs et reporting pour la", "direction"]),
-    ]
-    loop = "M62 292H1138A24 24 0 0 1 1162 316A24 24 0 0 1 1138 340H62A24 24 0 0 1 38 316A24 24 0 0 1 62 292Z"
-    dur = 10
-    css = (
-        f".nd{{animation:lit {dur}s linear infinite}}"
-        f"@keyframes lit{{0%{{fill:#fff;stroke:{NAVY}}}2%,12%{{fill:#fbf2de;stroke:{GOLD}}}16%,100%{{fill:#fff;stroke:{NAVY}}}}}"
-        ".p{opacity:0}"
-        "@media (prefers-reduced-motion: reduce){.p{display:none}}"
+# ---------------------------------------------------------------- en-têtes des README des 3 dépôts de projets
+ENTETES = [
+    ("ecommerce-dashboard-analytics", "Dashboard e-commerce"),
+    ("wmdp-cyber", "Hackathon WMDP"),
+    ("revops-crm-migration-analysis", "Audit migration CRM"),
+]
+
+
+def entete_svg(nom):
+    ft = font("pf700")
+    H = 230
+    s = ft.fit(nom, 76, 820)
+    grad, bg = frame(W, H, border=False)
+    defs = grad + (
+        f'<linearGradient id="fl" gradientUnits="userSpaceOnUse" x1="{W / 2 - 180}" x2="{W / 2 + 180}"><stop offset="0" stop-color="{FIL}" stop-opacity="0"/>'
+        f'<stop offset=".5" stop-color="{FIL}"/><stop offset="1" stop-color="{FIL}" stop-opacity="0"/></linearGradient>'
     )
-    delays = [0.2, 1.5, 2.8, 4.1]
-    body = [f'<rect width="1200" height="364" rx="14" fill="{LIGHT}"/>']
-    body.append(f'<path d="{loop}" fill="none" stroke="{NAVY2}" stroke-width="2" stroke-dasharray="6 6" opacity=".55"/>')
-    for i, (x, num, title, lines) in enumerate(nodes):
-        cx = x + 129
-        body.append(f'<line x1="{cx}" y1="264" x2="{cx}" y2="292" stroke="{NAVY2}" stroke-width="2"/><circle cx="{cx}" cy="292" r="5" fill="{NAVY2}"/>')
-        body.append(f'<rect class="nd" style="animation-delay:{delays[i]}s" x="{x}" y="24" width="258" height="240" rx="12" fill="#ffffff" stroke="{NAVY}" stroke-width="2"/>')
-        body.append(
-            f'<circle cx="{x + 34}" cy="58" r="16" fill="{GOLD}"/><text x="{x + 34}" y="64" font-size="18" font-weight="700" fill="{NAVY}" text-anchor="middle" style="font-family:{SANS}">{num}</text>'
-            f'<text x="{x + 58}" y="64" font-size="18" font-weight="700" fill="{NAVY}" style="font-family:{SANS}">{e(title)}</text>'
-            f'<rect x="{x + 20}" y="84" width="40" height="3" fill="{GOLD}"/>'
-        )
-        ly = 114
-        for ln in lines:
-            if ln:
-                body.append(f'<text x="{x + 20}" y="{ly}" font-size="14" fill="{TEXT}" style="font-family:{SANS}">{e(ln)}</text>')
-            ly += 17 if ln else 8
-    n = 7
-    for k in range(n):
-        b = f"-{k * dur / n:.2f}s"
-        body.append(
-            f'<g class="p"><circle r="5.5" fill="{GOLD}" stroke="{NAVY}" stroke-width="1.5"/>'
-            f'<set attributeName="opacity" to="1" begin="0s"/>'
-            f'<animateMotion dur="{dur}s" begin="{b}" repeatCount="indefinite" path="{loop}"/></g>'
-        )
-    desc = (
-        "Schéma en quatre étapes, avec des particules qui circulent entre elles. 1, Données : 397 884 lignes de transactions (e-commerce), 5 234 contacts (RevOps). "
-        "2, Nettoyage : fiabilisation des données (Consulat du Mali), audit qualité avant migration (RevOps). "
-        "3, Modèle ou analyse : TF-IDF + Random Forest (TCIM), analyse des processus (Consulat du Mali), LLMs via l'API Hugging Face (WMDP). "
-        "4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction."
+    body = [bg, f'<rect x="14" y="14" width="{W - 28}" height="{H - 28}" rx="12" fill="none" stroke="{FIL}" stroke-opacity=".5"/>']
+    body.append(text_g(ft, nom, s, W / 2, 128, anchor="middle", cls="up", style="animation-delay:.1s")[0])
+    for x2 in (W / 2 - 180, W / 2 + 180):
+        body.append(f'<path{anim("draw", .5)} pathLength="1" d="M{W / 2} 168H{num(x2)}" stroke="url(#fl)" stroke-width="2" fill="none"/>')
+    body.append(lz(W / 2, 168, 7, .45, ry=9))
+    return svg_v2(W, H, nom, f"En-tête : {nom}.", defs, "\n".join(body)), dict(titre=s)
+
+
+def entetes():
+    for repo, nom in ENTETES:
+        d = ROOT.parent / repo / "assets"
+        d.mkdir(exist_ok=True)
+        write(d / "header.svg", entete_svg(nom)[0])
+
+
+# ---------------------------------------------------------------- page d'aperçu locale (hors dépôt)
+def apercu(path, items, reduce=False):
+    def uri(s):
+        return "data:image/svg+xml;base64," + base64.b64encode(s.encode("utf-8")).decode()
+
+    blocks = []
+    for label, s in items:
+        cells = []
+        for bgc, theme in (("#ffffff", "clair"), ("#0d1117", "sombre")):
+            for w, kind in ((880, "desktop 880 px"), (360, "mobile 360 px")):
+                cells.append(
+                    f'<figure class="c" style="background:{bgc};width:{w}px;padding:{16 if w == 360 else 0}px;color:{"#1f2328" if theme == "clair" else "#e6edf3"}">'
+                    f'<figcaption>{kind}, fond {theme}</figcaption><img src="{uri(s)}" alt="" style="width:100%;display:block"></figure>'
+                )
+        blocks.append(f'<section><h2>{e(label)}</h2><div class="row">{"".join(cells)}</div></section>')
+    html = (
+        '<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Aperçu du profil</title>'
+        "<style>body{margin:0;padding:24px;background:#e9e4da;font-family:Segoe UI,Arial,sans-serif;color:#14284B}"
+        "h1{font-size:20px;margin:0 0 4px}p{margin:0 0 18px;font-size:14px}h2{font-size:16px;margin:28px 0 10px}"
+        ".row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}.c{margin:0;box-sizing:content-box;border:1px solid #d0c8b8;border-radius:6px;overflow:hidden}"
+        "figcaption{font-size:12px;padding:6px 0 8px;opacity:.7}button{font:inherit;padding:6px 14px;border:1px solid #14284B;background:#fff;border-radius:4px;cursor:pointer}</style></head><body>"
+        "<h1>Aperçu du profil (charte chaude)</h1><p>Images servies en &lt;img&gt;, comme sur GitHub. Mobile : 360 px de large avec 16 px de marge, soit 328 px d'image. "
+        '<button onclick="document.querySelectorAll(\'img\').forEach(i=>{const s=i.src;i.src=\'\';i.src=s})">Rejouer les animations</button></p>'
+        + "".join(blocks)
+        + "</body></html>"
     )
-    write("flow.svg", svg(1200, 364, "Du besoin à la solution", desc, css, "\n".join(body)))
+    Path(path).write_text(html, encoding="utf-8")
+    print("ok", path)
 
 
+# ---------------------------------------------------------------- point d'entrée
 if __name__ == "__main__":
-    hero()
-    idcard()
-    stack()
-    cards()
-    building()
-    flow()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("cibles", nargs="*", help="hero disponibilite footer kpi flow idcard stack cards building entetes (défaut : tout le profil)")
+    ap.add_argument("--fonts", required=True, help="dossier des .woff de @fontsource/playfair-display et @fontsource/source-sans-3")
+    ap.add_argument("--apercu", help="chemin d'une page HTML d'aperçu de tous les SVG, à garder hors du dépôt")
+    a = ap.parse_args()
+    for key, fname in FONT_FILES.items():
+        FONTS[key] = Font(Path(a.fonts) / f"{fname}.woff")
+    simples = {
+        "hero": ("hero.svg", hero_svg), "disponibilite": ("disponibilite.svg", disponibilite_svg), "footer": ("footer.svg", lambda: (footer_svg(), {})),
+        "kpi": ("kpi.svg", kpi_svg), "flow": ("flow.svg", flow_svg), "idcard": ("card.svg", idcard_svg),
+        "stack": ("stack.svg", stack_svg), "building": ("building.svg", building_svg),
+    }
+    cibles = a.cibles or list(simples) + ["cards"]
+    built = []
+    for c in cibles:
+        if c in simples:
+            fname, fn = simples[c]
+            s, m = fn()
+            write(ASSETS / fname, s)
+            built.append((fname, s, m))
+        elif c == "cards":
+            built += cards()
+        elif c == "entetes":
+            entetes()
+        else:
+            ap.error(f"cible inconnue : {c}")
+    for fname, _, m in built:
+        if m:
+            print(f"  {fname} à 328 px :", {k: (round(v * 328 / W, 1) if isinstance(v, (int, float)) else v) for k, v in m.items()})
+    if a.apercu:
+        items = [(f, s) for f, s, _ in built]
+        items += [(f"En-tête {n}", entete_svg(n)[0]) for _, n in ENTETES]
+        apercu(a.apercu, items)
