@@ -1,6 +1,7 @@
 # Snake de contributions (décoratif). Calqué sur l'exemple officiel de Platane/snk.
 # Aucun secret à créer : GITHUB_TOKEN est fourni automatiquement par GitHub.
 # Actions tierces épinglées sur un SHA de commit (le job a la permission contents: write).
+# Couleurs (charte chaude) : serpent doré ; points du beige au bleu (clair), du bleu au beige (sombre).
 name: Generate snake
 
 on:
@@ -25,8 +26,8 @@ jobs:
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
-            dist/github-snake.svg?color_snake=#c8901a&color_dots=#e6edf5,#b9cbe3,#7fa3d1,#2c5282,#1e3a5f
-            dist/github-snake-dark.svg?color_snake=#c8901a&color_dots=#161b22,#26416b,#2c5282,#4f7fc0,#8fb4e6
+            dist/github-snake.svg?color_snake=#C58B1C&color_dots=#F6E8CC,#DCCBA8,#8A98B4,#3B5181,#14284B
+            dist/github-snake-dark.svg?color_snake=#C58B1C&color_dots=#161b22,#253A5E,#4A6391,#B7A988,#F6E8CC
 
       # crazy-max/ghaction-github-pages v5.0.0 : publie dist/ sur la branche « output »
       - name: Publish to the output branch
