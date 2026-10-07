@@ -1,28 +1,32 @@
 <p align="right"><a href="README.en.md">English version</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Fenêtre de terminal animée. whoami : Kadidiatou Bagayoko, Data &amp; AI Solutions Builder. Recherche : alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école. Analyse des processus, fiabilisation des données, réduction de 50 % des déplacements. Partie IA de TCIM : classification de données de santé, accuracy 82,5 %. Les données racontent une histoire, je la traduis." width="100%">
+  <img src="assets/hero.svg" alt="Kadidiatou Bagayoko. Analyse de données, création de dashboards, machine learning. Utiliser la data &amp; l'IA pour concevoir des solutions innovantes." width="100%">
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko"><img src="https://img.shields.io/badge/LinkedIn-kadi--bagayoko-1e3a5f?style=flat-square" alt="LinkedIn : linkedin.com/in/kadi-bagayoko"></a>
-  <a href="mailto:kadibaga22@gmail.com"><img src="https://img.shields.io/badge/Email-kadibaga22%40gmail.com-1e3a5f?style=flat-square" alt="Email : kadibaga22@gmail.com"></a>
-  <img src="https://img.shields.io/badge/Portfolio-lien%20%C3%A0%20venir-c8901a?style=flat-square" alt="Portfolio : lien à venir">
+  <img src="assets/disponibilite.svg" alt="Disponible pour une alternance dès octobre 2026. Analyse de données, science des données, IA." width="100%">
+</p>
+
+<p align="center">
+  <a href="https://linkedin.com/in/kadi-bagayoko"><img src="https://img.shields.io/badge/LinkedIn-kadi--bagayoko-14284B?style=flat-square&labelColor=10285A" alt="LinkedIn : linkedin.com/in/kadi-bagayoko"></a>
+  <a href="mailto:kadibaga22@gmail.com"><img src="https://img.shields.io/badge/Email-kadibaga22%40gmail.com-14284B?style=flat-square&labelColor=10285A" alt="Email : kadibaga22@gmail.com"></a>
+  <img src="https://img.shields.io/badge/Portfolio-lien%20%C3%A0%20venir-C58B1C?style=flat-square&labelColor=10285A" alt="Portfolio : lien à venir">
 </p>
 
 <p align="center">
   <img src="assets/kpi.svg" alt="Chiffres clés. 50 % de réduction des déplacements des usagers (Consulat du Mali). +30 % d'engagement (Femmes Audacieuses). 82,5 % d'accuracy en classification de données de santé (TCIM, en cours). 397 884 lignes de transactions analysées (dashboard e-commerce). 5 234 contacts audités (audit CRM, données synthétiques). 250 prompts adversariaux conçus (hackathon WMDP)." width="100%">
 </p>
 
-## ▪ À propos
+## ◆ À propos
 
 <p align="center">
-  <img src="assets/card.svg" alt="Carte d'identité. Rôle : Data &amp; AI Solutions Builder. Formation : Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024–2027. Recherche : alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école. En cours : partie IA du projet TCIM, portfolio avec assistant IA." width="100%">
+  <img src="assets/card.svg" alt="Carte d'identité. Rôle : Data &amp; AI Solutions Builder. Formation : Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024-2027. Recherche : alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école. En cours : partie IA du projet TCIM, portfolio avec assistant IA." width="100%">
 </p>
 
 Étudiante en Bachelor en Intelligence Artificielle à l'ECE Paris, spécialisation Data & IA, je cherche une alternance à partir d'octobre 2026. Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. Depuis avril 2026, je développe la partie IA du projet TCIM, une classification automatique de données de santé.
 
-## ▪ Expériences
+## ◆ Expériences
 
 <details open>
 <summary><b>Consulat du Mali</b> · Stagiaire Data &amp; Innovation Digitale · avril à juin 2026</summary>
@@ -42,28 +46,33 @@
 
 </details>
 
-## ▪ Du besoin à la solution
+## ◆ Du besoin à la solution
 
 <p align="center">
-  <img src="assets/flow.svg" alt="Schéma en quatre étapes, avec des particules qui circulent entre elles. 1, Données : 397 884 lignes de transactions (e-commerce), 5 234 contacts (RevOps). 2, Nettoyage : fiabilisation des données (Consulat du Mali), audit qualité avant migration (RevOps). 3, Modèle ou analyse : TF-IDF + Random Forest (TCIM), analyse des processus (Consulat du Mali), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
+  <img src="assets/flow.svg" alt="Schéma en quatre étapes reliées par un fil d'or. 1, Données : 397 884 lignes de transactions (e-commerce), 5 234 contacts (RevOps). 2, Nettoyage : fiabilisation des données (Consulat du Mali), audit qualité avant migration (RevOps). 3, Modèle ou analyse : TF-IDF + Random Forest (TCIM), analyse des processus (Consulat du Mali), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
 </p>
 
-## ▪ Projets
+## ◆ Projets
 
-<table>
-<tr>
-<td width="50%"><a href="https://github.com/Kadi2207/ecommerce-dashboard-analytics"><img src="assets/card-dashboard.svg" alt="Dashboard e-commerce, janvier 2026 : 397 884 lignes de transactions, CA de £8,91M, 6 indicateurs et 6 graphiques. Python, pandas, Streamlit, Plotly. Lien vers le dépôt." width="100%"></a></td>
-<td width="50%"><a href="https://github.com/Kadi2207/wmdp-cyber"><img src="assets/card-wmdp.svg" alt="Hackathon WMDP, mars 2026, autrice unique : 250 prompts adversariaux, 6 LLMs, 360 requêtes, 0 % de refus sur Llama et Qwen mesuré par mots-clés. API Hugging Face. Lien vers le dépôt." width="100%"></a></td>
-</tr>
-<tr>
-<td width="50%"><a href="https://github.com/Kadi2207/revops-crm-migration-analysis"><img src="assets/card-revops.svg" alt="Audit migration CRM, données synthétiques : 734 comptes et 5 234 contacts, audit avant migration Salesforce vers HubSpot. pandas, matplotlib, notebook. Lien vers le dépôt." width="100%"></a></td>
-<td width="50%"><img src="assets/building.svg" alt="En construction : TCIM / Skills4Mind (depuis avril 2026, présentation du projet sur demande) et portfolio avec assistant chatbot IA (lien à venir)." width="100%"></td>
-</tr>
-</table>
+<p align="center">
+  <a href="https://github.com/Kadi2207/ecommerce-dashboard-analytics"><img src="assets/card-dashboard.svg" alt="Dashboard e-commerce, janvier 2026 : 397 884 lignes de transactions, CA de £8,91M, 6 indicateurs et 6 graphiques. Python, pandas, Streamlit, Plotly. Lien vers le dépôt." width="100%"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Kadi2207/wmdp-cyber"><img src="assets/card-wmdp.svg" alt="Hackathon WMDP, mars 2026, autrice unique : 250 prompts adversariaux, 6 LLMs, 360 requêtes, 0 % de refus sur Llama et Qwen mesuré par mots-clés. API Hugging Face. Lien vers le dépôt." width="100%"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Kadi2207/revops-crm-migration-analysis"><img src="assets/card-revops.svg" alt="Audit migration CRM, données synthétiques : 734 comptes et 5 234 contacts, audit avant migration Salesforce vers HubSpot. pandas, matplotlib, notebook. Lien vers le dépôt." width="100%"></a>
+</p>
+
+<p align="center">
+  <img src="assets/building.svg" alt="En construction : TCIM / Skills4Mind (depuis avril 2026, présentation du projet sur demande) et portfolio avec assistant chatbot IA (lien à venir)." width="100%">
+</p>
 
 Dépôts : [dashboard e-commerce](https://github.com/Kadi2207/ecommerce-dashboard-analytics) · [WMDP](https://github.com/Kadi2207/wmdp-cyber) · [audit CRM](https://github.com/Kadi2207/revops-crm-migration-analysis). TCIM n'a pas de dépôt public : présentation du projet sur demande.
 
-## ▪ Mes résultats en graphiques
+## ◆ Mes résultats en graphiques
 
 Trois graphiques produits par [`scripts/make_charts.py`](scripts/make_charts.py) (pandas + matplotlib) à partir de petits CSV d'agrégats ; la méthode de chacun est dans [`data/SOURCES.md`](data/SOURCES.md).
 
@@ -85,7 +94,7 @@ Trois graphiques produits par [`scripts/make_charts.py`](scripts/make_charts.py)
 
 *Audit CRM : nombre de valeurs distinctes par champ catégoriel avant et après normalisation de la casse et des espaces (cellule 7 du notebook). Limite : données synthétiques (versions « bruitées » d'un jeu Kaggle), pas de données d'entreprise ; les fautes de frappe restantes ne sont pas corrigées à cette étape.*
 
-## ▪ Stack
+## ◆ Stack
 
 <p align="center">
   <img src="assets/stack.svg" alt="Stack. Données : Python, pandas, Plotly, Streamlit, notebooks. IA : API Hugging Face, Claude Code. Outils : HubSpot (compte gratuit), WordPress." width="100%">
@@ -93,31 +102,31 @@ Trois graphiques produits par [`scripts/make_charts.py`](scripts/make_charts.py)
 
 Aussi : matplotlib, TF-IDF + Random Forest, AWS (Cloud Foundations).
 
-## ▪ Certifications
+## ◆ Certifications
 
 - AWS Academy Graduate, Cloud Foundations (Amazon Web Services, 2025)
 - Structuring Data & Exploring GenAI Tools (OMNES Education, 2025)
 - Prompt Engineering Fundamentals (Datascientest, 2024)
 
-## ▪ Prises de parole et projets d'équipe
+## ◆ Prises de parole et projets d'équipe
 
 Interview à VivaTech (Orbite Média) · sollicitée par OMNES Education pour une interview sur l'IA · 1ère place au projet robotique en équipe.
 
-## ▪ Activité
+## ◆ Activité
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake-dark.svg">
-    <img src="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake.svg" alt="Animation décorative : un serpent doré parcourt le graphe de contributions GitHub." width="100%">
+    <img src="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake.svg" alt="Animation décorative : un serpent doré parcourt le graphe de contributions GitHub, aux couleurs beige et bleu." width="100%">
   </picture>
 </p>
 
-## ▪ Contact
+## ◆ Contact
 
 Je recherche une alternance en Data & IA à partir d'octobre 2026, au rythme de 3 semaines en entreprise et 2 semaines à l'école.
 
 [LinkedIn](https://linkedin.com/in/kadi-bagayoko) · [kadibaga22@gmail.com](mailto:kadibaga22@gmail.com) · Portfolio : lien à venir
 
 <p align="center">
-  <img src="assets/footer.svg" alt="Bandeau décoratif bleu nuit avec un filet doré ondulé" width="100%">
+  <img src="assets/footer.svg" alt="Bandeau décoratif : vague beige, filet doré et losanges." width="100%">
 </p>

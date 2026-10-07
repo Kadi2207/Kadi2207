@@ -1,13 +1,17 @@
 <p align="right"><a href="README.md">Version française</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Animated terminal window (text in French). whoami: Kadidiatou Bagayoko, Data &amp; AI Solutions Builder. Looking for: work-study placement starting October 2026, 3 weeks at the company, 2 weeks at school. Process analysis, data reliability, 50% reduction in trips. AI part of TCIM: health data classification, 82.5% accuracy. Data tells a story, I translate it." width="100%">
+  <img src="assets/hero.svg" alt="Banner (text in French). Kadidiatou Bagayoko. Data analysis, dashboard building, machine learning. Using data &amp; AI to design innovative solutions." width="100%">
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko"><img src="https://img.shields.io/badge/LinkedIn-kadi--bagayoko-1e3a5f?style=flat-square" alt="LinkedIn: linkedin.com/in/kadi-bagayoko"></a>
-  <a href="mailto:kadibaga22@gmail.com"><img src="https://img.shields.io/badge/Email-kadibaga22%40gmail.com-1e3a5f?style=flat-square" alt="Email: kadibaga22@gmail.com"></a>
-  <img src="https://img.shields.io/badge/Portfolio-link%20coming%20soon-c8901a?style=flat-square" alt="Portfolio: link coming soon">
+  <img src="assets/disponibilite.svg" alt="Availability strip (text in French): available for a work-study placement (alternance) from October 2026. Data analysis, data science, AI." width="100%">
+</p>
+
+<p align="center">
+  <a href="https://linkedin.com/in/kadi-bagayoko"><img src="https://img.shields.io/badge/LinkedIn-kadi--bagayoko-14284B?style=flat-square&labelColor=10285A" alt="LinkedIn: linkedin.com/in/kadi-bagayoko"></a>
+  <a href="mailto:kadibaga22@gmail.com"><img src="https://img.shields.io/badge/Email-kadibaga22%40gmail.com-14284B?style=flat-square&labelColor=10285A" alt="Email: kadibaga22@gmail.com"></a>
+  <img src="https://img.shields.io/badge/Portfolio-link%20coming%20soon-C58B1C?style=flat-square&labelColor=10285A" alt="Portfolio: link coming soon">
 </p>
 
 <p align="center">
@@ -16,15 +20,15 @@
 
 > The visuals are in French; the captions below are translated.
 
-## ▪ About
+## ◆ About
 
 <p align="center">
-  <img src="assets/card.svg" alt="Identity card. Role: Data &amp; AI Solutions Builder. Degree: Bachelor in Artificial Intelligence (Licence level), ECE Paris, 2024–2027. Looking for: work-study (alternance) starting October 2026, 3 weeks at the company, 2 weeks at school. Ongoing: AI part of the TCIM project, portfolio with an AI assistant." width="100%">
+  <img src="assets/card.svg" alt="Identity card. Role: Data &amp; AI Solutions Builder. Degree: Bachelor in Artificial Intelligence (Licence level), ECE Paris, 2024-2027. Looking for: work-study (alternance) starting October 2026, 3 weeks at the company, 2 weeks at school. Ongoing: AI part of the TCIM project, portfolio with an AI assistant." width="100%">
 </p>
 
 I am a student in the Bachelor in Artificial Intelligence at ECE Paris, specialising in Data & AI, and I am looking for a work-study placement starting October 2026. At the Consulate of Mali, I analysed processes, made data more reliable and presented optimisation recommendations to the Consul, which led to a 50% reduction in users' trips. Since April 2026, I have been developing the AI part of the TCIM project, an automatic classification of health data.
 
-## ▪ Experience
+## ◆ Experience
 
 <details open>
 <summary><b>Consulate of Mali</b> · Data &amp; Digital Innovation intern · April to June 2026</summary>
@@ -44,28 +48,33 @@ I am a student in the Bachelor in Artificial Intelligence at ECE Paris, speciali
 
 </details>
 
-## ▪ From need to solution
+## ◆ From need to solution
 
 <p align="center">
-  <img src="assets/flow.svg" alt="Four-step diagram with particles circulating between the steps. 1, Data: 397,884 transaction rows (e-commerce), 5,234 contacts (RevOps). 2, Cleaning: data reliability (Consulate of Mali), quality audit before migration (RevOps). 3, Model or analysis: TF-IDF + Random Forest (TCIM), process analysis (Consulate of Mali), LLMs through the Hugging Face API (WMDP). 4, Dashboard: Streamlit + Plotly, KPIs and reporting for management." width="100%">
+  <img src="assets/flow.svg" alt="Four-step diagram linked by a gold thread. 1, Data: 397,884 transaction rows (e-commerce), 5,234 contacts (RevOps). 2, Cleaning: data reliability (Consulate of Mali), quality audit before migration (RevOps). 3, Model or analysis: TF-IDF + Random Forest (TCIM), process analysis (Consulate of Mali), LLMs through the Hugging Face API (WMDP). 4, Dashboard: Streamlit + Plotly, KPIs and reporting for management." width="100%">
 </p>
 
-## ▪ Projects
+## ◆ Projects
 
-<table>
-<tr>
-<td width="50%"><a href="https://github.com/Kadi2207/ecommerce-dashboard-analytics"><img src="assets/card-dashboard.svg" alt="E-commerce dashboard, January 2026: 397,884 transaction rows, revenue of £8.91M, 6 indicators and 6 charts. Python, pandas, Streamlit, Plotly. Link to the repository." width="100%"></a></td>
-<td width="50%"><a href="https://github.com/Kadi2207/wmdp-cyber"><img src="assets/card-wmdp.svg" alt="WMDP hackathon, March 2026, sole author: 250 adversarial prompts, 6 LLMs, 360 requests, 0% refusal on Llama and Qwen measured by keywords. Hugging Face API. Link to the repository." width="100%"></a></td>
-</tr>
-<tr>
-<td width="50%"><a href="https://github.com/Kadi2207/revops-crm-migration-analysis"><img src="assets/card-revops.svg" alt="CRM migration audit, synthetic data: 734 accounts and 5,234 contacts, audit ahead of a Salesforce to HubSpot migration. pandas, matplotlib, notebook. Link to the repository." width="100%"></a></td>
-<td width="50%"><img src="assets/building.svg" alt="Under construction: TCIM / Skills4Mind (since April 2026, project presentation on request) and a portfolio with an AI chatbot assistant (link coming soon)." width="100%"></td>
-</tr>
-</table>
+<p align="center">
+  <a href="https://github.com/Kadi2207/ecommerce-dashboard-analytics"><img src="assets/card-dashboard.svg" alt="E-commerce dashboard, January 2026: 397,884 transaction rows, revenue of £8.91M, 6 indicators and 6 charts. Python, pandas, Streamlit, Plotly. Link to the repository." width="100%"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Kadi2207/wmdp-cyber"><img src="assets/card-wmdp.svg" alt="WMDP hackathon, March 2026, sole author: 250 adversarial prompts, 6 LLMs, 360 requests, 0% refusal on Llama and Qwen measured by keywords. Hugging Face API. Link to the repository." width="100%"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Kadi2207/revops-crm-migration-analysis"><img src="assets/card-revops.svg" alt="CRM migration audit, synthetic data: 734 accounts and 5,234 contacts, audit ahead of a Salesforce to HubSpot migration. pandas, matplotlib, notebook. Link to the repository." width="100%"></a>
+</p>
+
+<p align="center">
+  <img src="assets/building.svg" alt="Under construction: TCIM / Skills4Mind (since April 2026, project presentation on request) and a portfolio with an AI chatbot assistant (link coming soon)." width="100%">
+</p>
 
 Repositories: [e-commerce dashboard](https://github.com/Kadi2207/ecommerce-dashboard-analytics) · [WMDP](https://github.com/Kadi2207/wmdp-cyber) · [CRM audit](https://github.com/Kadi2207/revops-crm-migration-analysis). TCIM has no public repository: project presentation on request.
 
-## ▪ My results in charts
+## ◆ My results in charts
 
 Three charts produced by [`scripts/make_charts.py`](scripts/make_charts.py) (pandas + matplotlib) from small aggregate CSV files; the method for each one is in [`data/SOURCES.md`](data/SOURCES.md).
 
@@ -87,7 +96,7 @@ Three charts produced by [`scripts/make_charts.py`](scripts/make_charts.py) (pan
 
 *CRM audit: number of distinct values per categorical field before and after normalising case and whitespace (cell 7 of the notebook). Limitation: synthetic data (“noisy” versions of a Kaggle dataset), no company data; the remaining typos are not corrected at this step.*
 
-## ▪ Stack
+## ◆ Stack
 
 <p align="center">
   <img src="assets/stack.svg" alt="Stack. Data: Python, pandas, Plotly, Streamlit, notebooks. AI: Hugging Face API, Claude Code. Tools: HubSpot (free account), WordPress." width="100%">
@@ -95,31 +104,31 @@ Three charts produced by [`scripts/make_charts.py`](scripts/make_charts.py) (pan
 
 Also: matplotlib, TF-IDF + Random Forest, AWS (Cloud Foundations).
 
-## ▪ Certifications
+## ◆ Certifications
 
 - AWS Academy Graduate, Cloud Foundations (Amazon Web Services, 2025)
 - Structuring Data & Exploring GenAI Tools (OMNES Education, 2025)
 - Prompt Engineering Fundamentals (Datascientest, 2024)
 
-## ▪ Public speaking and team projects
+## ◆ Public speaking and team projects
 
 Interview at VivaTech (Orbite Média) · asked by OMNES Education for an interview on AI · 1st place in a team robotics project.
 
-## ▪ Activity
+## ◆ Activity
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake-dark.svg">
-    <img src="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake.svg" alt="Decorative animation: a gold snake moves across the GitHub contribution graph." width="100%">
+    <img src="https://raw.githubusercontent.com/Kadi2207/Kadi2207/output/github-snake.svg" alt="Decorative animation: a gold snake moves across the GitHub contribution graph, in beige and blue." width="100%">
   </picture>
 </p>
 
-## ▪ Contact
+## ◆ Contact
 
 I am looking for a work-study placement in Data & AI starting October 2026, with 3 weeks at the company and 2 weeks at school.
 
 [LinkedIn](https://linkedin.com/in/kadi-bagayoko) · [kadibaga22@gmail.com](mailto:kadibaga22@gmail.com) · Portfolio: link coming soon
 
 <p align="center">
-  <img src="assets/footer.svg" alt="Decorative navy banner with a wavy gold line" width="100%">
+  <img src="assets/footer.svg" alt="Decorative strip: beige wave, gold line and diamonds." width="100%">
 </p>
