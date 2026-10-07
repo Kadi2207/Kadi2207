@@ -4,9 +4,15 @@ Lit uniquement les 3 fichiers de data/ (jamais data/responses/ ni des données b
 Sortie : assets/charts/*.svg (texte converti en tracés : rendu identique partout).
 
 Usage, depuis la racine du dépôt :
-    pip install pandas matplotlib
-    python scripts/make_charts.py
+    pip install pandas matplotlib fonttools
+    python scripts/make_charts.py --fonts <dossier des .woff>
+
+Polices (SIL Open Font License 1.1, voir assets/POLICES.md) : Playfair Display pour les titres, Source Sans 3
+pour le reste, mêmes fichiers .woff que scripts/build_svgs.py, convertis en .ttf dans un dossier temporaire.
+Sans --fonts, matplotlib utilise DejaVu Sans.
 """
+import argparse
+import tempfile
 from pathlib import Path
 
 import matplotlib
@@ -20,19 +26,39 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 OUT = ROOT / "assets" / "charts"
 
-NAVY, BLUE, GOLD = "#1e3a5f", "#2c5282", "#c8901a"
-SKY, BG, TEXT, MUTED = "#9db4d3", "#f5f8fc", "#2c3e50", "#52647b"
+# Charte chaude (refonte v2)
+INK, AMP, FIL = "#14284B", "#C58B1C", "#C9953B"
+BEIGE, BG, MUTED = "#F6E8CC", "#FBF4E4", "#47556D"
+GRID, EDGE = "#EBDDBE", "#D8C49B"
+NAVY = BLUE = TEXT = INK
+GOLD, SKY = AMP, FIL
+TITLE_FONT = {}
 
 plt.rcParams.update({
     "svg.fonttype": "path",          # texte -> tracés
     "svg.hashsalt": "kadi2207",      # identifiants stables d'une exécution à l'autre
-    "font.family": "DejaVu Sans",
-    "axes.edgecolor": "#c5d2e3",
+    "font.family": ["DejaVu Sans"],
+    "axes.edgecolor": EDGE,
     "axes.labelcolor": TEXT,
     "xtick.color": TEXT,
     "ytick.color": TEXT,
     "text.color": TEXT,
 })
+
+
+def load_fonts(folder):
+    """Convertit les .woff en .ttf (temporaires) et les déclare à matplotlib."""
+    from fontTools.ttLib import TTFont
+    from matplotlib import font_manager
+
+    tmp = Path(tempfile.mkdtemp())
+    for name in ("source-sans-3-latin-400-normal", "source-sans-3-latin-600-normal", "source-sans-3-latin-700-normal", "playfair-display-latin-700-normal"):
+        f = TTFont(str(Path(folder) / f"{name}.woff"))
+        f.flavor = None
+        f.save(str(tmp / f"{name}.ttf"))
+        font_manager.fontManager.addfont(str(tmp / f"{name}.ttf"))
+    plt.rcParams["font.family"] = ["Source Sans 3", "DejaVu Sans"]  # DejaVu pour les flèches absentes de Source Sans
+    TITLE_FONT.update(family=["Playfair Display", "DejaVu Sans"])
 
 MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]
 
@@ -45,10 +71,10 @@ def fr(x, nd=2):
 def card(width, height, title, subtitle, footnote):
     """Figure-carte : fond #f5f8fc, titre bleu nuit, filet or, note de bas de page."""
     fig = plt.figure(figsize=(width, height), facecolor=BG)
-    fig.add_artist(plt.Line2D([0.045, 0.105], [0.945, 0.945], color=GOLD, lw=3, transform=fig.transFigure))
-    fig.text(0.045, 0.905, title, fontsize=15, fontweight="bold", color=NAVY, va="top")
-    fig.text(0.045, 0.845, subtitle, fontsize=10.5, color=MUTED, va="top")
-    fig.text(0.045, 0.035, footnote, fontsize=8.6, color=MUTED, va="bottom", linespacing=1.5)
+    fig.add_artist(plt.Line2D([0.045, 0.105], [0.945, 0.945], color=FIL, lw=3, transform=fig.transFigure))
+    fig.text(0.045, 0.905, title, fontsize=17, fontweight="bold", color=INK, va="top", **TITLE_FONT)
+    fig.text(0.045, 0.835, subtitle, fontsize=11.5, color=MUTED, va="top")
+    fig.text(0.045, 0.035, footnote, fontsize=9.4, color=MUTED, va="bottom", linespacing=1.45)
     return fig
 
 
@@ -79,22 +105,22 @@ def chart_ecommerce():
                "Dashboard e-commerce · somme de TotalAmount par mois, en millions de £",
                "Source : data_clean.csv du dépôt ecommerce-dashboard-analytics (397 884 lignes, total £"
                f"{fr(d['revenue_gbp'].sum() / 1e6)} M).\nLimite : décembre 2011 est partiel (données jusqu'au 9 décembre, 8 jours de vente).")
-    ax = fig.add_axes([0.09, 0.2, 0.88, 0.5])
+    ax = fig.add_axes([0.09, 0.27, 0.88, 0.45])
     style(ax)
     vals = d["revenue_gbp"] / 1e6
     peak = vals.idxmax()
     for i, (v, p) in enumerate(zip(vals, d["partial"])):
         if p:
-            ax.bar(i, v, color="#dfe8f4", edgecolor=BLUE, hatch="////", linewidth=1.2, width=0.68)
+            ax.bar(i, v, color=BEIGE, edgecolor=INK, hatch="////", linewidth=1.2, width=0.68)
         else:
             ax.bar(i, v, color=GOLD if i == peak else BLUE, width=0.68)
-    ax.text(peak, vals[peak] + 0.025, f"£{fr(vals[peak])} M", ha="center", va="bottom", fontsize=10, fontweight="bold", color=NAVY)
+    ax.text(peak, vals[peak] + 0.025, f"£{fr(vals[peak])} M", ha="center", va="bottom", fontsize=11, fontweight="bold", color=NAVY)
     last = len(d) - 1
     ax.text(last, vals[last] + 0.025, f"£{fr(vals[last])} M\n(partiel)", ha="center", va="bottom", fontsize=9, color=NAVY)
-    ax.set_xticks(range(len(d)), labels, fontsize=9)
+    ax.set_xticks(range(len(d)), labels, fontsize=10)
     ax.set_ylim(0, 1.35)
-    ax.set_yticks([0, 0.4, 0.8, 1.2], [fr(t, 1) for t in (0, 0.4, 0.8, 1.2)], fontsize=9)
-    ax.yaxis.grid(True, color="#dbe5f1", lw=0.8)
+    ax.set_yticks([0, 0.4, 0.8, 1.2], [fr(t, 1) for t in (0, 0.4, 0.8, 1.2)], fontsize=10)
+    ax.yaxis.grid(True, color=GRID, lw=0.8)
     ax.set_axisbelow(True)
     save(fig, "ecommerce_monthly_revenue.svg")
 
@@ -123,13 +149,13 @@ def chart_wmdp():
         ax.bar(xs, vs, width=w * 0.92, color=color, label=label)
         for x, v in zip(xs, vs):
             ax.text(x, v + 0.12, fr(v), ha="center", va="bottom", fontsize=9, color=NAVY)
-    ax.set_xticks(range(len(models)), [names[m] for m in models], fontsize=10)
+    ax.set_xticks(range(len(models)), [names[m] for m in models], fontsize=11)
     ax.set_ylim(0, 10)
     ax.set_yticks([0, 2, 4, 6, 8, 10])
     ax.tick_params(axis="y", labelsize=9)
-    ax.yaxis.grid(True, color="#dbe5f1", lw=0.8)
+    ax.yaxis.grid(True, color=GRID, lw=0.8)
     ax.set_axisbelow(True)
-    ax.set_ylabel("Dangerosité (0–10)", fontsize=9)
+    ax.set_ylabel("Dangerosité (0 à 10)", fontsize=10)
     ax.legend(handles=[Patch(color=c, label=l) for _, l, c in cats], frameon=False, fontsize=9.5, loc="upper right", ncol=2)
     save(fig, "wmdp_danger_by_category.svg")
 
@@ -141,7 +167,7 @@ def chart_revops():
                "Données synthétiques (versions « bruitées » d'un jeu Kaggle) : 734 comptes, 5 234 contacts, aucune donnée d'entreprise.\n"
                "Source : cellule 7 du notebook audit_crm.ipynb. « Après » = casse et espaces normalisés ; les fautes de frappe restantes\n"
                "(ex. Campaign_Type : 22 → 17) ne sont pas corrigées à cette étape.")
-    ax = fig.add_axes([0.27, 0.2, 0.69, 0.52])
+    ax = fig.add_axes([0.27, 0.25, 0.69, 0.48])
     style(ax)
     n = len(d)
     h = 0.36
@@ -153,13 +179,13 @@ def chart_revops():
         ax.text(r.distinct_after + 0.3, y - h / 2, str(r.distinct_after), va="center", fontsize=9, color=NAVY, fontweight="bold")
     ax.set_yticks(range(n), [f"{r.field}" for r in d.iloc[::-1].itertuples()], fontsize=9)
     ax.set_xlim(0, d.distinct_before.max() + 3)
-    ax.xaxis.grid(True, color="#dbe5f1", lw=0.8)
+    ax.xaxis.grid(True, color=GRID, lw=0.8)
     ax.set_axisbelow(True)
     ax.tick_params(axis="x", labelsize=9)
     ax.set_xlabel("Nombre de valeurs distinctes", fontsize=9)
     # séparation Companies / Employees
     split = n - d[d.dataset == "Companies"].shape[0] - 0.5
-    ax.axhline(split, color="#c5d2e3", lw=1, ls="--")
+    ax.axhline(split, color=EDGE, lw=1, ls="--")
     ax.text(ax.get_xlim()[1], n - 0.55, "Companies", ha="right", va="bottom", fontsize=8.5, color=MUTED)
     ax.text(ax.get_xlim()[1], split - 0.05, "Employees", ha="right", va="top", fontsize=8.5, color=MUTED)
     ax.legend(handles=[Patch(color=SKY, label="Valeurs brutes"), Patch(color=NAVY, label="Après normalisation")],
@@ -168,6 +194,11 @@ def chart_revops():
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fonts", help="dossier des .woff de @fontsource/playfair-display et @fontsource/source-sans-3")
+    a = ap.parse_args()
+    if a.fonts:
+        load_fonts(a.fonts)
     chart_ecommerce()
     chart_wmdp()
     chart_revops()
