@@ -364,9 +364,13 @@ def ligne_w(fnt, items, size):
     return sum(fnt.width(m, size) for m in items) + (len(items) - 1) * size * 2 * (0.55 + 0.17)
 
 
-# ---------------------------------------------------------------- bannière éditoriale (fond sombre, trait doré en arc)
+# ---------------------------------------------------------------- bannière éditoriale (fond beige « tech », trait doré en arc)
+# Fond beige de la bannière et du contact (2026-10-13, rappel de la bannière LinkedIn) : texte bleu nuit ; le doré
+# #C9953B n'atteint que 2,2:1 sur beige, il reste aux filets et losanges, et le texte d'accent prend un doré foncé.
+B_INK, B_MUTED, B_SOFT, B_GOLD = "#0d1b2a", "#3a4b60", "#2c4a6e", "#7a5212"  # 14:1, 7:1, 7,5:1, 5,7:1 sur #F6E8CC
+GOLD_DEEP = "#A8741F"  # bout du trait lumineux sur beige (le doré clair #E2BD72 y disparaît)
 NOM = "Kadidiatou Bagayoko"
-HERO_SOUS = [("Étudiante en Intelligence Artificielle ", INK), ("&", AMP), (" Data Science", INK)]
+HERO_SOUS = [("Étudiante en Intelligence Artificielle ", B_INK), ("&", B_GOLD), (" Data Science", B_INK)]
 HERO_CONTACT = ["Villiers-sur-Marne, France", "kadibaga22@gmail.com", "LinkedIn"]
 HERO_PHRASE = "Passionnée par la data et l'IA, je recherche une alternance en Data & IA à partir d'octobre 2026."
 CITATION = ["Comprendre le besoin,", "construire la solution,", "livrer l'impact."]
@@ -381,22 +385,40 @@ def panel(Wd, H, gid="pn", cx="80%", cy="15%"):
     return defs, bg
 
 
-def glow_defs(gid, x1, x2):
+def beige_panel(Wd, H, gid, cx, cy, dx, dy):
+    """Grand panneau beige « tech » : dégradé crème → beige, trame de points bleu nuit qui s'estompe autour de (dx, dy),
+    halo doré très léger, liseré doré : (defs, fond). Pas d'aplat."""
+    defs = (f'<radialGradient id="{gid}" cx="{cx}" cy="{cy}" r="100%"><stop offset="0" stop-color="{CREME}"/>'
+            f'<stop offset=".5" stop-color="{BEIGE}"/><stop offset="1" stop-color="#F2E0BE"/></radialGradient>'
+            f'<radialGradient id="{gid}h" cx="{dx}" cy="{dy}" r="45%"><stop offset="0" stop-color="{GLOW}" stop-opacity=".22"/>'
+            f'<stop offset="1" stop-color="{GLOW}" stop-opacity="0"/></radialGradient>'
+            f'<pattern id="{gid}p" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="1.2" fill="{B_INK}"/></pattern>'
+            f'<radialGradient id="{gid}m" cx="{dx}" cy="{dy}" r="60%"><stop offset="0" stop-color="#fff"/>'
+            f'<stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'
+            f'<mask id="{gid}k"><rect width="{Wd}" height="{num(H)}" fill="url(#{gid}m)"/></mask>')
+    bg = (f'<rect width="{Wd}" height="{num(H)}" rx="20" fill="url(#{gid})"/>'
+          f'<rect width="{Wd}" height="{num(H)}" rx="20" fill="url(#{gid}h)"/>'
+          f'<rect width="{Wd}" height="{num(H)}" rx="20" fill="url(#{gid}p)" fill-opacity=".1" mask="url(#{gid}k)"/>'
+          f'<rect x="1" y="1" width="{Wd - 2}" height="{num(H - 2)}" rx="19" fill="none" stroke="{FIL}" stroke-opacity=".7" stroke-width="1.5"/>')
+    return defs, bg
+
+
+def glow_defs(gid, x1, x2, end=GLOW):
     """Dégradé du trait lumineux (transparent puis doré puis doré clair) et flou de son halo."""
     return (f'<linearGradient id="{gid}" gradientUnits="userSpaceOnUse" x1="{x1}" x2="{x2}"><stop offset="0" stop-color="{FIL}" stop-opacity="0"/>'
-            f'<stop offset=".35" stop-color="{FIL}"/><stop offset="1" stop-color="{GLOW}"/></linearGradient>'
+            f'<stop offset=".35" stop-color="{FIL}"/><stop offset="1" stop-color="{end}"/></linearGradient>'
             f'<filter id="{gid}b" x="-5%" y="-40%" width="110%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>')
 
 
-def glow_path(d, gid, t0, dur, width=2.5, loop=False):
+def glow_path(d, gid, t0, dur, width=2.5, loop=False, halo=GLOW):
     """Trait doré qui se trace, doublé d'un halo flou tracé en même temps."""
-    return (f'<path{anim("draw", t0, dur, loop)} pathLength="1" d="{d}" fill="none" stroke="{GLOW}" stroke-width="{width * 3}" stroke-opacity=".45" filter="url(#{gid}b)"/>'
+    return (f'<path{anim("draw", t0, dur, loop)} pathLength="1" d="{d}" fill="none" stroke="{halo}" stroke-width="{width * 3}" stroke-opacity=".45" filter="url(#{gid}b)"/>'
             f'<path{anim("draw", t0, dur, loop)} pathLength="1" d="{d}" fill="none" stroke="url(#{gid})" stroke-width="{width}" stroke-linecap="round"/>')
 
 
-def sparks(pts, t0, step, loop=False):
+def sparks(pts, t0, step, loop=False, color=GLOW):
     """Particules dorées discrètes : visibles sans animation, scintillent une fois (ou à chaque cycle)."""
-    return "".join(f'<circle{anim("tw", t0 + i * step, loop=loop)} cx="{num(x)}" cy="{num(y)}" r="{r}" fill="{GLOW}" fill-opacity="{op}"/>'
+    return "".join(f'<circle{anim("tw", t0 + i * step, loop=loop)} cx="{num(x)}" cy="{num(y)}" r="{r}" fill="{color}" fill-opacity="{op}"/>'
                    for i, (x, y, r, op) in enumerate(pts))
 
 
@@ -409,27 +431,27 @@ def hero_svg():
     fn, fr, fq, fm = font("ss600"), font("ss400"), font("pf400i"), font("pf700")
     pad, H = 56, 548
     s_nom = fn.fit(NOM, 80, 860, tracking=.015)
-    defs, bg = panel(W, H, "hb")
+    defs, bg = beige_panel(W, H, "hb", "18%", "12%", "88%", "30%")
     arc = ((-10, 530), (330, 512), (660, 450), (1010, 205))
-    defs += glow_defs("ga", 0, W)
+    defs += glow_defs("ga", 0, W, end=GOLD_DEEP)
     body = [bg]
     # trait lumineux en arc, derrière le texte et l'encadré (en boucle, comme les particules et les losanges)
-    body.append(glow_path(f"M{arc[0][0]} {arc[0][1]}C{arc[1][0]} {arc[1][1]} {arc[2][0]} {arc[2][1]} {arc[3][0]} {arc[3][1]}", "ga", .3, 2.3, loop=True))
+    body.append(glow_path(f"M{arc[0][0]} {arc[0][1]}C{arc[1][0]} {arc[1][1]} {arc[2][0]} {arc[2][1]} {arc[3][0]} {arc[3][1]}", "ga", .3, 2.3, loop=True, halo=FIL))
     pts = []
     for k, (t, dy, r, op) in enumerate(((.18, -14, 1.6, .7), (.31, 9, 1.2, .6), (.44, -22, 2, .8), (.55, 12, 1.4, .6), (.63, -8, 2.4, .9),
                                          (.74, 18, 1.3, .6), (.83, -26, 1.8, .8), (.9, 6, 2.6, .9), (.96, -16, 1.4, .7))):
         x, y = bezier(*arc, t)
         pts.append((x, y + dy, r, op))
     pts += [(912, 72, 1.6, .55), (958, 128, 1.1, .5), (842, 40, 1.2, .45), (720, 96, 1, .4)]
-    body.append(sparks(pts, 1.4, .1, loop=True))
-    # nom, filet doré prolongé d'un filet beige, sous-titre, coordonnées (◆ beige), phrase
-    body.append(text_g(fn, NOM, s_nom, pad, 132, tracking=.015, cls="up", style="animation-delay:.1s")[0])
+    body.append(sparks(pts, 1.4, .1, loop=True, color=FIL))
+    # nom, filet doré prolongé d'un filet fin bleu nuit, sous-titre, coordonnées (◆ dorés), phrase
+    body.append(text_g(fn, [(NOM, B_INK)], s_nom, pad, 132, tracking=.015, cls="up", style="animation-delay:.1s")[0])
     body.append(rule(pad, 162, pad + 120, .55, .7, 2.5, loop=True))
     body.append(lz(pad + 134, 162, 5, 1.05, loop=True))
-    body.append(rule(pad + 148, 162, pad + 196, 1.2, .5, 1.2, color=BEIGE, opacity=.7, loop=True))
+    body.append(rule(pad + 148, 162, pad + 196, 1.2, .5, 1.2, color=B_SOFT, opacity=.5, loop=True))
     body.append(text_g(fr, HERO_SOUS, 33, pad, 218, cls="fade", style="animation-delay:.7s")[0])
-    body.append(ligne_g(fr, HERO_CONTACT, 25, pad, 268, "start", 1.0, .15, color=SOFT, loop=True, sep=BEIGE)[0])
-    svg, last = para(fr, HERO_PHRASE, 30, pad, 340, 500, 42)
+    body.append(ligne_g(fr, HERO_CONTACT, 25, pad, 268, "start", 1.0, .15, color=B_SOFT, loop=True, sep=FIL)[0])
+    svg, last = para(fr, HERO_PHRASE, 30, pad, 340, 500, 42, color=B_INK)
     body.append(f'<g{anim("fade", 1.3)}>{svg}</g>')
     # encadré citation à droite
     x0, y0, bw, bh = 598, 292, 346, 190
@@ -531,38 +553,38 @@ def flow_svg():
     return svg_v2(W, H, FLOW_TITRE, desc, defs, "\n".join(body), style=ANIM2 + kf_css()), dict(titre=46, etape=st, texte=si)
 
 
-# ---------------------------------------------------------------- contact (grand panneau, ligne dorée ondulée)
-CONTACT_TITRE = [("Construisons quelque chose d'", INK), ("utile.", FIL)]
+# ---------------------------------------------------------------- contact (grand panneau beige « tech », ligne dorée ondulée)
+CONTACT_TITRE = [("Construisons quelque chose d'", B_INK), ("utile.", B_GOLD)]
 CONTACT_SOUS = "Ouverte aux opportunités en Data, Machine Learning et IA"
 CONTACT_BLOCS = [("linkedin", "LinkedIn", "linkedin.com/in/kadi-bagayoko"), ("email", "Email", "kadibaga22@gmail.com"), ("github", "GitHub", "github.com/Kadi2207")]
 
 
-def contact_icon(kind, cx, cy, s=34):
+def contact_icon(kind, cx, cy, s=34, ink=INK):
     h = s / 2
-    st = f'fill="none" stroke="{INK}" stroke-width="2.2" stroke-linejoin="round"'
+    st = f'fill="none" stroke="{ink}" stroke-width="2.2" stroke-linejoin="round"'
     if kind == "linkedin":  # carré arrondi + « in » (le logo LinkedIn n'est pas dans simple-icons)
-        g, w = text_g(font("ss700"), [("in", INK)], s * .62, cx, cy + s * .62 * font("ss700").cap / 2 + 1, anchor="middle")
+        g, w = text_g(font("ss700"), [("in", ink)], s * .62, cx, cy + s * .62 * font("ss700").cap / 2 + 1, anchor="middle")
         return f'<rect x="{num(cx - h)}" y="{num(cy - h)}" width="{s}" height="{s}" rx="6" {st}/>' + g
     if kind == "email":
         return (f'<rect x="{num(cx - h)}" y="{num(cy - h * .72)}" width="{s}" height="{num(s * .72)}" rx="4" {st}/>'
                 f'<path d="M{num(cx - h + 2)} {num(cy - h * .72 + 3)}L{num(cx)} {num(cy + 2)}L{num(cx + h - 2)} {num(cy - h * .72 + 3)}" {st}/>')
     sc = s / 24
-    return f'<g transform="translate({num(cx - h)} {num(cy - h)}) scale({round(sc, 3)})"><path d="{icon_path(kind)}" fill="{INK}"/></g>'
+    return f'<g transform="translate({num(cx - h)} {num(cy - h)}) scale({round(sc, 3)})"><path d="{icon_path(kind)}" fill="{ink}"/></g>'
 
 
-def arrow(x, y, s=14):
-    return f'<path d="M{num(x)} {num(y + s)}L{num(x + s)} {num(y)}M{num(x + 3)} {num(y)}H{num(x + s)}V{num(y + s - 3)}" fill="none" stroke="{FIL}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
+def arrow(x, y, s=14, color=FIL):
+    return f'<path d="M{num(x)} {num(y + s)}L{num(x + s)} {num(y)}M{num(x + 3)} {num(y)}H{num(x + s)}V{num(y + s - 3)}" fill="none" stroke="{color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
 
 
 def contact_svg():
     fe, ft, fs, fl, fh = font("ss700"), font("ss700"), font("ss400"), font("ss600"), font("ss400")
     pad, H = 56, 540
-    defs, bg = panel(W, H, "cb", cx="85%", cy="100%")
-    defs += glow_defs("gw", 0, W)
+    defs, bg = beige_panel(W, H, "cb", "15%", "0%", "85%", "100%")
+    defs += glow_defs("gw", 0, W, end=GOLD_DEEP)
     body = [bg]
     # en-tête : ◆ CONTACT / ÉCHANGEONS, filet, pastille « Disponible »
     r = 24 * 0.26
-    g1, w1 = text_g(fe, [("CONTACT", INK), ("  /  ", FIL), ("ÉCHANGEONS", FIL)], 24, pad + 2 * r + 16, 80, tracking=.2)
+    g1, w1 = text_g(fe, [("CONTACT", B_INK), ("  /  ", B_GOLD), ("ÉCHANGEONS", B_GOLD)], 24, pad + 2 * r + 16, 80, tracking=.2)
     body.append(f'<g{anim("fade", .1)}><path fill="{FIL}" d="{diamond(pad + r, 80 - 24 * fe.cap / 2, r, r * 1.25)}"/>{g1}</g>')
     pt, ps = "Disponible", 23
     pw = 20 + 12 + 12 + fl.width(pt, ps) + 20
@@ -570,7 +592,7 @@ def contact_svg():
     x_rule0 = pad + 2 * r + 16 + w1 + 24
     body.append(rule(x_rule0, 80 - 24 * fe.cap / 2, px - 20, .3, .9, 1.4, opacity=.6, loop=True))
     dot = (px + 26, py + ph / 2)
-    body.append(f'<g{anim("fade", .5)}><rect x="{num(px)}" y="{num(py)}" width="{num(pw)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{BEIGE}" stroke-opacity=".8" stroke-width="1.5"/>'
+    body.append(f'<g{anim("fade", .5)}><rect x="{num(px)}" y="{num(py)}" width="{num(pw)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{FIL}" stroke-opacity=".8" stroke-width="1.5"/>'
                 f'<circle cx="{num(dot[0])}" cy="{num(dot[1])}" r="6" fill="{FIL}"/>'
                 + text_g(fl, [(pt, CREME)], ps, px + 44, py + ph / 2 + ps * fl.cap / 2)[0] + "</g>")
     for t in (1.0, 2.0):
@@ -578,18 +600,18 @@ def contact_svg():
     # titre et sous-titre
     s_t = ft.fit(CONTACT_TITRE, 64, W - 2 * pad)
     body.append(text_g(ft, CONTACT_TITRE, s_t, pad, 186, cls="up", style="animation-delay:.3s")[0])
-    body.append(text_g(fs, [(CONTACT_SOUS, SOFT)], 30, pad, 238, cls="fade", style="animation-delay:.7s")[0])
+    body.append(text_g(fs, [(CONTACT_SOUS, B_SOFT)], 30, pad, 238, cls="fade", style="animation-delay:.7s")[0])
     # trois blocs
     gap, y0, bh = 20, 282, 108
     bw = (W - 2 * pad - 2 * gap) / 3
     for i, (kind, label, handle) in enumerate(CONTACT_BLOCS):
         x = pad + i * (bw + gap)
         sh = fh.fit(handle, 21, bw - 78 - 16)
-        g = (f'<rect x="{num(x)}" y="{y0}" width="{num(bw)}" height="{bh}" rx="18" fill="{DARK}" fill-opacity=".7" stroke="{FIL}" stroke-opacity=".75" stroke-width="1.5"/>'
-             + contact_icon(kind, x + 42, y0 + bh / 2)
-             + text_g(fl, [(label, INK)], 29, x + 78, y0 + 50)[0]
-             + text_g(fh, [(handle, MUTED)], sh, x + 78, y0 + 82)[0]
-             + arrow(x + bw - 34, y0 + 22))
+        g = (f'<rect x="{num(x)}" y="{y0}" width="{num(bw)}" height="{bh}" rx="18" fill="{CREME}" fill-opacity=".75" stroke="{FIL}" stroke-opacity=".75" stroke-width="1.5"/>'
+             + contact_icon(kind, x + 42, y0 + bh / 2, ink=B_INK)
+             + text_g(fl, [(label, B_INK)], 29, x + 78, y0 + 50)[0]
+             + text_g(fh, [(handle, B_MUTED)], sh, x + 78, y0 + 82)[0]
+             + arrow(x + bw - 34, y0 + 22, color=B_GOLD))
         body.append(f'<g{anim("up", 1.0 + i * .15)}>{g}</g>')
     # ligne dorée ondulée, onde secondaire, points et losanges
 
@@ -597,11 +619,11 @@ def contact_svg():
         return 468 + a * (16 * math.sin(2 * math.pi * x / 520 + ph) + 9 * math.sin(2 * math.pi * x / 230 + 1.3 + ph))
 
     xs = list(range(-20, W + 41, 40))
-    body.append(f'<path{anim("draw", .9, 2.0, True)} pathLength="1" d="{smooth([(x, wy(x, .7, 1.9) + 10) for x in xs])}" fill="none" stroke="{BEIGE}" stroke-opacity=".35" stroke-width="1.3"/>')
-    body.append(glow_path(smooth([(x, wy(x)) for x in xs]), "gw", .9, 2.2, width=2.2, loop=True))
+    body.append(f'<path{anim("draw", .9, 2.0, True)} pathLength="1" d="{smooth([(x, wy(x, .7, 1.9) + 10) for x in xs])}" fill="none" stroke="{B_SOFT}" stroke-opacity=".3" stroke-width="1.3"/>')
+    body.append(glow_path(smooth([(x, wy(x)) for x in xs]), "gw", .9, 2.2, width=2.2, loop=True, halo=FIL))
     pts = [(x, wy(x), rr, op) for x, rr, op in ((140, 2.4, .8), (300, 1.6, .6), (470, 2.8, .9), (600, 1.6, .6), (760, 2.4, .8), (880, 1.8, .7))]
     pts += [(x, wy(x, .7, 1.9) + 10, 1.4, .5) for x in (220, 540, 820)]
-    body.append(sparks(pts, 1.8, .14, loop=True))
+    body.append(sparks(pts, 1.8, .14, loop=True, color=FIL))
     for k, x in enumerate((380, 930)):
         body.append(lz(x, wy(x), 6, 2.4 + k * .3, ry=8, loop=True))
     desc = ("Construisons quelque chose d'utile. " + CONTACT_SOUS + ". Disponible. "

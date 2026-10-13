@@ -47,26 +47,6 @@ Portfolio : lien à venir
 | 2026, avril à juin | Consulat du Mali | Stagiaire Data & Innovation Digitale | Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. *(estimation)* |
 | 2025, juin à septembre | Femmes Audacieuses | Analyse de données & Business | KPIs et reporting pour la direction : +30 % d'engagement. |
 
-## ◆ Projets
-
-<p align="center">
-  <a href="https://github.com/Kadi2207/ecommerce-dashboard-analytics"><img src="assets/card-dashboard.svg" alt="Dashboard e-commerce, janvier 2026. Nettoyage et analyse de 397 884 lignes de transactions avec pandas. Restitution dans un dashboard Streamlit de 6 indicateurs et 6 graphiques, sur un chiffre d'affaires de £8,91 M. Python, pandas, Streamlit, Plotly. Lien vers le dépôt." width="100%"></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/Kadi2207/wmdp-cyber"><img src="assets/card-wmdp.svg" alt="Hackathon WMDP, mars 2026, autrice unique. Conception d'un corpus de 250 prompts adversariaux en 5 types de reformulation. Évaluation de 6 LLMs open source via l'API Hugging Face, sur 360 requêtes : 0 % de refus sur Llama et Qwen, mesuré par détection de mots-clés. Lien vers le dépôt." width="100%"></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/Kadi2207/revops-crm-migration-analysis"><img src="assets/card-revops.svg" alt="Audit migration CRM, données synthétiques. Audit de qualité de 734 comptes et 5 234 contacts avant une migration Salesforce vers HubSpot. Travail sur des données synthétiques issues de Kaggle : aucune donnée d'entreprise. pandas, matplotlib, notebook. Lien vers le dépôt." width="100%"></a>
-</p>
-
-<p align="center">
-  <img src="assets/building.svg" alt="En construction : TCIM / Skills4Mind (depuis avril 2026, partie IA, classification automatique de données de santé, accuracy de 82,5 %, présentation du projet sur demande) et portfolio avec assistant chatbot IA (lien à venir)." width="100%">
-</p>
-
-Dépôts : [dashboard e-commerce](https://github.com/Kadi2207/ecommerce-dashboard-analytics) · [WMDP](https://github.com/Kadi2207/wmdp-cyber) · [audit CRM](https://github.com/Kadi2207/revops-crm-migration-analysis). TCIM n'a pas de dépôt public : présentation du projet sur demande.
-
 ## ◆ Le dashboard en images
 
 Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur les graphiques.
