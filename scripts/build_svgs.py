@@ -838,17 +838,22 @@ def entete_svg(nom):
     ft = font("pf700")
     H = 230
     s = ft.fit(nom, 76, 820)
-    grad, bg = frame(W, H, border=False)
-    defs = grad + (
+    # charte sombre du profil (comme le flow et le contact) : panneau à halo et liseré doré, texte clair,
+    # filet doré centré avec losange, petits losanges beige en accent, quelques particules dorées
+    defs, bg = panel(W, H, "eb", cx="50%", cy="0%")
+    defs += (
         f'<linearGradient id="fl" gradientUnits="userSpaceOnUse" x1="{W / 2 - 180}" x2="{W / 2 + 180}"><stop offset="0" stop-color="{FIL}" stop-opacity="0"/>'
-        f'<stop offset=".5" stop-color="{FIL}"/><stop offset="1" stop-color="{FIL}" stop-opacity="0"/></linearGradient>'
+        f'<stop offset=".5" stop-color="{GLOW}"/><stop offset="1" stop-color="{FIL}" stop-opacity="0"/></linearGradient>'
     )
-    body = [bg, f'<rect x="14" y="14" width="{W - 28}" height="{H - 28}" rx="12" fill="none" stroke="{FIL}" stroke-opacity=".5"/>']
-    body.append(text_g(ft, nom, s, W / 2, 128, anchor="middle", cls="up", style="animation-delay:.1s")[0])
+    body = [bg, f'<rect x="14" y="14" width="{W - 28}" height="{H - 28}" rx="12" fill="none" stroke="{FIL}" stroke-opacity=".3"/>']
+    body.append(text_g(ft, [(nom, INK)], s, W / 2, 128, anchor="middle", cls="up", style="animation-delay:.1s")[0])
     for x2 in (W / 2 - 180, W / 2 + 180):
         body.append(f'<path{anim("draw", .5)} pathLength="1" d="M{W / 2} 168H{num(x2)}" stroke="url(#fl)" stroke-width="2" fill="none"/>')
     body.append(lz(W / 2, 168, 7, .45, ry=9))
-    return svg_v2(W, H, nom, f"En-tête : {nom}.", defs, "\n".join(body)), dict(titre=s)
+    for k, x in enumerate((W / 2 - 200, W / 2 + 200)):
+        body.append(lz(x, 168, 3.5, .9 + k * .1, fill=BEIGE, ry=4.5))
+    body.append(sparks([(W / 2 - 330, 62, 1.6, .5), (W / 2 + 300, 48, 2, .6), (W / 2 + 360, 176, 1.3, .45), (W / 2 - 280, 190, 1.2, .4)], 1.1, .12))
+    return svg_v2(W, H, nom, f"En-tête : {nom}.", defs, "\n".join(body), style=ANIM2), dict(titre=s)
 
 
 def entetes():
