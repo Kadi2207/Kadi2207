@@ -1,6 +1,6 @@
 # Sources des données des graphiques
 
-Les trois CSV de ce dossier sont de **petits agrégats** : aucune donnée brute, aucune réponse de modèle, aucun contenu de `data/responses/`. Le script `scripts/make_charts.py` ne lit que ces trois fichiers.
+Les trois CSV de ce dossier sont de **petits agrégats** : aucune donnée brute, aucune réponse de modèle, aucun contenu de `data/responses/`. Le script `scripts/make_charts.py` ne lit que les fichiers WMDP et RevOps. Le dashboard e-commerce est montré par ses captures réelles ; `ecommerce_monthly_revenue.csv` reste ici comme contrôle du total de £8,91 M.
 
 ## `ecommerce_monthly_revenue.csv`
 
