@@ -105,5 +105,5 @@ Real screenshots of the e-commerce dashboard (Streamlit + Plotly), cropped to th
 </p>
 
 <p align="center">
-  <img src="assets/footer.svg" alt="Decorative strip: midnight-blue wave, gold line, beige line and diamonds." width="100%">
+  <img src="assets/footer.svg" alt="Decorative strip: beige wave, gold line, midnight-blue line and diamonds." width="100%">
 </p>

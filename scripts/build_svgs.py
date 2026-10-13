@@ -365,7 +365,7 @@ def ligne_w(fnt, items, size):
 
 
 # ---------------------------------------------------------------- bannière éditoriale (fond beige « tech », trait doré en arc)
-# Fond beige de la bannière et du contact (2026-10-13, rappel de la bannière LinkedIn) : texte bleu nuit ; le doré
+# Fond beige de la bannière et du pied de page (2026-10-13, rappel de la bannière LinkedIn) : texte bleu nuit ; le doré
 # #C9953B n'atteint que 2,2:1 sur beige, il reste aux filets et losanges, et le texte d'accent prend un doré foncé.
 B_INK, B_MUTED, B_SOFT, B_GOLD = "#0d1b2a", "#3a4b60", "#2c4a6e", "#7a5212"  # 14:1, 7:1, 7,5:1, 5,7:1 sur #F6E8CC
 GOLD_DEEP = "#A8741F"  # bout du trait lumineux sur beige (le doré clair #E2BD72 y disparaît)
@@ -466,7 +466,7 @@ def hero_svg():
     return svg_v2(W, H, NOM, desc, defs, "\n".join(body), style=ANIM2 + kf_css()), dict(nom=s_nom, sous_titre=33, coordonnees=25, phrase=30, citation=28)
 
 
-# ---------------------------------------------------------------- pied de page : vague beige, filet doré, losanges
+# ---------------------------------------------------------------- pied de page : vague beige « tech » (comme la bannière), filet doré, losanges
 def footer_svg():
     H = 130
 
@@ -479,20 +479,21 @@ def footer_svg():
     fil_l = smooth([(x, wy(x) + 16) for x in reversed(xs) if x <= 500])
     fil_b = smooth([(x, wy(x) + 26) for x in xs])
     defs = (
-        f'<linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="{DARK}"/><stop offset=".5" stop-color="{DARK2}"/>'
-        f'<stop offset="1" stop-color="{DARK}"/></linearGradient>'
+        f'<linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="#F2E0BE"/><stop offset=".5" stop-color="{CREME}"/>'
+        f'<stop offset="1" stop-color="#F2E0BE"/></linearGradient>'
+        f'<pattern id="pt" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="1.2" fill="{B_INK}"/></pattern>'
         f'<clipPath id="cp"><rect width="{W}" height="{H}" rx="20"/></clipPath>'
     )
-    body = [f'<g clip-path="url(#cp)"><path d="{top}V{H}H0Z" fill="url(#bg)"/></g>']
-    body.append(f'<path{anim("draw", .5, 1.4)} pathLength="1" d="{fil_b}" fill="none" stroke="{BEIGE}" stroke-opacity=".45" stroke-width="1"/>')
+    body = [f'<g clip-path="url(#cp)"><path d="{top}V{H}H0Z" fill="url(#bg)"/><path d="{top}V{H}H0Z" fill="url(#pt)" fill-opacity=".08"/></g>']
+    body.append(f'<path{anim("draw", .5, 1.4)} pathLength="1" d="{fil_b}" fill="none" stroke="{B_SOFT}" stroke-opacity=".45" stroke-width="1"/>')
     for d in (fil_l, fil_r):
         body.append(f'<path{anim("draw", .2, 1.4)} pathLength="1" d="{d}" fill="none" stroke="{FIL}" stroke-width="2"/>')
     body.append(lz(500, wy(500) + 16, 8, .15, ry=10))
     for k, x in enumerate((250, 750)):
         body.append(lz(x, wy(x) + 16, 5, .8 + k * .1))
     for k, dx in enumerate((-26, 0, 26)):
-        body.append(lz(500 + dx, 104, 4.5 if dx else 6, 1.4 + k * .12, fill=BEIGE if dx == 0 else FIL))
-    return svg_v2(W, H, "Pied de page", "Bandeau décoratif : vague bleu nuit, filet doré, filet beige et losanges.", defs, "\n".join(body))
+        body.append(lz(500 + dx, 104, 4.5 if dx else 6, 1.4 + k * .12, fill=B_INK if dx == 0 else FIL))
+    return svg_v2(W, H, "Pied de page", "Bandeau décoratif : vague beige, filet doré, filet bleu nuit et losanges.", defs, "\n".join(body))
 
 
 # ---------------------------------------------------------------- schéma « Du besoin à la solution » (fil d'or vertical)
@@ -553,38 +554,38 @@ def flow_svg():
     return svg_v2(W, H, FLOW_TITRE, desc, defs, "\n".join(body), style=ANIM2 + kf_css()), dict(titre=46, etape=st, texte=si)
 
 
-# ---------------------------------------------------------------- contact (grand panneau beige « tech », ligne dorée ondulée)
-CONTACT_TITRE = [("Construisons quelque chose d'", B_INK), ("utile.", B_GOLD)]
+# ---------------------------------------------------------------- contact (grand panneau, ligne dorée ondulée)
+CONTACT_TITRE = [("Construisons quelque chose d'", INK), ("utile.", FIL)]
 CONTACT_SOUS = "Ouverte aux opportunités en Data, Machine Learning et IA"
 CONTACT_BLOCS = [("linkedin", "LinkedIn", "linkedin.com/in/kadi-bagayoko"), ("email", "Email", "kadibaga22@gmail.com"), ("github", "GitHub", "github.com/Kadi2207")]
 
 
-def contact_icon(kind, cx, cy, s=34, ink=INK):
+def contact_icon(kind, cx, cy, s=34):
     h = s / 2
-    st = f'fill="none" stroke="{ink}" stroke-width="2.2" stroke-linejoin="round"'
+    st = f'fill="none" stroke="{INK}" stroke-width="2.2" stroke-linejoin="round"'
     if kind == "linkedin":  # carré arrondi + « in » (le logo LinkedIn n'est pas dans simple-icons)
-        g, w = text_g(font("ss700"), [("in", ink)], s * .62, cx, cy + s * .62 * font("ss700").cap / 2 + 1, anchor="middle")
+        g, w = text_g(font("ss700"), [("in", INK)], s * .62, cx, cy + s * .62 * font("ss700").cap / 2 + 1, anchor="middle")
         return f'<rect x="{num(cx - h)}" y="{num(cy - h)}" width="{s}" height="{s}" rx="6" {st}/>' + g
     if kind == "email":
         return (f'<rect x="{num(cx - h)}" y="{num(cy - h * .72)}" width="{s}" height="{num(s * .72)}" rx="4" {st}/>'
                 f'<path d="M{num(cx - h + 2)} {num(cy - h * .72 + 3)}L{num(cx)} {num(cy + 2)}L{num(cx + h - 2)} {num(cy - h * .72 + 3)}" {st}/>')
     sc = s / 24
-    return f'<g transform="translate({num(cx - h)} {num(cy - h)}) scale({round(sc, 3)})"><path d="{icon_path(kind)}" fill="{ink}"/></g>'
+    return f'<g transform="translate({num(cx - h)} {num(cy - h)}) scale({round(sc, 3)})"><path d="{icon_path(kind)}" fill="{INK}"/></g>'
 
 
-def arrow(x, y, s=14, color=FIL):
-    return f'<path d="M{num(x)} {num(y + s)}L{num(x + s)} {num(y)}M{num(x + 3)} {num(y)}H{num(x + s)}V{num(y + s - 3)}" fill="none" stroke="{color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
+def arrow(x, y, s=14):
+    return f'<path d="M{num(x)} {num(y + s)}L{num(x + s)} {num(y)}M{num(x + 3)} {num(y)}H{num(x + s)}V{num(y + s - 3)}" fill="none" stroke="{FIL}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
 
 
 def contact_svg():
     fe, ft, fs, fl, fh = font("ss700"), font("ss700"), font("ss400"), font("ss600"), font("ss400")
     pad, H = 56, 540
-    defs, bg = beige_panel(W, H, "cb", "15%", "0%", "85%", "100%")
-    defs += glow_defs("gw", 0, W, end=GOLD_DEEP)
+    defs, bg = panel(W, H, "cb", cx="85%", cy="100%")
+    defs += glow_defs("gw", 0, W)
     body = [bg]
     # en-tête : ◆ CONTACT / ÉCHANGEONS, filet, pastille « Disponible »
     r = 24 * 0.26
-    g1, w1 = text_g(fe, [("CONTACT", B_INK), ("  /  ", B_GOLD), ("ÉCHANGEONS", B_GOLD)], 24, pad + 2 * r + 16, 80, tracking=.2)
+    g1, w1 = text_g(fe, [("CONTACT", INK), ("  /  ", FIL), ("ÉCHANGEONS", FIL)], 24, pad + 2 * r + 16, 80, tracking=.2)
     body.append(f'<g{anim("fade", .1)}><path fill="{FIL}" d="{diamond(pad + r, 80 - 24 * fe.cap / 2, r, r * 1.25)}"/>{g1}</g>')
     pt, ps = "Disponible", 23
     pw = 20 + 12 + 12 + fl.width(pt, ps) + 20
@@ -592,7 +593,7 @@ def contact_svg():
     x_rule0 = pad + 2 * r + 16 + w1 + 24
     body.append(rule(x_rule0, 80 - 24 * fe.cap / 2, px - 20, .3, .9, 1.4, opacity=.6, loop=True))
     dot = (px + 26, py + ph / 2)
-    body.append(f'<g{anim("fade", .5)}><rect x="{num(px)}" y="{num(py)}" width="{num(pw)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{FIL}" stroke-opacity=".8" stroke-width="1.5"/>'
+    body.append(f'<g{anim("fade", .5)}><rect x="{num(px)}" y="{num(py)}" width="{num(pw)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{BEIGE}" stroke-opacity=".8" stroke-width="1.5"/>'
                 f'<circle cx="{num(dot[0])}" cy="{num(dot[1])}" r="6" fill="{FIL}"/>'
                 + text_g(fl, [(pt, CREME)], ps, px + 44, py + ph / 2 + ps * fl.cap / 2)[0] + "</g>")
     for t in (1.0, 2.0):
@@ -600,18 +601,18 @@ def contact_svg():
     # titre et sous-titre
     s_t = ft.fit(CONTACT_TITRE, 64, W - 2 * pad)
     body.append(text_g(ft, CONTACT_TITRE, s_t, pad, 186, cls="up", style="animation-delay:.3s")[0])
-    body.append(text_g(fs, [(CONTACT_SOUS, B_SOFT)], 30, pad, 238, cls="fade", style="animation-delay:.7s")[0])
+    body.append(text_g(fs, [(CONTACT_SOUS, SOFT)], 30, pad, 238, cls="fade", style="animation-delay:.7s")[0])
     # trois blocs
     gap, y0, bh = 20, 282, 108
     bw = (W - 2 * pad - 2 * gap) / 3
     for i, (kind, label, handle) in enumerate(CONTACT_BLOCS):
         x = pad + i * (bw + gap)
         sh = fh.fit(handle, 21, bw - 78 - 16)
-        g = (f'<rect x="{num(x)}" y="{y0}" width="{num(bw)}" height="{bh}" rx="18" fill="{CREME}" fill-opacity=".75" stroke="{FIL}" stroke-opacity=".75" stroke-width="1.5"/>'
-             + contact_icon(kind, x + 42, y0 + bh / 2, ink=B_INK)
-             + text_g(fl, [(label, B_INK)], 29, x + 78, y0 + 50)[0]
-             + text_g(fh, [(handle, B_MUTED)], sh, x + 78, y0 + 82)[0]
-             + arrow(x + bw - 34, y0 + 22, color=B_GOLD))
+        g = (f'<rect x="{num(x)}" y="{y0}" width="{num(bw)}" height="{bh}" rx="18" fill="{DARK}" fill-opacity=".7" stroke="{FIL}" stroke-opacity=".75" stroke-width="1.5"/>'
+             + contact_icon(kind, x + 42, y0 + bh / 2)
+             + text_g(fl, [(label, INK)], 29, x + 78, y0 + 50)[0]
+             + text_g(fh, [(handle, MUTED)], sh, x + 78, y0 + 82)[0]
+             + arrow(x + bw - 34, y0 + 22))
         body.append(f'<g{anim("up", 1.0 + i * .15)}>{g}</g>')
     # ligne dorée ondulée, onde secondaire, points et losanges
 
@@ -619,11 +620,11 @@ def contact_svg():
         return 468 + a * (16 * math.sin(2 * math.pi * x / 520 + ph) + 9 * math.sin(2 * math.pi * x / 230 + 1.3 + ph))
 
     xs = list(range(-20, W + 41, 40))
-    body.append(f'<path{anim("draw", .9, 2.0, True)} pathLength="1" d="{smooth([(x, wy(x, .7, 1.9) + 10) for x in xs])}" fill="none" stroke="{B_SOFT}" stroke-opacity=".3" stroke-width="1.3"/>')
-    body.append(glow_path(smooth([(x, wy(x)) for x in xs]), "gw", .9, 2.2, width=2.2, loop=True, halo=FIL))
+    body.append(f'<path{anim("draw", .9, 2.0, True)} pathLength="1" d="{smooth([(x, wy(x, .7, 1.9) + 10) for x in xs])}" fill="none" stroke="{BEIGE}" stroke-opacity=".35" stroke-width="1.3"/>')
+    body.append(glow_path(smooth([(x, wy(x)) for x in xs]), "gw", .9, 2.2, width=2.2, loop=True))
     pts = [(x, wy(x), rr, op) for x, rr, op in ((140, 2.4, .8), (300, 1.6, .6), (470, 2.8, .9), (600, 1.6, .6), (760, 2.4, .8), (880, 1.8, .7))]
     pts += [(x, wy(x, .7, 1.9) + 10, 1.4, .5) for x in (220, 540, 820)]
-    body.append(sparks(pts, 1.8, .14, loop=True, color=FIL))
+    body.append(sparks(pts, 1.8, .14, loop=True))
     for k, x in enumerate((380, 930)):
         body.append(lz(x, wy(x), 6, 2.4 + k * .3, ry=8, loop=True))
     desc = ("Construisons quelque chose d'utile. " + CONTACT_SOUS + ". Disponible. "

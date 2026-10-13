@@ -103,5 +103,5 @@ Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur l
 </p>
 
 <p align="center">
-  <img src="assets/footer.svg" alt="Bandeau décoratif : vague bleu nuit, filet doré, filet beige et losanges." width="100%">
+  <img src="assets/footer.svg" alt="Bandeau décoratif : vague beige, filet doré, filet bleu nuit et losanges." width="100%">
 </p>
