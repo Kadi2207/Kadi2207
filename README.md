@@ -36,7 +36,7 @@ Je ne m'arrête pas à l'analyse : je construis des solutions complètes, du bes
 Portfolio : lien à venir
 
 <p align="center">
-  <img src="assets/flow.svg" alt="Du besoin à la solution, à travers des stratégies digitales innovantes. Quatre étapes reliées par un fil d'or. 1, Besoin : analyse des processus et recommandations présentées au Consul (Consulat du Mali). 2, Nettoyage : 397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps). 3, Modèle / analyse : TF-IDF + Random Forest (TCIM), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
+  <img src="assets/flow.svg" alt="Du besoin à la solution, à travers des stratégies digitales innovantes. Quatre étapes reliées par un fil d'or, validées l'une après l'autre. 1, Besoin : analyse des processus et recommandations présentées au Consul (Consulat du Mali). 2, Nettoyage : 397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps). 3, Modèle / analyse : TF-IDF + Random Forest (TCIM), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
 </p>
 
 ## ◆ Expériences
@@ -103,17 +103,6 @@ Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur l
 **Outils**<br>
 <img src="assets/chips/stack-hubspot-compte-gratuit.svg" alt="HubSpot (compte gratuit)"> <img src="assets/chips/stack-aws-cloud-foundations.svg" alt="AWS (Cloud Foundations)">
 
-## ◆ Formation et certifications
-
-- Bachelor 3 Data & Intelligence Artificielle (grade Licence), ECE Paris, 2024-2027
-- AWS Academy Graduate, Cloud Foundations (Amazon Web Services, 2025)
-- Structuring Data & Exploring GenAI Tools (OMNES Education, 2025)
-- Prompt Engineering Fundamentals (Datascientest, 2024)
-
-## ◆ Prises de parole et projets d'équipe
-
-Interview à VivaTech (Orbite Média) · sollicitée par OMNES Education pour une interview sur l'IA · 1ère place au projet robotique en équipe.
-
 ## ◆ Activité
 
 <p align="center">
@@ -134,5 +123,5 @@ Interview à VivaTech (Orbite Média) · sollicitée par OMNES Education pour un
 </p>
 
 <p align="center">
-  <img src="assets/footer.svg" alt="Bandeau décoratif : vague bleu nuit, filet doré et losanges." width="100%">
+  <img src="assets/footer.svg" alt="Bandeau décoratif : vague bleu nuit, filet doré, filet beige et losanges." width="100%">
 </p>

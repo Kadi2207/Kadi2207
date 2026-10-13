@@ -15,8 +15,10 @@ regrouper les .woff des deux dossiers package/files dans <dossier>. Le texte est
 les SVG ne chargent aucune police et ne contiennent pas les fichiers de police.
 
 Les SVG sont servis via <img> : pas de script, pas de ressource externe. Chacun porte son fond bleu nuit
-(rendu identique en clair et sombre). Animations jouées une seule fois, finies avant 4 s ; l'état de
-base de chaque SVG est son état final (lisible sans animation) et prefers-reduced-motion les coupe.
+(rendu identique en clair et sombre). Textes : animation jouée une seule fois, finie avant 4 s. Bannière, flow
+et contact : décor (et étapes du flow) en boucle douce de 18 s, avec une pause sur l'état final entre deux
+cycles. L'état de base de chaque SVG est son état final (lisible sans animation) et prefers-reduced-motion
+coupe tout, boucle comprise.
 Lisibilité mobile : largeur de 1000 unités, affichée vers 328 px sur un téléphone de 360 px (x 0,33).
 """
 import argparse
@@ -34,7 +36,7 @@ ASSETS = ROOT / "assets"
 NAVY, CARD, NAVY_HI = "#0f2038", "#172b4c", "#152a4b"  # fond ; cartes (bleu un peu plus clair) ; centre du dégradé de la bannière
 INK, MUTED = "#e8eef5", "#b7c3d3"  # texte clair ; texte secondaire (> 7:1 sur NAVY et CARD)
 FIL = AMP = "#C9953B"  # doré : filets, losanges, « & »
-BEIGE = "#F6E8CC"  # décor rare
+BEIGE, CREME = "#F6E8CC", "#FBF4E4"  # accents seulement (filets, contours, citation), jamais en fond plein
 BAND, BEIGE_LIGHT = NAVY, INK  # alias de l'ancienne charte
 # Charte sombre des grands panneaux (bannière, flow, contact) et des chips, d'après les maquettes du 2026-10-13
 DARK, DARK2, DARK_HI = "#0a1422", "#0d1b2a", "#14283f"  # fond profond ; fond des panneaux ; halo
@@ -43,7 +45,7 @@ SOFT = "#a9bcd6"  # bleu clair des sous-titres (> 8:1 sur DARK2)
 NOMOTION = "@media (prefers-reduced-motion: reduce){*{animation:none!important}}"
 W = 1000
 
-# Animations : une seule fois, rien d'infini. Sans animation, l'état de base est l'état final.
+# Animations jouées une seule fois (la boucle douce est définie plus bas). Sans animation, l'état de base est l'état final.
 ANIM = (
     "@keyframes up{from{opacity:0;transform:translateY(18px)}}"
     "@keyframes fade{from{opacity:0}}"
@@ -60,7 +62,53 @@ ANIM2 = ANIM + (
     "@keyframes ping{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(3)}}"
     ".tw{transform-box:fill-box;transform-origin:center;animation:tw .8s ease-out backwards}"
     ".ping{transform-box:fill-box;transform-origin:center;animation:ping 1.2s ease-out backwards}"
+    ".grow{transform-box:fill-box;transform-origin:center}"
 )
+
+# Boucle douce : cycle de 18 s, animations finies vers 10 s au plus tard, pause sur l'état final, puis retour à
+# l'état de départ pendant les RESET dernières secondes. Chaque élément en boucle reçoit ses propres @keyframes
+# (style en ligne, qui remplace l'animation de sa classe) ; prefers-reduced-motion les coupe (animation:none).
+CYCLE, RESET = 18.0, 0.8
+# type : (état de départ, [(fraction de la durée, état intermédiaire)], état final, accélération)
+ETATS = {
+    "up": ("opacity:0;transform:translateY(18px)", [], "opacity:1;transform:none", "cubic-bezier(.2,.7,.2,1)"),
+    "fade": ("opacity:0", [], "opacity:1", "ease-out"),
+    "draw": ("stroke-dashoffset:1", [], "stroke-dashoffset:0", "cubic-bezier(.45,0,.2,1)"),
+    "lz": ("opacity:0;transform:scale(.2) rotate(-90deg)", [(.6, "opacity:1;transform:scale(1.35)")], "opacity:1;transform:none", "ease-out"),
+    "tw": ("opacity:0", [(.5, "opacity:1;transform:scale(2)")], "opacity:1;transform:none", "ease-out"),
+    "ping": ("opacity:0", [(0, "opacity:.9;transform:scale(1)")], "opacity:0;transform:scale(3)", "ease-out"),
+    "lit": ("opacity:.35", [], "opacity:1", "ease-out"),  # étape du flow : atténuée puis allumée
+    "grow": ("transform:scale(0)", [], "transform:none", "cubic-bezier(.3,.6,.3,1)"),  # losange du flow qui se remplit
+}
+DUREES = {"up": 1.0, "fade": .9, "draw": 1.1, "lz": .6, "tw": .8, "ping": 1.2, "lit": .6, "grow": .7}
+KF = {}
+
+
+def boucle(cls, delay, dur=None):
+    """Attributs d'un élément en boucle : classe (transform-box, dasharray) et animation propre de CYCLE secondes."""
+    dur = dur or DUREES[cls]
+    name = f"{cls}_{round(delay * 100)}_{round(dur * 100)}"
+    if name not in KF:
+        pre, mids, end, ease = ETATS[cls]
+        fr = [(0, pre, "" if delay > 0 else ease)]
+        if delay > 0:
+            fr.append((delay - (.01 if mids and mids[0][0] == 0 else 0), pre, ease))
+        fr += [(delay + f * dur, st, ease) for f, st in mids]
+        fr += [(delay + dur, end, ""), (CYCLE - RESET, end, "ease-in-out"), (CYCLE, pre, "")]
+
+        def pc(t):
+            return (f"{t / CYCLE * 100:.3f}".rstrip("0").rstrip(".") or "0") + "%"
+
+        KF[name] = f"@keyframes {name}{{" + "".join(
+            f"{pc(t)}{{{st}{f';animation-timing-function:{ez}' if ez else ''}}}" for t, st, ez in fr) + "}"
+    return f' class="{cls}" style="animation:{name} {num(CYCLE)}s linear infinite"'
+
+
+def kf_css():
+    """@keyframes des éléments en boucle du SVG en cours, puis remise à zéro."""
+    s = "".join(KF.values())
+    KF.clear()
+    return s
 
 
 def e(s):
@@ -232,7 +280,9 @@ def para(fnt, text, size, x, y, max_w, lh, color=INK, anchor="start"):
     return "".join(out), y + (len(lines) - 1) * lh
 
 
-def anim(cls, delay, dur=None):
+def anim(cls, delay, dur=None, loop=False):
+    if loop:
+        return boucle(cls, delay, dur)
     return f' class="{cls}" style="animation-delay:{delay:.2f}s{f";animation-duration:{dur}s" if dur else ""}"'
 
 
@@ -241,20 +291,20 @@ def diamond(cx, cy, r, ry=None):
     return f"M{num(cx)} {num(cy - ry)}L{num(cx + r)} {num(cy)}L{num(cx)} {num(cy + ry)}L{num(cx - r)} {num(cy)}Z"
 
 
-def lz(cx, cy, r, delay, fill=FIL, ry=None):
-    return f'<path{anim("lz", delay)} fill="{fill}" d="{diamond(cx, cy, r, ry)}"/>'
+def lz(cx, cy, r, delay, fill=FIL, ry=None, loop=False):
+    return f'<path{anim("lz", delay, loop=loop)} fill="{fill}" d="{diamond(cx, cy, r, ry)}"/>'
 
 
-def rule(x1, y, x2, delay, dur=0.8, width=2.5, color=FIL, opacity=1):
+def rule(x1, y, x2, delay, dur=0.8, width=2.5, color=FIL, opacity=1, loop=False):
     op = f' stroke-opacity="{opacity}"' if opacity != 1 else ""
-    return f'<path{anim("draw", delay, dur)} pathLength="1" d="M{num(x1)} {num(y)}H{num(x2)}" stroke="{color}" stroke-width="{width}"{op} fill="none"/>'
+    return f'<path{anim("draw", delay, dur, loop)} pathLength="1" d="M{num(x1)} {num(y)}H{num(x2)}" stroke="{color}" stroke-width="{width}"{op} fill="none"/>'
 
 
-def eyebrow(text, x, y, delay=None, size=25):
+def eyebrow(text, x, y, delay=None, size=25, color=MUTED):
     """Petit intitulé en capitales espacées, précédé d'un losange doré."""
     f = font("ss700")
     r = size * 0.24
-    g, w = text_g(f, [(text, MUTED)], size, x + 2 * r + size * 0.45, y, tracking=0.14)
+    g, w = text_g(f, [(text, color)], size, x + 2 * r + size * 0.45, y, tracking=0.14)
     d = f'<path fill="{FIL}" d="{diamond(x + r, y - size * f.cap / 2, r)}"/>'
     inner = d + g
     if delay is not None:
@@ -292,8 +342,9 @@ def svg_v2(Wd, H, title, desc, defs, body, style=ANIM):
     )
 
 
-def ligne_g(fnt, items, size, x, y, anchor, t0, step, color=INK):
-    """Éléments sur une ligne, séparés par des ◆ dessinés (absents de la police) qui s'allument à tour de rôle."""
+def ligne_g(fnt, items, size, x, y, anchor, t0, step, color=INK, loop=False, sep=FIL):
+    """Éléments sur une ligne, séparés par des ◆ dessinés (absents de la police) qui s'allument à tour de rôle.
+    loop : seuls les ◆ sont en boucle, le texte apparaît une fois."""
     r, gap = size * 0.17, size * 0.55
     ws = [fnt.width(m, size) for m in items]
     total = sum(ws) + (len(items) - 1) * (2 * gap + 2 * r)
@@ -304,7 +355,7 @@ def ligne_g(fnt, items, size, x, y, anchor, t0, step, color=INK):
         parts.append(text_g(fnt, [(m, color)], size, cx, y, cls="fade", style=f"animation-delay:{t0 + i * step:.2f}s")[0])
         cx += w
         if i < len(items) - 1:
-            parts.append(lz(cx + gap + r, cy, r, t0 + i * step + step * .6))
+            parts.append(lz(cx + gap + r, cy, r, t0 + i * step + step * .6, fill=sep, loop=loop))
             cx += 2 * gap + 2 * r
     return "".join(parts), total
 
@@ -337,15 +388,15 @@ def glow_defs(gid, x1, x2):
             f'<filter id="{gid}b" x="-5%" y="-40%" width="110%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>')
 
 
-def glow_path(d, gid, t0, dur, width=2.5):
+def glow_path(d, gid, t0, dur, width=2.5, loop=False):
     """Trait doré qui se trace, doublé d'un halo flou tracé en même temps."""
-    return (f'<path{anim("draw", t0, dur)} pathLength="1" d="{d}" fill="none" stroke="{GLOW}" stroke-width="{width * 3}" stroke-opacity=".45" filter="url(#{gid}b)"/>'
-            f'<path{anim("draw", t0, dur)} pathLength="1" d="{d}" fill="none" stroke="url(#{gid})" stroke-width="{width}" stroke-linecap="round"/>')
+    return (f'<path{anim("draw", t0, dur, loop)} pathLength="1" d="{d}" fill="none" stroke="{GLOW}" stroke-width="{width * 3}" stroke-opacity=".45" filter="url(#{gid}b)"/>'
+            f'<path{anim("draw", t0, dur, loop)} pathLength="1" d="{d}" fill="none" stroke="url(#{gid})" stroke-width="{width}" stroke-linecap="round"/>')
 
 
-def sparks(pts, t0, step):
-    """Particules dorées discrètes : visibles sans animation, scintillent une fois."""
-    return "".join(f'<circle{anim("tw", t0 + i * step)} cx="{num(x)}" cy="{num(y)}" r="{r}" fill="{GLOW}" fill-opacity="{op}"/>'
+def sparks(pts, t0, step, loop=False):
+    """Particules dorées discrètes : visibles sans animation, scintillent une fois (ou à chaque cycle)."""
+    return "".join(f'<circle{anim("tw", t0 + i * step, loop=loop)} cx="{num(x)}" cy="{num(y)}" r="{r}" fill="{GLOW}" fill-opacity="{op}"/>'
                    for i, (x, y, r, op) in enumerate(pts))
 
 
@@ -362,33 +413,35 @@ def hero_svg():
     arc = ((-10, 530), (330, 512), (660, 450), (1010, 205))
     defs += glow_defs("ga", 0, W)
     body = [bg]
-    # trait lumineux en arc, derrière le texte et l'encadré
-    body.append(glow_path(f"M{arc[0][0]} {arc[0][1]}C{arc[1][0]} {arc[1][1]} {arc[2][0]} {arc[2][1]} {arc[3][0]} {arc[3][1]}", "ga", .3, 2.3))
+    # trait lumineux en arc, derrière le texte et l'encadré (en boucle, comme les particules et les losanges)
+    body.append(glow_path(f"M{arc[0][0]} {arc[0][1]}C{arc[1][0]} {arc[1][1]} {arc[2][0]} {arc[2][1]} {arc[3][0]} {arc[3][1]}", "ga", .3, 2.3, loop=True))
     pts = []
     for k, (t, dy, r, op) in enumerate(((.18, -14, 1.6, .7), (.31, 9, 1.2, .6), (.44, -22, 2, .8), (.55, 12, 1.4, .6), (.63, -8, 2.4, .9),
                                          (.74, 18, 1.3, .6), (.83, -26, 1.8, .8), (.9, 6, 2.6, .9), (.96, -16, 1.4, .7))):
         x, y = bezier(*arc, t)
         pts.append((x, y + dy, r, op))
     pts += [(912, 72, 1.6, .55), (958, 128, 1.1, .5), (842, 40, 1.2, .45), (720, 96, 1, .4)]
-    body.append(sparks(pts, 1.4, .1))
-    # nom, filet, sous-titre, coordonnées, phrase
+    body.append(sparks(pts, 1.4, .1, loop=True))
+    # nom, filet doré prolongé d'un filet beige, sous-titre, coordonnées (◆ beige), phrase
     body.append(text_g(fn, NOM, s_nom, pad, 132, tracking=.015, cls="up", style="animation-delay:.1s")[0])
-    body.append(rule(pad, 162, pad + 120, .55, .7, 2.5))
-    body.append(lz(pad + 134, 162, 5, 1.05))
+    body.append(rule(pad, 162, pad + 120, .55, .7, 2.5, loop=True))
+    body.append(lz(pad + 134, 162, 5, 1.05, loop=True))
+    body.append(rule(pad + 148, 162, pad + 196, 1.2, .5, 1.2, color=BEIGE, opacity=.7, loop=True))
     body.append(text_g(fr, HERO_SOUS, 33, pad, 218, cls="fade", style="animation-delay:.7s")[0])
-    body.append(ligne_g(fr, HERO_CONTACT, 25, pad, 268, "start", 1.0, .15, color=SOFT)[0])
+    body.append(ligne_g(fr, HERO_CONTACT, 25, pad, 268, "start", 1.0, .15, color=SOFT, loop=True, sep=BEIGE)[0])
     svg, last = para(fr, HERO_PHRASE, 30, pad, 340, 500, 42)
     body.append(f'<g{anim("fade", 1.3)}>{svg}</g>')
     # encadré citation à droite
     x0, y0, bw, bh = 598, 292, 346, 190
     q = [f'<rect x="{x0}" y="{y0}" width="{bw}" height="{bh}" rx="14" fill="{DARK2}" stroke="{FIL}" stroke-opacity=".6" stroke-width="1.5"/>',
          text_g(fm, [("“", FIL)], 64, x0 + 26, y0 + 70)[0]]
-    q += [text_g(fq, [(ln, INK)], 28, x0 + 30, y0 + 84 + i * 38)[0] for i, ln in enumerate(CITATION)]
+    q += [text_g(fq, [(ln, CREME)], 28, x0 + 30, y0 + 84 + i * 38)[0] for i, ln in enumerate(CITATION)]
+    q.append(f'<path d="M{x0 + 70} {y0 + 36}H{x0 + 130}" stroke="{BEIGE}" stroke-opacity=".7" stroke-width="1.5"/>')
     q.append(f'<path fill="{FIL}" d="{diamond(x0 + bw - 24, y0 + bh - 24, 6, 8)}"/>')
     body.append(f'<g{anim("up", 1.6)}>{"".join(q)}</g>')
     desc = (f"{NOM}. Étudiante en Intelligence Artificielle & Data Science. " + ", ".join(HERO_CONTACT) + ". "
             + HERO_PHRASE + " Citation : " + " ".join(CITATION))
-    return svg_v2(W, H, NOM, desc, defs, "\n".join(body), style=ANIM2), dict(nom=s_nom, sous_titre=33, coordonnees=25, phrase=30, citation=28)
+    return svg_v2(W, H, NOM, desc, defs, "\n".join(body), style=ANIM2 + kf_css()), dict(nom=s_nom, sous_titre=33, coordonnees=25, phrase=30, citation=28)
 
 
 # ---------------------------------------------------------------- pied de page : vague beige, filet doré, losanges
@@ -402,12 +455,14 @@ def footer_svg():
     top = smooth([(x, wy(x)) for x in xs])
     fil_r = smooth([(x, wy(x) + 16) for x in xs if x >= 500])
     fil_l = smooth([(x, wy(x) + 16) for x in reversed(xs) if x <= 500])
+    fil_b = smooth([(x, wy(x) + 26) for x in xs])
     defs = (
-        f'<linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="{NAVY}"/><stop offset=".5" stop-color="{CARD}"/>'
-        f'<stop offset="1" stop-color="{NAVY}"/></linearGradient>'
+        f'<linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="{DARK}"/><stop offset=".5" stop-color="{DARK2}"/>'
+        f'<stop offset="1" stop-color="{DARK}"/></linearGradient>'
         f'<clipPath id="cp"><rect width="{W}" height="{H}" rx="20"/></clipPath>'
     )
     body = [f'<g clip-path="url(#cp)"><path d="{top}V{H}H0Z" fill="url(#bg)"/></g>']
+    body.append(f'<path{anim("draw", .5, 1.4)} pathLength="1" d="{fil_b}" fill="none" stroke="{BEIGE}" stroke-opacity=".45" stroke-width="1"/>')
     for d in (fil_l, fil_r):
         body.append(f'<path{anim("draw", .2, 1.4)} pathLength="1" d="{d}" fill="none" stroke="{FIL}" stroke-width="2"/>')
     body.append(lz(500, wy(500) + 16, 8, .15, ry=10))
@@ -415,7 +470,7 @@ def footer_svg():
         body.append(lz(x, wy(x) + 16, 5, .8 + k * .1))
     for k, dx in enumerate((-26, 0, 26)):
         body.append(lz(500 + dx, 104, 4.5 if dx else 6, 1.4 + k * .12, fill=BEIGE if dx == 0 else FIL))
-    return svg_v2(W, H, "Pied de page", "Bandeau décoratif : vague bleu nuit, filet doré et losanges.", defs, "\n".join(body))
+    return svg_v2(W, H, "Pied de page", "Bandeau décoratif : vague bleu nuit, filet doré, filet beige et losanges.", defs, "\n".join(body))
 
 
 # ---------------------------------------------------------------- schéma « Du besoin à la solution » (fil d'or vertical)
@@ -438,7 +493,7 @@ def flow_svg():
     r = 46 * 0.24
     title = f'<path fill="{FIL}" d="{diamond(pad + r, 96 - 46 * ft.cap / 2, r, r * 1.25)}"/>' + text_g(ft, FLOW_TITRE, 46, pad + 2 * r + 20, 96)[0]
     body_head = [f'<g{anim("up", .1)}>{title}</g>',
-                 text_g(fs, [(FLOW_SOUS, SOFT)], 31, pad + 2 * r + 20, 146, cls="fade", style="animation-delay:.6s")[0],
+                 text_g(fs, [(FLOW_SOUS, BEIGE)], 31, pad + 2 * r + 20, 146, cls="fade", style="animation-delay:.6s")[0],
                  rule(pad, 184, W - pad, .9, .7, 1.2, opacity=.45)]
     y = 250
     nodes, centers = [], []
@@ -452,19 +507,28 @@ def flow_svg():
         y = last + 78
     H = y - 78 + 56
     defs, bg = panel(W, H, "fb", cx="15%", cy="0%")
-    t0, dur = 1.0, 1.8
-    span = centers[-1] - centers[0]
     body = [bg] + body_head
-    body.append(f'<path{anim("draw", t0, dur)} pathLength="1" d="M{xl} {num(centers[0])}V{num(centers[-1])}" stroke="{FIL}" stroke-width="3" fill="none"/>')
+    # rail discret, toujours visible ; puis, en boucle et une étape à la fois : le fil d'or rejoint l'étape, elle
+    # s'allume (texte et contour), son losange se remplit d'or, une coche beige la valide. Pause : 4 étapes validées.
+    rn = 24
+    body.append(f'<path d="M{xl} {num(centers[0])}V{num(centers[-1])}" stroke="{FIL}" stroke-opacity=".25" stroke-width="2" fill="none"/>')
+    t0, pas = 1.3, 2.2
     for k, (c, parts) in enumerate(zip(centers, nodes)):
-        t = t0 + dur * (c - centers[0]) / span
-        body.append(lz(xl, c, 24, t, fill=DARK2))
-        body.append(f'<path{anim("lz", t)} fill="none" stroke="{FIL}" stroke-width="2.5" d="{diamond(xl, c, 24)}"/>')
-        body.append(f'<g{anim("fade", t, .6)}>{text_g(fnum, [(str(k + 1), INK)], 22, xl, c + 22 * fnum.cap / 2, anchor="middle")[0]}</g>')
-        body.append(f'<g{anim("fade", t + .05, .7)}>{"".join(parts)}</g>')
-    desc = (f"{FLOW_TITRE}, {FLOW_SOUS}. Quatre étapes reliées par un fil d'or. "
+        t = t0 + k * pas
+        if k:
+            body.append(f'<path{anim("draw", t - .6, .6, True)} pathLength="1" d="M{xl} {num(centers[k - 1] + rn)}V{num(c - rn)}" stroke="{FIL}" stroke-width="3" fill="none"/>')
+        body.append(f'<path fill="{DARK2}" d="{diamond(xl, c, rn)}"/>')
+        body.append(f'<path{anim("lit", t, .5, True)} fill="none" stroke="{FIL}" stroke-width="2.5" d="{diamond(xl, c, rn)}"/>')
+        body.append(f'<path{anim("grow", t + .4, .7, True)} fill="{FIL}" d="{diamond(xl, c, rn - 5)}"/>')
+        body.append(f'<g{anim("fade", t + .8, .4, True)}>{text_g(fnum, [(str(k + 1), DARK)], 22, xl, c + 22 * fnum.cap / 2, anchor="middle")[0]}</g>')
+        body.append(f'<g{anim("lit", t + .05, .6, True)}>{"".join(parts)}</g>')
+        bx, by = xl + 21, c - 21
+        body.append(f'<circle{anim("fade", t + 1.1, .4, True)} cx="{num(bx)}" cy="{num(by)}" r="11" fill="{DARK}" stroke="{BEIGE}" stroke-width="1.8"/>')
+        body.append(f'<path{anim("draw", t + 1.25, .5, True)} pathLength="1" d="M{num(bx - 5)} {num(by + .5)}L{num(bx - 1.5)} {num(by + 4)}L{num(bx + 5.5)} {num(by - 4)}"'
+                    f' fill="none" stroke="{BEIGE}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>')
+    desc = (f"{FLOW_TITRE}, {FLOW_SOUS}. Quatre étapes reliées par un fil d'or, validées l'une après l'autre. "
             + " ".join(f"{k + 1}, {t} : {l}." for k, (t, l) in enumerate(ETAPES)))
-    return svg_v2(W, H, FLOW_TITRE, desc, defs, "\n".join(body), style=ANIM2), dict(titre=46, etape=st, texte=si)
+    return svg_v2(W, H, FLOW_TITRE, desc, defs, "\n".join(body), style=ANIM2 + kf_css()), dict(titre=46, etape=st, texte=si)
 
 
 # ---------------------------------------------------------------- contact (grand panneau, ligne dorée ondulée)
@@ -504,12 +568,13 @@ def contact_svg():
     pw = 20 + 12 + 12 + fl.width(pt, ps) + 20
     px, py, ph = W - pad - pw, 80 - 24 * fe.cap / 2 - 20, 40
     x_rule0 = pad + 2 * r + 16 + w1 + 24
-    body.append(rule(x_rule0, 80 - 24 * fe.cap / 2, px - 20, .3, .9, 1.4, opacity=.6))
+    body.append(rule(x_rule0, 80 - 24 * fe.cap / 2, px - 20, .3, .9, 1.4, opacity=.6, loop=True))
     dot = (px + 26, py + ph / 2)
-    body.append(f'<g{anim("fade", .5)}><rect x="{num(px)}" y="{num(py)}" width="{num(pw)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{FIL}" stroke-opacity=".8" stroke-width="1.5"/>'
+    body.append(f'<g{anim("fade", .5)}><rect x="{num(px)}" y="{num(py)}" width="{num(pw)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{BEIGE}" stroke-opacity=".8" stroke-width="1.5"/>'
                 f'<circle cx="{num(dot[0])}" cy="{num(dot[1])}" r="6" fill="{FIL}"/>'
-                + text_g(fl, [(pt, INK)], ps, px + 44, py + ph / 2 + ps * fl.cap / 2)[0] + "</g>")
-    body.append(f'<circle{anim("ping", 1.0)} cx="{num(dot[0])}" cy="{num(dot[1])}" r="6" fill="none" stroke="{FIL}" stroke-width="2" opacity="0"/>')
+                + text_g(fl, [(pt, CREME)], ps, px + 44, py + ph / 2 + ps * fl.cap / 2)[0] + "</g>")
+    for t in (1.0, 2.0):
+        body.append(f'<circle{anim("ping", t, loop=True)} cx="{num(dot[0])}" cy="{num(dot[1])}" r="6" fill="none" stroke="{FIL}" stroke-width="2" opacity="0"/>')
     # titre et sous-titre
     s_t = ft.fit(CONTACT_TITRE, 64, W - 2 * pad)
     body.append(text_g(ft, CONTACT_TITRE, s_t, pad, 186, cls="up", style="animation-delay:.3s")[0])
@@ -532,16 +597,16 @@ def contact_svg():
         return 468 + a * (16 * math.sin(2 * math.pi * x / 520 + ph) + 9 * math.sin(2 * math.pi * x / 230 + 1.3 + ph))
 
     xs = list(range(-20, W + 41, 40))
-    body.append(f'<path{anim("draw", .9, 2.0)} pathLength="1" d="{smooth([(x, wy(x, .7, 1.9) + 10) for x in xs])}" fill="none" stroke="{SOFT}" stroke-opacity=".28" stroke-width="1.3"/>')
-    body.append(glow_path(smooth([(x, wy(x)) for x in xs]), "gw", .9, 2.2, width=2.2))
+    body.append(f'<path{anim("draw", .9, 2.0, True)} pathLength="1" d="{smooth([(x, wy(x, .7, 1.9) + 10) for x in xs])}" fill="none" stroke="{BEIGE}" stroke-opacity=".35" stroke-width="1.3"/>')
+    body.append(glow_path(smooth([(x, wy(x)) for x in xs]), "gw", .9, 2.2, width=2.2, loop=True))
     pts = [(x, wy(x), rr, op) for x, rr, op in ((140, 2.4, .8), (300, 1.6, .6), (470, 2.8, .9), (600, 1.6, .6), (760, 2.4, .8), (880, 1.8, .7))]
     pts += [(x, wy(x, .7, 1.9) + 10, 1.4, .5) for x in (220, 540, 820)]
-    body.append(sparks(pts, 1.8, .14))
+    body.append(sparks(pts, 1.8, .14, loop=True))
     for k, x in enumerate((380, 930)):
-        body.append(lz(x, wy(x), 6, 2.4 + k * .3, ry=8))
+        body.append(lz(x, wy(x), 6, 2.4 + k * .3, ry=8, loop=True))
     desc = ("Construisons quelque chose d'utile. " + CONTACT_SOUS + ". Disponible. "
             + " ".join(f"{l} : {h}." for _, l, h in CONTACT_BLOCS))
-    return svg_v2(W, H, "Contact", desc, defs, "\n".join(body), style=ANIM2), dict(titre=s_t, sous_titre=30, bloc=29, adresse=21)
+    return svg_v2(W, H, "Contact", desc, defs, "\n".join(body), style=ANIM2 + kf_css()), dict(titre=s_t, sous_titre=30, bloc=29, adresse=21)
 
 
 # ---------------------------------------------------------------- chips (badges locaux, lisibles sur fond blanc et sombre)
@@ -611,7 +676,7 @@ def card_svg(title, tag, sentences, stack_txt, desc):
     pad, sb, lhb = 44, 36, 48
     y_tag = pad + 22
     y_title = y_tag + 68
-    parts = [eyebrow(tag.upper(), pad, y_tag, delay=.1, size=24)[0]]
+    parts = [eyebrow(tag.upper(), pad, y_tag, delay=.1, size=24, color=BEIGE)[0]]
     parts.append(text_g(ft, title, 52, pad, y_title, cls="up", style="animation-delay:.1s")[0])
     parts.append(rule(pad, y_title + 22, pad + 90, .4, .7, 3))
     y = y_title + 22 + 58
@@ -624,7 +689,7 @@ def card_svg(title, tag, sentences, stack_txt, desc):
     svg, last = para(font("ss600"), stack_txt, 31, pad + ew + 20, y, W - 2 * pad - ew - 20, 40, color=MUTED)
     parts.append(f'<g{anim("fade", 1.0)}>{ey}{svg}</g>')
     H = last + 18 + pad
-    _, bg = frame(W, H)
+    _, bg = frame(W, H, fill=DARK2)
     return svg_v2(W, H, title, desc, "", bg + "\n" + "\n".join(parts)), dict(texte=sb, titre=52)
 
 
@@ -716,7 +781,7 @@ def building_svg():
     pad, sb, lhb = 44, 30, 40
     r = sb * 0.17
     y = pad + 24 * 0.74
-    parts = [eyebrow("EN CONSTRUCTION", pad, y, delay=.1, size=24)[0]]
+    parts = [eyebrow("EN CONSTRUCTION", pad, y, delay=.1, size=24, color=BEIGE)[0]]
     y += 30
     d = .25
     for name, tag, lines in CHANTIERS:
@@ -733,7 +798,7 @@ def building_svg():
         y = yl - lhb + 26
         d += .2
     H = y - 26 + pad + 6
-    grad, bg = frame(W, H)
+    grad, bg = frame(W, H, fill=DARK2)
     desc = "En construction. " + " ".join(f"{n} ({t}) : " + ". ".join(ls) + "." for n, t, ls in CHANTIERS)
     return svg_v2(W, H, "En construction", desc, grad, bg + "\n" + "\n".join(parts)), dict(texte=sb, titre=38)
 

@@ -38,7 +38,7 @@ I don't stop at analysis: I build complete solutions, from the business need to 
 Portfolio: link coming soon
 
 <p align="center">
-  <img src="assets/flow.svg" alt="Diagram (text in French): from need to solution, through innovative digital strategies. Four steps linked by a gold thread. 1, Need: process analysis and recommendations presented to the Consul (Consulate of Mali). 2, Cleaning: 397,884 transaction rows cleaned (e-commerce), quality audit of 5,234 contacts (RevOps). 3, Model / analysis: TF-IDF + Random Forest (TCIM), LLMs through the Hugging Face API (WMDP). 4, Dashboard: Streamlit + Plotly, KPIs and reporting for management." width="100%">
+  <img src="assets/flow.svg" alt="Diagram (text in French): from need to solution, through innovative digital strategies. Four steps linked by a gold thread, checked off one after another. 1, Need: process analysis and recommendations presented to the Consul (Consulate of Mali). 2, Cleaning: 397,884 transaction rows cleaned (e-commerce), quality audit of 5,234 contacts (RevOps). 3, Model / analysis: TF-IDF + Random Forest (TCIM), LLMs through the Hugging Face API (WMDP). 4, Dashboard: Streamlit + Plotly, KPIs and reporting for management." width="100%">
 </p>
 
 ## ◆ Experience
@@ -105,17 +105,6 @@ Real screenshots of the e-commerce dashboard (Streamlit + Plotly), cropped to th
 **Tools**<br>
 <img src="assets/chips/stack-hubspot-compte-gratuit.svg" alt="HubSpot (free account)"> <img src="assets/chips/stack-aws-cloud-foundations.svg" alt="AWS (Cloud Foundations)">
 
-## ◆ Education and certifications
-
-- Bachelor 3 in Data & Artificial Intelligence (Licence level), ECE Paris, 2024-2027
-- AWS Academy Graduate, Cloud Foundations (Amazon Web Services, 2025)
-- Structuring Data & Exploring GenAI Tools (OMNES Education, 2025)
-- Prompt Engineering Fundamentals (Datascientest, 2024)
-
-## ◆ Public speaking and team projects
-
-Interview at VivaTech (Orbite Média) · asked by OMNES Education for an interview on AI · 1st place in a team robotics project.
-
 ## ◆ Activity
 
 <p align="center">
@@ -136,5 +125,5 @@ Interview at VivaTech (Orbite Média) · asked by OMNES Education for an intervi
 </p>
 
 <p align="center">
-  <img src="assets/footer.svg" alt="Decorative strip: midnight-blue wave, gold line and diamonds." width="100%">
+  <img src="assets/footer.svg" alt="Decorative strip: midnight-blue wave, gold line, beige line and diamonds." width="100%">
 </p>
