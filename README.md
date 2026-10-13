@@ -1,51 +1,51 @@
 <p align="right"><a href="README.en.md">English version</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Kadidiatou Bagayoko. Analyse de données, création de dashboards, machine learning. Utiliser la data &amp; l'IA pour concevoir des solutions innovantes." width="100%">
+  <img src="assets/hero.svg" alt="Kadidiatou Bagayoko. Étudiante en Intelligence Artificielle &amp; Data Science. Villiers-sur-Marne, France ; kadibaga22@gmail.com ; LinkedIn. Passionnée par la data et l'IA, je recherche une alternance en Data &amp; IA à partir d'octobre 2026. Citation : Comprendre le besoin, construire la solution, livrer l'impact." width="100%">
 </p>
 
 <p align="center">
-  <img src="assets/disponibilite.svg" alt="Disponible pour une alternance dès octobre 2026. Analyse de données, science des données, IA." width="100%">
+  <img src="assets/chips/dispo.svg" alt="Disponibilité octobre 2026">
+  <img src="assets/chips/alternance.svg" alt="Alternance 2026-2027 · à partir d'octobre">
+  <img src="assets/chips/major.svg" alt="Major de promo B2 2025-2026 · ECE Paris">
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko"><img src="https://img.shields.io/badge/LinkedIn-kadi--bagayoko-C9953B?style=flat-square&labelColor=0f2038" alt="LinkedIn : linkedin.com/in/kadi-bagayoko"></a>
-  <a href="mailto:kadibaga22@gmail.com"><img src="https://img.shields.io/badge/Email-kadibaga22%40gmail.com-C9953B?style=flat-square&labelColor=0f2038" alt="Email : kadibaga22@gmail.com"></a>
+  <img src="assets/chips/ml.svg" alt="Machine Learning">
+  <img src="assets/chips/genai.svg" alt="GenAI">
+  <img src="assets/chips/python.svg" alt="Python">
+  <img src="assets/chips/sql.svg" alt="SQL">
+  <img src="assets/chips/data-analysis.svg" alt="Data Analysis">
+</p>
+
+<p align="center">
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a>
 </p>
 
 ## ◆ À propos
 
-Étudiante spécialisée dans la data et l'intelligence artificielle.
+Je développe et conçois des solutions Data & IA.
 
-Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers.
+- **Rôle** : Data & AI Solutions Builder
+- **Formation** : Bachelor 3 Data & Intelligence Artificielle, ECE Paris
+- **Ouverte pour** : Alternance 2026-2027, 3 sem. entreprise / 2 sem. école
+- **Je construis** : dashboards, systèmes sur mesure, automatisation, machine learning, assistants IA
+
+Je ne m'arrête pas à l'analyse : je construis des solutions complètes, du besoin métier jusqu'au déploiement.
 
 Portfolio : lien à venir
 
+<p align="center">
+  <img src="assets/flow.svg" alt="Du besoin à la solution, à travers des stratégies digitales innovantes. Quatre étapes reliées par un fil d'or. 1, Besoin : analyse des processus et recommandations présentées au Consul (Consulat du Mali). 2, Nettoyage : 397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps). 3, Modèle / analyse : TF-IDF + Random Forest (TCIM), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
+</p>
+
 ## ◆ Expériences
 
-<details>
-<summary><b>Consulat du Mali</b> · Stagiaire Data &amp; Innovation Digitale · avril à juin 2026</summary>
-
-- Analyse des processus.
-- Fiabilisation des données.
-- Recommandations d'optimisation présentées au Consul.
-- Résultat : réduction de 50 % des déplacements des usagers.
-
-</details>
-
-<details>
-<summary><b>Femmes Audacieuses</b> · Analyse de données &amp; Business · juin à septembre 2025</summary>
-
-- KPIs et reporting pour la direction.
-- Résultat : +30 % d'engagement.
-
-</details>
-
-## ◆ Du besoin à la solution
-
-<p align="center">
-  <img src="assets/flow.svg" alt="Schéma en quatre étapes reliées par un fil d'or. 1, Données : 397 884 lignes de transactions (e-commerce), 5 234 contacts (RevOps). 2, Nettoyage : fiabilisation des données (Consulat du Mali), audit qualité avant migration (RevOps). 3, Modèle ou analyse : TF-IDF + Random Forest (TCIM), analyse des processus (Consulat du Mali), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
-</p>
+| Année | Structure | Rôle | Ce que j'ai fait |
+|---|---|---|---|
+| 2026, depuis avril | TCIM / Skills4Mind | Partie IA (en cours) | Classification automatique de données de santé (TF-IDF + Random Forest), accuracy de 82,5 %. Présentation du projet sur demande. |
+| 2026, avril à juin | Consulat du Mali | Stagiaire Data & Innovation Digitale | Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. *(estimation)* |
+| 2025, juin à septembre | Femmes Audacieuses | Analyse de données & Business | KPIs et reporting pour la direction : +30 % d'engagement. |
 
 ## ◆ Projets
 
@@ -89,31 +89,23 @@ Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur l
 
 *Chiffre d'affaires par heure de la journée et distribution du montant des transactions.*
 
-## ◆ Graphiques
-
-Deux graphiques produits par [scripts/make_charts.py](scripts/make_charts.py) (pandas + matplotlib) à partir de petits CSV d'agrégats ; la méthode de chacun est dans [data/SOURCES.md](data/SOURCES.md).
-
-<p align="center">
-  <img src="assets/charts/wmdp_danger_by_category.svg" alt="Dangerosité moyenne sur une échelle de 0 à 10, par catégorie, pour Llama-1B, Llama-70B, Qwen-7B et Qwen-72B : entre 0 et 0,10 en biologie, entre 0,65 et 1,00 en cybersécurité." width="100%">
-</p>
-
-*Hackathon WMDP, run du 28 mars 2026 : dangerosité moyenne (0 à 10) des réponses de Llama-1B, Llama-70B, Qwen-7B et Qwen-72B, soit 233 réponses non vides sur 240 requêtes. Limites : le score est une détection de mots-clés, pas un jugement humain ; le 0 % de refus est lui aussi mesuré par mots-clés, sur des prompts à formulation défensive. Aucune conclusion de sécurité n'en est tirée, et les modèles DeepSeek-R1 (réponses vides) ne figurent pas dans ce graphique.*
-
-<p align="center">
-  <img src="assets/charts/revops_field_normalization.svg" alt="Barres horizontales du nombre de valeurs distinctes avant et après normalisation de la casse pour 9 champs, par exemple Contract_Status de 8 à 3 et Seniority_Level de 12 à 5." width="100%">
-</p>
-
-*Audit CRM : nombre de valeurs distinctes par champ catégoriel avant et après normalisation de la casse et des espaces (cellule 7 du notebook). Limite : données synthétiques (versions « bruitées » d'un jeu Kaggle), pas de données d'entreprise ; les fautes de frappe restantes ne sont pas corrigées à cette étape.*
-
 ## ◆ Stack
 
-<p align="center">
-  <img src="assets/stack.svg" alt="Stack. Data : Python, pandas, matplotlib, Plotly, Streamlit. IA / ML : TF-IDF + Random Forest, API Hugging Face. Dev : notebooks, Claude Code, WordPress. Outils : HubSpot (compte gratuit), AWS (Cloud Foundations)." width="100%">
-</p>
+**Data**<br>
+<img src="assets/chips/stack-python.svg" alt="Python"> <img src="assets/chips/stack-sql.svg" alt="SQL"> <img src="assets/chips/stack-pandas.svg" alt="pandas"> <img src="assets/chips/stack-matplotlib.svg" alt="matplotlib"> <img src="assets/chips/stack-plotly.svg" alt="Plotly"> <img src="assets/chips/stack-streamlit.svg" alt="Streamlit">
+
+**IA / ML**<br>
+<img src="assets/chips/stack-tf-idf-random-forest.svg" alt="TF-IDF + Random Forest"> <img src="assets/chips/stack-api-hugging-face.svg" alt="API Hugging Face">
+
+**Dév**<br>
+<img src="assets/chips/stack-notebooks.svg" alt="Notebooks"> <img src="assets/chips/stack-claude-code.svg" alt="Claude Code"> <img src="assets/chips/stack-wordpress.svg" alt="WordPress">
+
+**Outils**<br>
+<img src="assets/chips/stack-hubspot-compte-gratuit.svg" alt="HubSpot (compte gratuit)"> <img src="assets/chips/stack-aws-cloud-foundations.svg" alt="AWS (Cloud Foundations)">
 
 ## ◆ Formation et certifications
 
-- Bachelor en Intelligence Artificielle (grade Licence), spécialisation Data & IA, ECE Paris, 2024-2027
+- Bachelor 3 Data & Intelligence Artificielle (grade Licence), ECE Paris, 2024-2027
 - AWS Academy Graduate, Cloud Foundations (Amazon Web Services, 2025)
 - Structuring Data & Exploring GenAI Tools (OMNES Education, 2025)
 - Prompt Engineering Fundamentals (Datascientest, 2024)
@@ -133,9 +125,13 @@ Interview à VivaTech (Orbite Média) · sollicitée par OMNES Education pour un
 
 ## ◆ Contact
 
-Je recherche une alternance en Data & IA à partir d'octobre 2026, au rythme de 3 semaines en entreprise et 2 semaines à l'école.
+<p align="center">
+  <img src="assets/contact.svg" alt="Construisons quelque chose d'utile. Ouverte aux opportunités en Data, Machine Learning et IA. Disponible. LinkedIn : linkedin.com/in/kadi-bagayoko. Email : kadibaga22@gmail.com. GitHub : github.com/Kadi2207." width="100%">
+</p>
 
-[LinkedIn](https://linkedin.com/in/kadi-bagayoko) · [kadibaga22@gmail.com](mailto:kadibaga22@gmail.com) · Portfolio : lien à venir
+<p align="center">
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> · <a href="https://github.com/Kadi2207">GitHub</a> · Portfolio : lien à venir
+</p>
 
 <p align="center">
   <img src="assets/footer.svg" alt="Bandeau décoratif : vague bleu nuit, filet doré et losanges." width="100%">
