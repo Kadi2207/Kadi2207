@@ -1,10 +1,11 @@
-"""Génère les SVG animés du profil (charte bleu nuit) et l'en-tête des README des 3 dépôts de projets.
+"""Génère les SVG du profil (charte sombre bleu nuit et doré) et l'en-tête des README des 3 dépôts de projets.
 
 Usage, depuis la racine du dépôt :
     python scripts/build_svgs.py --fonts <dossier>                   (tout le profil)
-    python scripts/build_svgs.py --fonts <dossier> hero footer       (cibles choisies)
+    python scripts/build_svgs.py --fonts <dossier> hero contact      (cibles choisies)
     python scripts/build_svgs.py --fonts <dossier> entetes           (assets/header.svg des 3 dépôts voisins)
-Cibles : hero disponibilite footer flow idcard stack cards captures building entetes.
+Cibles : hero flow contact chips footer cards captures building entetes.
+Le pied de page (footer) n'est pas régénéré par défaut : il garde son dessin actuel.
 
 Polices (licence SIL Open Font License 1.1, voir assets/POLICES.md) :
 - Playfair Display (Claus Eggers Sørensen) : titres, nom, chiffres ; paquet npm @fontsource/playfair-display 5.3.0
@@ -29,16 +30,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
-# Bande de disponibilité (assets/disponibilite.svg), seul endroit où vit ce texte. Pour régénérer uniquement ce fichier :
-#   python scripts/build_svgs.py --fonts <dossier des .woff> disponibilite
-STATUT = ("Disponible pour une alternance dès octobre 2026", "Analyse de données, science des données, IA")
-
 # Charte bleu nuit (passe finale, harmonisée avec la bannière LinkedIn)
 NAVY, CARD, NAVY_HI = "#0f2038", "#172b4c", "#152a4b"  # fond ; cartes (bleu un peu plus clair) ; centre du dégradé de la bannière
 INK, MUTED = "#e8eef5", "#b7c3d3"  # texte clair ; texte secondaire (> 7:1 sur NAVY et CARD)
 FIL = AMP = "#C9953B"  # doré : filets, losanges, « & »
 BEIGE = "#F6E8CC"  # décor rare
 BAND, BEIGE_LIGHT = NAVY, INK  # alias de l'ancienne charte
+# Charte sombre des grands panneaux (bannière, flow, contact) et des chips, d'après les maquettes du 2026-10-13
+DARK, DARK2, DARK_HI = "#0a1422", "#0d1b2a", "#14283f"  # fond profond ; fond des panneaux ; halo
+GLOW = "#E2BD72"  # doré clair : reflet du trait et particules
+SOFT = "#a9bcd6"  # bleu clair des sous-titres (> 8:1 sur DARK2)
 NOMOTION = "@media (prefers-reduced-motion: reduce){*{animation:none!important}}"
 W = 1000
 
@@ -52,6 +53,13 @@ ANIM = (
     ".fade{animation:fade .9s ease-out backwards}"
     ".draw{stroke-dasharray:1;animation:draw 1.1s cubic-bezier(.45,0,.2,1) backwards}"
     ".lz{transform-box:fill-box;transform-origin:center;animation:lz .6s ease-out backwards}"
+)
+# particules qui scintillent une fois ; onde de la pastille « Disponible » (état final et de base : invisible)
+ANIM2 = ANIM + (
+    "@keyframes tw{from{opacity:0}50%{opacity:1;transform:scale(2)}}"
+    "@keyframes ping{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(3)}}"
+    ".tw{transform-box:fill-box;transform-origin:center;animation:tw .8s ease-out backwards}"
+    ".ping{transform-box:fill-box;transform-origin:center;animation:ping 1.2s ease-out backwards}"
 )
 
 
@@ -284,7 +292,7 @@ def svg_v2(Wd, H, title, desc, defs, body, style=ANIM):
     )
 
 
-def ligne_g(fnt, items, size, x, y, anchor, t0, step):
+def ligne_g(fnt, items, size, x, y, anchor, t0, step, color=INK):
     """Éléments sur une ligne, séparés par des ◆ dessinés (absents de la police) qui s'allument à tour de rôle."""
     r, gap = size * 0.17, size * 0.55
     ws = [fnt.width(m, size) for m in items]
@@ -293,7 +301,7 @@ def ligne_g(fnt, items, size, x, y, anchor, t0, step):
     cy = y - size * fnt.xh / 2
     parts = []
     for i, (m, w) in enumerate(zip(items, ws)):
-        parts.append(text_g(fnt, m, size, cx, y, cls="fade", style=f"animation-delay:{t0 + i * step:.2f}s")[0])
+        parts.append(text_g(fnt, [(m, color)], size, cx, y, cls="fade", style=f"animation-delay:{t0 + i * step:.2f}s")[0])
         cx += w
         if i < len(items) - 1:
             parts.append(lz(cx + gap + r, cy, r, t0 + i * step + step * .6))
@@ -305,86 +313,82 @@ def ligne_w(fnt, items, size):
     return sum(fnt.width(m, size) for m in items) + (len(items) - 1) * size * 2 * (0.55 + 0.17)
 
 
-# ---------------------------------------------------------------- bannière (variante A, permanente : ni statut ni date)
+# ---------------------------------------------------------------- bannière éditoriale (fond sombre, trait doré en arc)
 NOM = "Kadidiatou Bagayoko"
-METIERS = ["Analyse de données", "Création de dashboards", "Machine learning"]
-ACC1 = [("Utiliser la data ", INK), ("&", AMP), (" l’IA", INK)]
-ACC2 = [("pour concevoir des solutions innovantes.", INK)]
+HERO_SOUS = [("Étudiante en Intelligence Artificielle ", INK), ("&", AMP), (" Data Science", INK)]
+HERO_CONTACT = ["Villiers-sur-Marne, France", "kadibaga22@gmail.com", "LinkedIn"]
+HERO_PHRASE = "Passionnée par la data et l'IA, je recherche une alternance en Data & IA à partir d'octobre 2026."
+CITATION = ["Comprendre le besoin,", "construire la solution,", "livrer l'impact."]
+
+
+def panel(Wd, H, gid="pn", cx="80%", cy="15%"):
+    """Grand panneau sombre à coins arrondis, halo discret, liseré doré : (defs, fond)."""
+    defs = (f'<radialGradient id="{gid}" cx="{cx}" cy="{cy}" r="95%"><stop offset="0" stop-color="{DARK_HI}"/>'
+            f'<stop offset=".5" stop-color="{DARK2}"/><stop offset="1" stop-color="{DARK}"/></radialGradient>')
+    bg = (f'<rect width="{Wd}" height="{num(H)}" rx="20" fill="url(#{gid})"/>'
+          f'<rect x="1" y="1" width="{Wd - 2}" height="{num(H - 2)}" rx="19" fill="none" stroke="{FIL}" stroke-opacity=".4" stroke-width="1.5"/>')
+    return defs, bg
+
+
+def glow_defs(gid, x1, x2):
+    """Dégradé du trait lumineux (transparent puis doré puis doré clair) et flou de son halo."""
+    return (f'<linearGradient id="{gid}" gradientUnits="userSpaceOnUse" x1="{x1}" x2="{x2}"><stop offset="0" stop-color="{FIL}" stop-opacity="0"/>'
+            f'<stop offset=".35" stop-color="{FIL}"/><stop offset="1" stop-color="{GLOW}"/></linearGradient>'
+            f'<filter id="{gid}b" x="-5%" y="-40%" width="110%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>')
+
+
+def glow_path(d, gid, t0, dur, width=2.5):
+    """Trait doré qui se trace, doublé d'un halo flou tracé en même temps."""
+    return (f'<path{anim("draw", t0, dur)} pathLength="1" d="{d}" fill="none" stroke="{GLOW}" stroke-width="{width * 3}" stroke-opacity=".45" filter="url(#{gid}b)"/>'
+            f'<path{anim("draw", t0, dur)} pathLength="1" d="{d}" fill="none" stroke="url(#{gid})" stroke-width="{width}" stroke-linecap="round"/>')
+
+
+def sparks(pts, t0, step):
+    """Particules dorées discrètes : visibles sans animation, scintillent une fois."""
+    return "".join(f'<circle{anim("tw", t0 + i * step)} cx="{num(x)}" cy="{num(y)}" r="{r}" fill="{GLOW}" fill-opacity="{op}"/>'
+                   for i, (x, y, r, op) in enumerate(pts))
+
+
+def bezier(p0, p1, p2, p3, t):
+    u = 1 - t
+    return tuple(u ** 3 * a + 3 * u * u * t * b + 3 * u * t * t * c + t ** 3 * d for a, b, c, d in zip(p0, p1, p2, p3))
 
 
 def hero_svg():
-    bold, semi, ital = font("pf700"), font("pf600"), font("pf400i")
-    s_nom = bold.fit(NOM, 100, 840)
-    s_m = min(40, 40 * 860 / ligne_w(semi, METIERS[:2], 40))
-    s_a = ital.fit(ACC2, 38, 860)
-    y_nom, fy, ym = 160, 206, 278
-    ya = ym + s_m * 1.4 + 70
-    H = round(ya + s_a * 1.3 + 92)
-    bg = f'<rect width="{W}" height="{H}" rx="20" fill="url(#bg)"/>'
-    defs = (
-        f'<radialGradient id="bg" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="{NAVY_HI}"/><stop offset="1" stop-color="{NAVY}"/></radialGradient>'
-        f'<linearGradient id="fl" gradientUnits="userSpaceOnUse" x1="{W / 2 - 230}" x2="{W / 2 + 230}"><stop offset="0" stop-color="{FIL}" stop-opacity="0"/>'
-        f'<stop offset=".5" stop-color="{FIL}"/><stop offset="1" stop-color="{FIL}" stop-opacity="0"/></linearGradient>'
-    )
-    body = [bg, f'<rect x="16" y="16" width="{W - 32}" height="{H - 32}" rx="12" fill="none" stroke="{FIL}" stroke-opacity=".5"/>']
-    for cx, cy in ((16, 16), (W - 16, 16), (16, H - 16), (W - 16, H - 16)):
-        body.append(lz(cx, cy, 5, 2.6))
-    body.append(text_g(bold, NOM, s_nom, W / 2, y_nom, anchor="middle", cls="up", style="animation-delay:.15s")[0])
-    # filet d'or tracé depuis le centre, losanges qui s'allument
-    for x2 in (W / 2 - 230, W / 2 + 230):
-        body.append(f'<path{anim("draw", .7)} pathLength="1" d="M{num(W / 2)} {fy}H{num(x2)}" stroke="url(#fl)" stroke-width="2" fill="none"/>')
-    body.append(lz(W / 2, fy, 9, .65, ry=11))
-    for k, dx in enumerate((-40, 40)):
-        body.append(lz(W / 2 + dx, fy, 4, 1.0 + k * .08))
-    # métiers sur deux lignes (lisibles à 328 px) : le retour à la ligne remplace le second ◆
-    body.append(ligne_g(semi, METIERS[:2], s_m, W / 2, ym, "middle", 1.1, .3)[0])
-    body.append(ligne_g(semi, METIERS[2:], s_m, W / 2, ym + s_m * 1.4, "middle", 1.7, .3)[0])
-    for k, runs in enumerate((ACC1, ACC2)):
-        body.append(text_g(ital, runs, s_a, W / 2, ya + k * s_a * 1.3, anchor="middle", cls="fade", style=f"animation-delay:{2.1 + k * .2:.2f}s")[0])
-    desc = "Kadidiatou Bagayoko. Analyse de données, création de dashboards, machine learning. Utiliser la data & l'IA pour concevoir des solutions innovantes."
-    return svg_v2(W, H, NOM, desc, defs, "\n".join(body)), dict(nom=s_nom, metiers=s_m, accroche=s_a)
-
-
-# ---------------------------------------------------------------- bande de disponibilité
-def disponibilite_svg():
-    f1, f2 = font("ss600"), font("ss400")
-    size, lh, pad = 36, 50, 34
-    r = size * 0.2
-    gap = size * 0.5
-    w1 = f1.width(STATUT[0], size)
-    w2 = f2.width(STATUT[1], size)
-    one_line = w1 + 2 * gap + 2 * r + gap + w2 <= W - 80
-    top = pad + size * f1.cap
-    parts = []
-    if one_line:
-        x = (W - (w1 + 3 * gap + 2 * r + w2)) / 2
-        parts.append(text_g(f1, [(STATUT[0], BEIGE_LIGHT)], size, x, top, cls="up", style="animation-delay:.2s")[0])
-        parts.append(lz(x + w1 + gap + r, top - size * f1.xh / 2, r, .9, fill=FIL))
-        parts.append(text_g(f2, [(STATUT[1], BEIGE_LIGHT)], size, x + w1 + 2 * gap + 2 * r, top, cls="fade", style="animation-delay:1.1s")[0])
-        last = top
-    else:
-        lines1 = wrap(f1, STATUT[0], size, W - 80)
-        for i, ln in enumerate(lines1):
-            parts.append(text_g(f1, [(ln, BEIGE_LIGHT)], size, W / 2, top + i * lh, anchor="middle", cls="up", style=f"animation-delay:{.2 + i * .15:.2f}s")[0])
-        y2 = top + len(lines1) * lh
-        lines2 = wrap(f2, STATUT[1], size, W - 80 - 2 * r - gap)
-        for i, ln in enumerate(lines2):
-            yy = y2 + i * lh
-            w = f2.width(ln, size)
-            x = (W - (2 * r + gap + w)) / 2 if i == 0 else (W - w) / 2
-            if i == 0:
-                parts.append(lz(x + r, yy - size * f2.xh / 2, r, .9, fill=FIL))
-                x += 2 * r + gap
-            parts.append(text_g(f2, [(ln, BEIGE_LIGHT)], size, x, yy, cls="fade", style=f"animation-delay:{1.1 + i * .15:.2f}s")[0])
-        last = y2 + (len(lines2) - 1) * lh
-    H = round(last + pad + size * 0.25)
-    body = [f'<rect width="{W}" height="{H}" rx="14" fill="{CARD}"/>',
-            f'<rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="13" fill="none" stroke="{FIL}" stroke-opacity=".35" stroke-width="1.5"/>']
-    for x2 in (W / 2 - 160, W / 2 + 160):
-        body.append(f'<path{anim("draw", .3, 1.0)} pathLength="1" d="M{W / 2} {H - 10}H{num(x2)}" stroke="{FIL}" stroke-width="2" stroke-opacity=".8" fill="none"/>')
-    body += parts
-    desc = f"{STATUT[0]}. {STATUT[1]}."
-    return svg_v2(W, H, "Disponibilité", desc, "", "\n".join(body)), dict(texte=size, lignes="1" if one_line else "2")
+    fn, fr, fq, fm = font("ss600"), font("ss400"), font("pf400i"), font("pf700")
+    pad, H = 56, 548
+    s_nom = fn.fit(NOM, 80, 860, tracking=.015)
+    defs, bg = panel(W, H, "hb")
+    arc = ((-10, 530), (330, 512), (660, 450), (1010, 205))
+    defs += glow_defs("ga", 0, W)
+    body = [bg]
+    # trait lumineux en arc, derrière le texte et l'encadré
+    body.append(glow_path(f"M{arc[0][0]} {arc[0][1]}C{arc[1][0]} {arc[1][1]} {arc[2][0]} {arc[2][1]} {arc[3][0]} {arc[3][1]}", "ga", .3, 2.3))
+    pts = []
+    for k, (t, dy, r, op) in enumerate(((.18, -14, 1.6, .7), (.31, 9, 1.2, .6), (.44, -22, 2, .8), (.55, 12, 1.4, .6), (.63, -8, 2.4, .9),
+                                         (.74, 18, 1.3, .6), (.83, -26, 1.8, .8), (.9, 6, 2.6, .9), (.96, -16, 1.4, .7))):
+        x, y = bezier(*arc, t)
+        pts.append((x, y + dy, r, op))
+    pts += [(912, 72, 1.6, .55), (958, 128, 1.1, .5), (842, 40, 1.2, .45), (720, 96, 1, .4)]
+    body.append(sparks(pts, 1.4, .1))
+    # nom, filet, sous-titre, coordonnées, phrase
+    body.append(text_g(fn, NOM, s_nom, pad, 132, tracking=.015, cls="up", style="animation-delay:.1s")[0])
+    body.append(rule(pad, 162, pad + 120, .55, .7, 2.5))
+    body.append(lz(pad + 134, 162, 5, 1.05))
+    body.append(text_g(fr, HERO_SOUS, 33, pad, 218, cls="fade", style="animation-delay:.7s")[0])
+    body.append(ligne_g(fr, HERO_CONTACT, 25, pad, 268, "start", 1.0, .15, color=SOFT)[0])
+    svg, last = para(fr, HERO_PHRASE, 30, pad, 340, 500, 42)
+    body.append(f'<g{anim("fade", 1.3)}>{svg}</g>')
+    # encadré citation à droite
+    x0, y0, bw, bh = 598, 292, 346, 190
+    q = [f'<rect x="{x0}" y="{y0}" width="{bw}" height="{bh}" rx="14" fill="{DARK2}" stroke="{FIL}" stroke-opacity=".6" stroke-width="1.5"/>',
+         text_g(fm, [("“", FIL)], 64, x0 + 26, y0 + 70)[0]]
+    q += [text_g(fq, [(ln, INK)], 28, x0 + 30, y0 + 84 + i * 38)[0] for i, ln in enumerate(CITATION)]
+    q.append(f'<path fill="{FIL}" d="{diamond(x0 + bw - 24, y0 + bh - 24, 6, 8)}"/>')
+    body.append(f'<g{anim("up", 1.6)}>{"".join(q)}</g>')
+    desc = (f"{NOM}. Étudiante en Intelligence Artificielle & Data Science. " + ", ".join(HERO_CONTACT) + ". "
+            + HERO_PHRASE + " Citation : " + " ".join(CITATION))
+    return svg_v2(W, H, NOM, desc, defs, "\n".join(body), style=ANIM2), dict(nom=s_nom, sous_titre=33, coordonnees=25, phrase=30, citation=28)
 
 
 # ---------------------------------------------------------------- pied de page : vague beige, filet doré, losanges
@@ -415,88 +419,144 @@ def footer_svg():
 
 
 # ---------------------------------------------------------------- schéma « Du besoin à la solution » (fil d'or vertical)
+FLOW_TITRE = "Du besoin à la solution"
+FLOW_SOUS = "à travers des stratégies digitales innovantes"
 ETAPES = [
-    ("Données", ["397 884 lignes de transactions (e-commerce)", "5 234 contacts (RevOps)"]),
-    ("Nettoyage", ["Fiabilisation des données (Consulat du Mali)", "Audit qualité avant migration (RevOps)"]),
-    ("Modèle ou analyse", ["TF-IDF + Random Forest (TCIM)", "Analyse des processus (Consulat du Mali)", "LLMs via l'API Hugging Face (WMDP)"]),
-    ("Dashboard", ["Streamlit + Plotly", "KPIs et reporting pour la direction"]),
+    ("Besoin", "Analyse des processus et recommandations présentées au Consul (Consulat du Mali)"),
+    ("Nettoyage", "397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps)"),
+    ("Modèle / analyse", "TF-IDF + Random Forest (TCIM), LLMs via l'API Hugging Face (WMDP)"),
+    ("Dashboard", "Streamlit + Plotly, KPIs et reporting pour la direction"),
 ]
 
 
 def flow_svg():
-    ft, fi, fnum = font("pf700"), font("ss400"), font("ss700")
-    xl, xt, top = 84, 140, 52
-    st, si, lh = 40, 31, 41
-    maxw = W - xt - 48
-    y = top
+    ft, fs, fi, fnum = font("ss700"), font("pf400i"), font("ss400"), font("ss700")
+    pad, xl, xt = 56, 92, 148
+    st, si, lh = 38, 29, 39
+    maxw = W - xt - pad
+    # en-tête : ◆ titre, puis la phrase d'étape
+    r = 46 * 0.24
+    title = f'<path fill="{FIL}" d="{diamond(pad + r, 96 - 46 * ft.cap / 2, r, r * 1.25)}"/>' + text_g(ft, FLOW_TITRE, 46, pad + 2 * r + 20, 96)[0]
+    body_head = [f'<g{anim("up", .1)}>{title}</g>',
+                 text_g(fs, [(FLOW_SOUS, SOFT)], 31, pad + 2 * r + 20, 146, cls="fade", style="animation-delay:.6s")[0],
+                 rule(pad, 184, W - pad, .9, .7, 1.2, opacity=.45)]
+    y = 250
     nodes, centers = [], []
-    for k, (title, items) in enumerate(ETAPES):
-        yt = y + st * 0.74
+    for k, (titre, ligne) in enumerate(ETAPES):
+        yt = y
         centers.append(yt - st * ft.cap / 2)
-        parts = [text_g(ft, title, st, xt, yt)[0]]
-        yi = yt + 50
-        for it in items:
-            svg, last = para(fi, it.replace(" (", "\u00a0("), si, xt, yi, maxw, lh)
-            parts.append(svg)
-            yi = last + lh
+        parts = [text_g(ft, titre, st, xt, yt)[0]]
+        svg, last = para(fi, ligne.replace(" (", " ("), si, xt, yt + 46, maxw, lh, color=MUTED)
+        parts.append(svg)
         nodes.append(parts)
-        y = yi - lh + 58
-    H = y - 58 + 52
-    grad, bg = frame(W, H, fill=NAVY)
-    t0, dur = .2, 2.4
+        y = last + 78
+    H = y - 78 + 56
+    defs, bg = panel(W, H, "fb", cx="15%", cy="0%")
+    t0, dur = 1.0, 1.8
     span = centers[-1] - centers[0]
-    body = [bg, f'<path{anim("draw", t0, dur)} pathLength="1" d="M{xl} {num(centers[0])}V{num(centers[-1])}" stroke="{FIL}" stroke-width="3" fill="none"/>']
+    body = [bg] + body_head
+    body.append(f'<path{anim("draw", t0, dur)} pathLength="1" d="M{xl} {num(centers[0])}V{num(centers[-1])}" stroke="{FIL}" stroke-width="3" fill="none"/>')
     for k, (c, parts) in enumerate(zip(centers, nodes)):
         t = t0 + dur * (c - centers[0]) / span
-        body.append(lz(xl, c, 24, t, fill=NAVY))
+        body.append(lz(xl, c, 24, t, fill=DARK2))
         body.append(f'<path{anim("lz", t)} fill="none" stroke="{FIL}" stroke-width="2.5" d="{diamond(xl, c, 24)}"/>')
-        body.append(f'<g{anim("fade", t)}>{text_g(fnum, [(str(k + 1), BEIGE_LIGHT)], 24, xl, c + 24 * fnum.cap / 2, anchor="middle")[0]}</g>')
-        body.append(f'<g{anim("fade", t + .1)}>{"".join(parts)}</g>')
-    desc = "Schéma en quatre étapes reliées par un fil d'or. " + " ".join(f"{k + 1}, {t} : " + ", ".join(i) + "." for k, (t, i) in enumerate(ETAPES))
-    return svg_v2(W, H, "Du besoin à la solution", desc, grad, "\n".join(body)), dict(titre=st, texte=si)
+        body.append(f'<g{anim("fade", t, .6)}>{text_g(fnum, [(str(k + 1), INK)], 22, xl, c + 22 * fnum.cap / 2, anchor="middle")[0]}</g>')
+        body.append(f'<g{anim("fade", t + .05, .7)}>{"".join(parts)}</g>')
+    desc = (f"{FLOW_TITRE}, {FLOW_SOUS}. Quatre étapes reliées par un fil d'or. "
+            + " ".join(f"{k + 1}, {t} : {l}." for k, (t, l) in enumerate(ETAPES)))
+    return svg_v2(W, H, FLOW_TITRE, desc, defs, "\n".join(body), style=ANIM2), dict(titre=46, etape=st, texte=si)
 
 
-# ---------------------------------------------------------------- carte d'identité
-IDENTITE = [
-    ("RÔLE", "Data & AI Solutions Builder"),
-    ("FORMATION", "Bachelor en Intelligence Artificielle (grade Licence), ECE Paris, 2024-2027"),
-    ("RECHERCHE", "Alternance à partir d'octobre 2026, 3 semaines en entreprise, 2 semaines à l'école"),
-    ("EN COURS", "Partie IA du projet TCIM, portfolio avec assistant IA"),
-]
+# ---------------------------------------------------------------- contact (grand panneau, ligne dorée ondulée)
+CONTACT_TITRE = [("Construisons quelque chose d'", INK), ("utile.", FIL)]
+CONTACT_SOUS = "Ouverte aux opportunités en Data, Machine Learning et IA"
+CONTACT_BLOCS = [("linkedin", "LinkedIn", "linkedin.com/in/kadi-bagayoko"), ("email", "Email", "kadibaga22@gmail.com"), ("github", "GitHub", "github.com/Kadi2207")]
 
 
-def idcard_svg():
-    fv = font("ss400")
-    pad, xv, sv, lh = 44, 300, 32, 42
-    maxw = W - xv - pad
-    y = pad
-    rows = []
-    for i, (k, v) in enumerate(IDENTITE):
-        lines = wrap(fv, v, sv, maxw)
-        yb = y + 18 + sv * 0.74
-        rows.append((k, lines, yb, y))
-        y = yb + (len(lines) - 1) * lh + 30
-    H = y + pad - 12
-    grad, bg = frame(W, H)
+def contact_icon(kind, cx, cy, s=34):
+    h = s / 2
+    st = f'fill="none" stroke="{INK}" stroke-width="2.2" stroke-linejoin="round"'
+    if kind == "linkedin":  # carré arrondi + « in » (le logo LinkedIn n'est pas dans simple-icons)
+        g, w = text_g(font("ss700"), [("in", INK)], s * .62, cx, cy + s * .62 * font("ss700").cap / 2 + 1, anchor="middle")
+        return f'<rect x="{num(cx - h)}" y="{num(cy - h)}" width="{s}" height="{s}" rx="6" {st}/>' + g
+    if kind == "email":
+        return (f'<rect x="{num(cx - h)}" y="{num(cy - h * .72)}" width="{s}" height="{num(s * .72)}" rx="4" {st}/>'
+                f'<path d="M{num(cx - h + 2)} {num(cy - h * .72 + 3)}L{num(cx)} {num(cy + 2)}L{num(cx + h - 2)} {num(cy - h * .72 + 3)}" {st}/>')
+    sc = s / 24
+    return f'<g transform="translate({num(cx - h)} {num(cy - h)}) scale({round(sc, 3)})"><path d="{icon_path(kind)}" fill="{INK}"/></g>'
+
+
+def arrow(x, y, s=14):
+    return f'<path d="M{num(x)} {num(y + s)}L{num(x + s)} {num(y)}M{num(x + 3)} {num(y)}H{num(x + s)}V{num(y + s - 3)}" fill="none" stroke="{FIL}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
+
+
+def contact_svg():
+    fe, ft, fs, fl, fh = font("ss700"), font("ss700"), font("ss400"), font("ss600"), font("ss400")
+    pad, H = 56, 540
+    defs, bg = panel(W, H, "cb", cx="85%", cy="100%")
+    defs += glow_defs("gw", 0, W)
     body = [bg]
-    for i, (k, lines, yb, ytop) in enumerate(rows):
-        d = .15 + i * .15
-        if i:
-            body.append(rule(pad, ytop, W - pad, d, .8, 1.2, opacity=.5))
-        g = [eyebrow(k, pad, yb, size=26)[0]]
-        g += [text_g(fv, ln, sv, xv, yb + j * lh)[0] for j, ln in enumerate(lines)]
-        body.append(f'<g{anim("up", d)}>{"".join(g)}</g>')
-    desc = "Carte d'identité. " + " ".join(f"{k.capitalize()} : {v}." for k, v in IDENTITE)
-    return svg_v2(W, H, "Carte d'identité", desc, grad, "\n".join(body)), dict(libelle=26, valeur=sv)
+    # en-tête : ◆ CONTACT / ÉCHANGEONS, filet, pastille « Disponible »
+    r = 24 * 0.26
+    g1, w1 = text_g(fe, [("CONTACT", INK), ("  /  ", FIL), ("ÉCHANGEONS", FIL)], 24, pad + 2 * r + 16, 80, tracking=.2)
+    body.append(f'<g{anim("fade", .1)}><path fill="{FIL}" d="{diamond(pad + r, 80 - 24 * fe.cap / 2, r, r * 1.25)}"/>{g1}</g>')
+    pt, ps = "Disponible", 23
+    pw = 20 + 12 + 12 + fl.width(pt, ps) + 20
+    px, py, ph = W - pad - pw, 80 - 24 * fe.cap / 2 - 20, 40
+    x_rule0 = pad + 2 * r + 16 + w1 + 24
+    body.append(rule(x_rule0, 80 - 24 * fe.cap / 2, px - 20, .3, .9, 1.4, opacity=.6))
+    dot = (px + 26, py + ph / 2)
+    body.append(f'<g{anim("fade", .5)}><rect x="{num(px)}" y="{num(py)}" width="{num(pw)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{FIL}" stroke-opacity=".8" stroke-width="1.5"/>'
+                f'<circle cx="{num(dot[0])}" cy="{num(dot[1])}" r="6" fill="{FIL}"/>'
+                + text_g(fl, [(pt, INK)], ps, px + 44, py + ph / 2 + ps * fl.cap / 2)[0] + "</g>")
+    body.append(f'<circle{anim("ping", 1.0)} cx="{num(dot[0])}" cy="{num(dot[1])}" r="6" fill="none" stroke="{FIL}" stroke-width="2" opacity="0"/>')
+    # titre et sous-titre
+    s_t = ft.fit(CONTACT_TITRE, 64, W - 2 * pad)
+    body.append(text_g(ft, CONTACT_TITRE, s_t, pad, 186, cls="up", style="animation-delay:.3s")[0])
+    body.append(text_g(fs, [(CONTACT_SOUS, SOFT)], 30, pad, 238, cls="fade", style="animation-delay:.7s")[0])
+    # trois blocs
+    gap, y0, bh = 20, 282, 108
+    bw = (W - 2 * pad - 2 * gap) / 3
+    for i, (kind, label, handle) in enumerate(CONTACT_BLOCS):
+        x = pad + i * (bw + gap)
+        sh = fh.fit(handle, 21, bw - 78 - 16)
+        g = (f'<rect x="{num(x)}" y="{y0}" width="{num(bw)}" height="{bh}" rx="18" fill="{DARK}" fill-opacity=".7" stroke="{FIL}" stroke-opacity=".75" stroke-width="1.5"/>'
+             + contact_icon(kind, x + 42, y0 + bh / 2)
+             + text_g(fl, [(label, INK)], 29, x + 78, y0 + 50)[0]
+             + text_g(fh, [(handle, MUTED)], sh, x + 78, y0 + 82)[0]
+             + arrow(x + bw - 34, y0 + 22))
+        body.append(f'<g{anim("up", 1.0 + i * .15)}>{g}</g>')
+    # ligne dorée ondulée, onde secondaire, points et losanges
+
+    def wy(x, a=1.0, ph=0.0):
+        return 468 + a * (16 * math.sin(2 * math.pi * x / 520 + ph) + 9 * math.sin(2 * math.pi * x / 230 + 1.3 + ph))
+
+    xs = list(range(-20, W + 41, 40))
+    body.append(f'<path{anim("draw", .9, 2.0)} pathLength="1" d="{smooth([(x, wy(x, .7, 1.9) + 10) for x in xs])}" fill="none" stroke="{SOFT}" stroke-opacity=".28" stroke-width="1.3"/>')
+    body.append(glow_path(smooth([(x, wy(x)) for x in xs]), "gw", .9, 2.2, width=2.2))
+    pts = [(x, wy(x), rr, op) for x, rr, op in ((140, 2.4, .8), (300, 1.6, .6), (470, 2.8, .9), (600, 1.6, .6), (760, 2.4, .8), (880, 1.8, .7))]
+    pts += [(x, wy(x, .7, 1.9) + 10, 1.4, .5) for x in (220, 540, 820)]
+    body.append(sparks(pts, 1.8, .14))
+    for k, x in enumerate((380, 930)):
+        body.append(lz(x, wy(x), 6, 2.4 + k * .3, ry=8))
+    desc = ("Construisons quelque chose d'utile. " + CONTACT_SOUS + ". Disponible. "
+            + " ".join(f"{l} : {h}." for _, l, h in CONTACT_BLOCS))
+    return svg_v2(W, H, "Contact", desc, defs, "\n".join(body), style=ANIM2), dict(titre=s_t, sous_titre=30, bloc=29, adresse=21)
 
 
-# ---------------------------------------------------------------- stack à icônes (4 groupes, technologies de FAITS.md)
-# icône simple-icons (assets/icons/) ou None : un losange doré remplace l'icône absente du paquet
+# ---------------------------------------------------------------- chips (badges locaux, lisibles sur fond blanc et sombre)
+# style : « plein » (doré, texte bleu nuit), « point » (contour doré + point doré), « contour » ; icône simple-icons ou None
+CHIPS_DISPO = [
+    ("dispo", "Disponibilité octobre 2026", "plein"),
+    ("alternance", "Alternance 2026-2027 · à partir d'octobre", "point"),
+    ("major", "Major de promo B2 2025-2026 · ECE Paris", "point"),
+]
+CHIPS_COMPETENCES = [("ml", "Machine Learning"), ("genai", "GenAI"), ("python", "Python"), ("sql", "SQL"), ("data-analysis", "Data Analysis")]
 STACK = [
-    ("DATA", [("python", "Python"), ("pandas", "pandas"), (None, "matplotlib"), ("plotly", "Plotly"), ("streamlit", "Streamlit")]),
+    ("Data", [("python", "Python"), (None, "SQL"), ("pandas", "pandas"), (None, "matplotlib"), ("plotly", "Plotly"), ("streamlit", "Streamlit")]),
     ("IA / ML", [(None, "TF-IDF + Random Forest"), ("huggingface", "API Hugging Face")]),
-    ("DEV", [("jupyter", "Notebooks"), ("claude", "Claude Code"), ("wordpress", "WordPress")]),
-    ("OUTILS", [("hubspot", "HubSpot (compte gratuit)"), (None, "AWS (Cloud Foundations)")]),
+    ("Dév", [("jupyter", "Notebooks"), ("claude", "Claude Code"), ("wordpress", "WordPress")]),
+    ("Outils", [("hubspot", "HubSpot (compte gratuit)"), (None, "AWS (Cloud Foundations)")]),
 ]
 
 
@@ -505,36 +565,44 @@ def icon_path(name):
     return re.search(r'<path d="([^"]+)"', s).group(1)
 
 
-def stack_svg():
-    fl = font("ss600")
-    pad, sl, ch, cgap = 44, 30, 66, 14
-    y = pad
-    parts, n = [], 0
-    for gname, chips in STACK:
-        yb = y + 26 * 0.74
-        parts.append(eyebrow(gname, pad, yb, delay=.1 + n * .06, size=26)[0])
-        x, yc = pad, yb + 26
-        for key, label in chips:
-            lw = fl.width(label, sl)
-            cw = 20 + 30 + 14 + lw + 26
-            if x + cw > W - pad:
-                x, yc = pad, yc + ch + cgap
-            if key:
-                ico = f'<g transform="translate({num(x + 20)} {num(yc + 18)}) scale(1.25)"><path d="{icon_path(key)}" fill="{INK}"/></g>'
-            else:
-                ico = f'<path fill="{FIL}" d="{diamond(x + 35, yc + ch / 2, 8, 10)}"/>'
-            g = (
-                f'<rect x="{num(x)}" y="{num(yc)}" width="{num(cw)}" height="{ch}" rx="{ch / 2}" fill="{NAVY}" stroke="{FIL}" stroke-opacity=".55"/>'
-                + ico + text_g(fl, label, sl, x + 64, yc + 44)[0]
-            )
-            parts.append(f'<g{anim("up", .15 + n * .06)}>{g}</g>')
-            x += cw + cgap
-            n += 1
-        y = yc + ch + 36
-    H = y - 36 + pad
-    _, bg = frame(W, H)
-    desc = "Stack. " + " ".join(f"{g.capitalize()} : " + ", ".join(l for _, l in c) + "." for g, c in STACK)
-    return svg_v2(W, H, "Stack", desc, "", bg + "\n" + "\n".join(parts)), dict(libelle=sl)
+def slug(s):
+    s = s.lower().replace("é", "e").replace("+", " ")
+    return re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+
+
+def chip_svg(label, style="contour", icon=False):
+    """Pastille de 30 px de haut (texte de 15 px), fond opaque : même rendu sur GitHub clair et sombre."""
+    f = font("ss600")
+    H, size, padx = 30, 15, 13
+    lead = 14 if style == "point" else 0 if icon is False else 22
+    w = round(padx + lead + f.width(label, size) + padx + 1)
+    fill, stroke, ink = (FIL, FIL, DARK) if style == "plein" else (DARK2, FIL, INK)
+    parts = [f'<rect x=".75" y=".75" width="{w - 1.5}" height="{H - 1.5}" rx="{(H - 1.5) / 2}" fill="{fill}" stroke="{stroke}" stroke-opacity=".85" stroke-width="1.5"/>']
+    if style == "point":
+        parts.append(f'<circle cx="{padx + 4}" cy="{H / 2}" r="4" fill="{FIL}"/>')
+    elif icon:
+        parts.append(f'<g transform="translate({padx} {H / 2 - 8}) scale({16 / 24:.4f})"><path d="{icon_path(icon)}" fill="{INK}"/></g>')
+    elif icon is None:
+        parts.append(f'<path fill="{FIL}" d="{diamond(padx + 7, H / 2, 5, 6.5)}"/>')
+    parts.append(text_g(f, [(label, ink)], size, padx + lead, H / 2 + size * f.cap / 2)[0])
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {H}" width="{w}" height="{H}" role="img" aria-labelledby="t">\n'
+            f'<title id="t">{e(label)}</title>\n{"".join(parts)}\n</svg>\n')
+
+
+def chips():
+    d = ASSETS / "chips"
+    d.mkdir(exist_ok=True)
+    out = []
+    for name, label, style in CHIPS_DISPO:
+        out.append((f"chips/{name}.svg", chip_svg(label, style)))
+    for name, label in CHIPS_COMPETENCES:
+        out.append((f"chips/{name}.svg", chip_svg(label)))
+    for _, items in STACK:
+        for icon, label in items:
+            out.append((f"chips/stack-{slug(label)}.svg", chip_svg(label, icon=icon)))
+    for fname, s in out:
+        write(ASSETS / fname, s)
+    return [(f, s, {}) for f, s in out]
 
 
 # ---------------------------------------------------------------- cartes de projets (texte seul, chiffres dans les phrases)
@@ -735,18 +803,17 @@ def apercu(path, items, reduce=False):
 # ---------------------------------------------------------------- point d'entrée
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("cibles", nargs="*", help="hero disponibilite footer flow idcard stack cards captures building entetes (défaut : tout le profil)")
+    ap.add_argument("cibles", nargs="*", help="hero flow contact chips footer cards captures building entetes (défaut : tout le profil sauf footer)")
     ap.add_argument("--fonts", required=True, help="dossier des .woff de @fontsource/playfair-display et @fontsource/source-sans-3")
     ap.add_argument("--apercu", help="chemin d'une page HTML d'aperçu de tous les SVG, à garder hors du dépôt")
     a = ap.parse_args()
     for key, fname in FONT_FILES.items():
         FONTS[key] = Font(Path(a.fonts) / f"{fname}.woff")
     simples = {
-        "hero": ("hero.svg", hero_svg), "disponibilite": ("disponibilite.svg", disponibilite_svg), "footer": ("footer.svg", lambda: (footer_svg(), {})),
-        "flow": ("flow.svg", flow_svg), "idcard": ("card.svg", idcard_svg),
-        "stack": ("stack.svg", stack_svg), "building": ("building.svg", building_svg),
+        "hero": ("hero.svg", hero_svg), "flow": ("flow.svg", flow_svg), "contact": ("contact.svg", contact_svg),
+        "footer": ("footer.svg", lambda: (footer_svg(), {})), "building": ("building.svg", building_svg),
     }
-    cibles = a.cibles or list(simples) + ["cards", "captures"]
+    cibles = a.cibles or [c for c in simples if c != "footer"] + ["chips", "cards", "captures"]
     built = []
     for c in cibles:
         if c in simples:
@@ -754,6 +821,8 @@ if __name__ == "__main__":
             s, m = fn()
             write(ASSETS / fname, s)
             built.append((fname, s, m))
+        elif c == "chips":
+            built += chips()
         elif c == "cards":
             built += cards()
         elif c == "captures":
