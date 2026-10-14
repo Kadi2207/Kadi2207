@@ -47,6 +47,68 @@ Portfolio : lien à venir
 | 2026, avril à juin | Consulat du Mali | Stagiaire Data & Innovation Digitale | Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. *(estimation)* |
 | 2025, juin à septembre | Femmes Audacieuses | Analyse de données & Business | KPIs et reporting pour la direction : +30 % d'engagement. |
 
+## ◆ Projets
+
+<p align="center">
+  <img src="assets/projet-tcim.svg" alt="Projet en vedette, depuis avril 2026 : TCIM, sécurisation de données de santé. Volets : Machine Learning, Data Engineering, Automatisation, Dashboard. Le besoin : détecter automatiquement les données médicales sensibles, sans intervention humaine. Ce que j'ai construit : un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur environ 190 textes médicaux annotés, dans une décision à 3 couches : règles, modèle, arbitre ; les données classées sensibles sont chiffrées automatiquement. Le résultat : une détection sans intervention humaine, un score de conformité sur 100 recalculé en temps réel et un rapport PDF automatisé. Chiffres : 82,5 % de précision, 300 arbres, projet noté 19,75/20." width="100%">
+</p>
+
+<p align="center">
+  <a href="https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing"><img src="assets/chips/demo-video.svg" alt="Voir la démo vidéo"></a>
+</p>
+
+<details>
+<summary><b>TCIM, sécurisation de données de santé</b> : 82,5 % de précision, projet noté 19,75/20</summary>
+
+**Contexte** : depuis avril 2026, partie IA du projet TCIM / Skills4Mind. Il s'agit de repérer automatiquement les données médicales sensibles, sur des données synthétiques générées avec Faker (50 patients, 66 comptes).
+
+**Méthode** : modèle supervisé scikit-learn (TF-IDF + Random Forest de 300 arbres) entraîné sur environ 190 textes médicaux annotés, dans une décision à 3 couches : règles déterministes, modèle ML, arbitre. Rappel privilégié par choix : dans un contexte sensible, une donnée manquée coûte plus cher qu'un faux positif. Random Forest choisi pour son explicabilité et la taille du corpus.
+
+**Valeur** : chiffrement automatique des données classées sensibles (Fernet, AES-128 CBC + HMAC-SHA256), détection d'intrusion sur 4 vecteurs d'attaque avec alertes et blocage de comptes, rapport PDF automatisé. Score de conformité sur 100 (chiffrement 30 %, traçabilité 30 %, contrôle d'accès 20 %, complétude 20 %) recalculé en temps réel par requêtes SQL d'agrégation sur PostgreSQL (après migration depuis SQLite), et suivi dans un dashboard Chart.js (KPI, répartition de la sensibilité, accès par rôle).
+
+[Voir la démo vidéo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing) · Présentation du projet sur demande
+
+</details>
+
+<details>
+<summary><b>Dashboard e-commerce</b> : 397 884 lignes de transactions, 6 indicateurs et 6 graphiques</summary>
+
+**Contexte** : janvier 2026. Analyser l'activité d'un site e-commerce à partir de 397 884 lignes de transactions (18 532 factures).
+
+**Méthode** : nettoyage et analyse avec Python et pandas, puis restitution dans un dashboard Streamlit + Plotly de 6 indicateurs et 6 graphiques.
+
+**Valeur** : une lecture rapide de l'activité : chiffre d'affaires de £8,91 M sur données nettoyées, panier moyen de £481, Royaume-Uni à 82 % du chiffre d'affaires.
+
+[Dépôt GitHub](https://github.com/Kadi2207/ecommerce-dashboard-analytics) · voir les captures ci-dessous
+
+</details>
+
+<details>
+<summary><b>Hackathon WMDP</b> : 6 LLMs open source évalués, 0 % de refus sur Llama et Qwen</summary>
+
+**Contexte** : mars 2026, autrice unique. Évaluer la sécurité de LLMs open source face à des prompts adversariaux.
+
+**Méthode** : corpus de 250 prompts adversariaux en 5 types de reformulation (direct, académique, contextuel, rôle, fragmenté) ; 6 LLMs interrogés via l'API Hugging Face sur 60 prompts, soit 360 requêtes.
+
+**Valeur** : 0 % de refus sur Llama et Qwen (4 modèles), mesuré par détection de mots-clés. Limite documentée : les réponses vides des modèles DeepSeek-R1 faussent leur score, aucune comparaison valide n'est faite à leur sujet.
+
+[Dépôt GitHub](https://github.com/Kadi2207/wmdp-cyber)
+
+</details>
+
+<details>
+<summary><b>Audit migration CRM (RevOps)</b> : qualité de 734 comptes et 5 234 contacts avant migration</summary>
+
+**Contexte** : préparer une migration Salesforce vers HubSpot, sur données synthétiques issues de Kaggle (aucune donnée d'entreprise).
+
+**Méthode** : audit de qualité des données de 734 comptes et 5 234 contacts dans un notebook pandas / matplotlib.
+
+**Valeur** : repérer les problèmes de qualité avant la migration plutôt qu'après l'import. En complément, sur un compte HubSpot gratuit : import de 950 contacts avec mapping et 0 erreur.
+
+[Dépôt GitHub](https://github.com/Kadi2207/revops-crm-migration-analysis)
+
+</details>
+
 ## ◆ Le dashboard en images
 
 Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur les graphiques.

@@ -662,12 +662,14 @@ def chip_svg(label, style="contour", icon=False):
     """Pastille de 30 px de haut (texte de 15 px), fond opaque : même rendu sur GitHub clair et sombre."""
     f = font("ss600")
     H, size, padx = 30, 15, 13
-    lead = 14 if style == "point" else 0 if icon is False else 22
+    lead = 14 if style == "point" else 18 if style == "video" else 0 if icon is False else 22
     w = round(padx + lead + f.width(label, size) + padx + 1)
-    fill, stroke, ink = (FIL, FIL, DARK) if style == "plein" else (DARK2, FIL, INK)
+    fill, stroke, ink = (FIL, FIL, DARK) if style in ("plein", "video") else (DARK2, FIL, INK)
     parts = [f'<rect x=".75" y=".75" width="{w - 1.5}" height="{H - 1.5}" rx="{(H - 1.5) / 2}" fill="{fill}" stroke="{stroke}" stroke-opacity=".85" stroke-width="1.5"/>']
     if style == "point":
         parts.append(f'<circle cx="{padx + 4}" cy="{H / 2}" r="4" fill="{FIL}"/>')
+    elif style == "video":  # triangle « lecture »
+        parts.append(f'<path fill="{DARK}" d="M{padx + 1} {H / 2 - 6}L{padx + 11} {H / 2}L{padx + 1} {H / 2 + 6}Z"/>')
     elif icon:
         parts.append(f'<g transform="translate({padx} {H / 2 - 8}) scale({16 / 24:.4f})"><path d="{icon_path(icon)}" fill="{INK}"/></g>')
     elif icon is None:
@@ -826,6 +828,100 @@ def building_svg():
     return svg_v2(W, H, "En construction", desc, grad, bg + "\n" + "\n".join(parts)), dict(texte=sb, titre=38)
 
 
+# ---------------------------------------------------------------- projet en vedette : TCIM (récit en 3 temps, volets, chiffres)
+TCIM_TITRE = "TCIM, sécurisation de données de santé"
+TCIM_SUR = "PROJET EN VEDETTE  ·  DEPUIS AVRIL 2026"
+TCIM_VOLETS = ["Machine Learning", "Data Engineering", "Automatisation", "Dashboard"]
+TCIM_RECIT = [
+    ("LE BESOIN", "Détecter automatiquement les données médicales sensibles, sans intervention humaine."),
+    ("CE QUE J'AI CONSTRUIT", "Un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur environ 190 textes médicaux annotés, "
+     "dans une décision à 3 couches : règles, modèle, arbitre. Les données classées sensibles sont chiffrées automatiquement."),
+    ("LE RÉSULTAT", "Une détection sans intervention humaine, un score de conformité sur 100 recalculé en temps réel "
+     "et un rapport PDF automatisé."),
+]
+TCIM_CHIFFRES = [("82,5 %", "de précision"), ("300", "arbres (Random Forest)"), ("19,75/20", "note du projet")]
+DEMO = [("demo-video", "Voir la démo vidéo"), ("demo-video-en", "Watch the video demo")]
+
+
+def projet_tcim_svg():
+    fe, ft, fp, fb, fn = font("ss700"), font("pf700"), font("ss600"), font("ss400"), font("pf700")
+    pad = 56
+    body = []  # le panneau de fond est ajouté à la fin, une fois la hauteur connue
+    # en-tête : surtitre, titre, filet doré prolongé d'un filet beige (en boucle)
+    body.append(eyebrow(TCIM_SUR, pad, 78, delay=.1, size=22, color=BEIGE)[0])
+    s_t = ft.fit(TCIM_TITRE, 52, W - 2 * pad)
+    body.append(text_g(ft, [(TCIM_TITRE, INK)], s_t, pad, 146, cls="up", style="animation-delay:.2s")[0])
+    body.append(rule(pad, 176, pad + 120, .5, .7, 2.5, loop=True))
+    body.append(lz(pad + 134, 176, 5, 1.0, loop=True))
+    body.append(rule(pad + 148, 176, pad + 196, 1.15, .5, 1.2, color=BEIGE, opacity=.6, loop=True))
+    body.append(sparks([(720, 44, 1.2, .45), (790, 62, 1.6, .55), (858, 36, 1.2, .5), (918, 66, 2, .7), (962, 92, 1.1, .4)], 1.3, .12, loop=True))
+    # 4 pastilles de volets, contour beige
+    ps, ph, gap = 25, 46, 14
+    ws = [fp.width(v, ps) + 2 * 18 + 18 for v in TCIM_VOLETS]
+    if sum(ws) + gap * 3 > W - 2 * pad:
+        k = (W - 2 * pad - gap * 3 - len(ws) * 54) / sum(w - 54 for w in ws)
+        ps *= k
+        ws = [fp.width(v, ps) + 54 for v in TCIM_VOLETS]
+    x, py = pad, 212
+    for i, (v, w) in enumerate(zip(TCIM_VOLETS, ws)):
+        g = (f'<rect x="{num(x)}" y="{py}" width="{num(w)}" height="{ph}" rx="{ph / 2}" fill="{DARK}" stroke="{BEIGE}" stroke-opacity=".75" stroke-width="1.5"/>'
+             + text_g(fp, [(v, CREME)], ps, x + 36, py + ph / 2 + ps * fp.cap / 2)[0])
+        body.append(f'<g{anim("fade", .8 + i * .12)}>{g}</g>')
+        body.append(lz(x + 22, py + ph / 2, 5, 1.3 + i * .15, ry=6.5, loop=True))
+        x += w + gap
+    # récit en 3 temps : fil d'or vertical, losanges qui se remplissent l'un après l'autre (en boucle)
+    xl, xt, sl, sb, lh = pad + 14, pad + 52, 24, 29, 39
+    y, centers, blocs = 330, [], []
+    for k, (lab, txt) in enumerate(TCIM_RECIT):
+        c = y - sl * fe.cap / 2
+        centers.append(c)
+        g = text_g(fe, [(lab, BEIGE)], sl, xt, y, tracking=.14)[0]
+        svg, last = para(fb, txt, sb, xt, y + 44, W - pad - xt, lh, color=INK)
+        blocs.append(f'<g{anim("fade", 1.1 + k * .25)}>{g}{svg}</g>')
+        y = last + 62
+    rn = 12
+    body.append(f'<path d="M{xl} {num(centers[0])}V{num(centers[-1])}" stroke="{FIL}" stroke-opacity=".25" stroke-width="2" fill="none"/>')
+    t0, pas = 1.8, 1.6
+    for k, c in enumerate(centers):
+        t = t0 + k * pas
+        if k:
+            body.append(f'<path{anim("draw", t - .6, .6, True)} pathLength="1" d="M{xl} {num(centers[k - 1] + rn)}V{num(c - rn)}" stroke="{FIL}" stroke-width="2.5" fill="none"/>')
+        body.append(f'<path fill="{DARK2}" stroke="{FIL}" stroke-width="2" d="{diamond(xl, c, rn, rn * 1.2)}"/>')
+        body.append(f'<path{anim("grow", t, .7, True)} fill="{FIL}" d="{diamond(xl, c, rn - 4, (rn - 4) * 1.2)}"/>')
+    body += blocs
+    # chiffres clés : trois encadrés
+    y0, bh, g2 = y - 20, 144, 20
+    bw = (W - 2 * pad - 2 * g2) / 3
+    for i, (n, lab) in enumerate(TCIM_CHIFFRES):
+        bx = pad + i * (bw + g2)
+        cx = bx + bw / 2
+        sl2 = fb.fit(lab, 25, bw - 24)
+        g = (f'<rect x="{num(bx)}" y="{num(y0)}" width="{num(bw)}" height="{bh}" rx="16" fill="{DARK}" fill-opacity=".7" stroke="{FIL}" stroke-opacity=".6" stroke-width="1.5"/>'
+             + text_g(fn, [(n, FIL)], 50, cx, y0 + 68, anchor="middle")[0]
+             + text_g(fb, [(lab, MUTED)], sl2, cx, y0 + 120, anchor="middle")[0])
+        body.append(f'<g{anim("up", 1.9 + i * .15)}>{g}</g>')
+        body.append(rule(cx - 28, y0 + 88, cx + 28, 6.6 + i * .2, .5, 1.5, color=BEIGE, opacity=.7, loop=True))
+        body.append(lz(bx + bw - 20, y0 + 20, 4, 7.2 + i * .15, fill=BEIGE, ry=5, loop=True))
+    H = y0 + bh + pad
+    defs, bg = panel(W, H, "tb", cx="85%", cy="0%")
+    desc = (f"{TCIM_TITRE}. Depuis avril 2026. Volets : " + ", ".join(TCIM_VOLETS) + ". "
+            + " ".join(f"{l.capitalize()} : {t}" for l, t in TCIM_RECIT) + " Chiffres : "
+            + ", ".join(f"{n} {l}" for n, l in TCIM_CHIFFRES) + ".")
+    return (svg_v2(W, H, TCIM_TITRE, desc, defs, bg + "\n" + "\n".join(body), style=ANIM2 + kf_css()),
+            dict(titre=s_t, volets=ps, recit=sb, libelle=sl, chiffre=50))
+
+
+def projets():
+    s, m = projet_tcim_svg()
+    write(ASSETS / "projet-tcim.svg", s)
+    out = [("projet-tcim.svg", s, m)]
+    for name, label in DEMO:
+        c = chip_svg(label, "video")
+        write(ASSETS / "chips" / f"{name}.svg", c)
+        out.append((f"chips/{name}.svg", c, {}))
+    return out
+
+
 # ---------------------------------------------------------------- en-têtes des README des 3 dépôts de projets
 ENTETES = [
     ("ecommerce-dashboard-analytics", "Dashboard e-commerce"),
@@ -896,7 +992,7 @@ def apercu(path, items, reduce=False):
 # ---------------------------------------------------------------- point d'entrée
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("cibles", nargs="*", help="hero flow contact chips footer cards captures building entetes (défaut : tout le profil sauf footer)")
+    ap.add_argument("cibles", nargs="*", help="hero flow contact chips footer cards captures building projets entetes (défaut : tout le profil sauf footer)")
     ap.add_argument("--fonts", required=True, help="dossier des .woff de @fontsource/playfair-display et @fontsource/source-sans-3")
     ap.add_argument("--apercu", help="chemin d'une page HTML d'aperçu de tous les SVG, à garder hors du dépôt")
     a = ap.parse_args()
@@ -920,6 +1016,8 @@ if __name__ == "__main__":
             built += cards()
         elif c == "captures":
             built += captures()
+        elif c == "projets":
+            built += projets()
         elif c == "entetes":
             entetes()
         else:
