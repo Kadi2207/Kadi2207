@@ -60,6 +60,19 @@ Portfolio: link coming soon
 </p>
 
 <details>
+<summary><b>Embedding Lab, an agent over meeting minutes</b>: MRR from 0.526 to 0.716 on dev after contrastive fine-tuning (significant gap on dev, not significant on the sealed test set)</summary>
+
+**Context**: November 2026, 3-week solo project (Makers piscine, Intelligence Lab, ECE Paris). Build an agent that reads meeting minutes and answers by citing its evidence, on a fictional corpus written for the project (12 projects, 26 meetings).
+
+**Method**: contrastive fine-tuning of a multilingual embedding model (e5-small, 371 triplets), hybrid BM25 and embedding search, controlled RAG where every citation is checked by the code, automatic extraction of units and relations with an LLM, bootstrap confidence intervals and permutation tests.
+
+**Value**: the agent tells a decision in force from a replaced one, flags a conflict it cannot settle, drafts an email without sending it and abstains when the sources do not contain the answer. With controlled RAG, the expected unit is cited for 24 queries out of 25 on dev. Documented weak point: automatically extracted relations (strict F1 of 0.406 on dev).
+
+[GitHub repository](https://github.com/Kadi2207/semantic-agent-engine) and [video demo](https://drive.google.com/file/d/1A4HDj5xyuPv-5aGcpKXTdHA3EXMbnUb0/view?usp=sharing)
+
+</details>
+
+<details>
 <summary><b>TCIM, securing health data</b>: 82.5% precision, project graded 19.75/20</summary>
 
 **Context**: since April 2026, AI part of the TCIM / Skills4Mind project. The goal is to automatically spot sensitive medical data, on synthetic data generated with Faker (50 patients, 66 accounts).

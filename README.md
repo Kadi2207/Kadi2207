@@ -58,6 +58,19 @@ Portfolio : lien à venir
 </p>
 
 <details>
+<summary><b>Embedding Lab, agent sur comptes rendus de réunions</b> : MRR de 0,526 à 0,716 en dev après fine-tuning contrastif (écart significatif en dev, non significatif en test scellé)</summary>
+
+**Contexte** : novembre 2026, projet solo de 3 semaines (piscine Makers, Intelligence Lab, ECE Paris). Construire un agent qui lit des comptes rendus de réunions et répond en citant sa preuve, sur un corpus fictif écrit pour le projet (12 projets, 26 réunions).
+
+**Méthode** : fine-tuning contrastif d'un modèle d'embeddings multilingue (e5-small, 371 triplets), recherche hybride BM25 et embeddings, RAG contrôlé dont chaque citation est vérifiée par le code, extraction automatique des unités et des relations par LLM, intervalles de confiance par bootstrap et tests de permutation.
+
+**Valeur** : l'agent distingue une décision en vigueur d'une décision remplacée, signale un conflit qu'il ne peut pas trancher, prépare un brouillon d'email sans l'envoyer et s'abstient quand les sources ne contiennent pas la réponse. Avec le RAG contrôlé, l'unité attendue est citée pour 24 requêtes sur 25 en dev. Point faible documenté : les relations extraites automatiquement (F1 strict de 0,406 en dev).
+
+[Dépôt GitHub](https://github.com/Kadi2207/semantic-agent-engine) et [démo vidéo](https://drive.google.com/file/d/1A4HDj5xyuPv-5aGcpKXTdHA3EXMbnUb0/view?usp=sharing)
+
+</details>
+
+<details>
 <summary><b>TCIM, sécurisation de données de santé</b> : 82,5 % de précision, projet noté 19,75/20</summary>
 
 **Contexte** : depuis avril 2026, partie IA du projet TCIM / Skills4Mind. Il s'agit de repérer automatiquement les données médicales sensibles, sur des données synthétiques générées avec Faker (50 patients, 66 comptes).
