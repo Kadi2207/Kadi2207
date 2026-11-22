@@ -1,7 +1,7 @@
 <p align="right"><a href="README.md">Version française</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Banner (text in French). Kadidiatou Bagayoko. Student in Artificial Intelligence &amp; Data Science. Villiers-sur-Marne, France; kadibaga22@gmail.com; LinkedIn. Passionate about data and AI, looking for a work-study placement (alternance) in Data &amp; AI, available now. Quote: understand the need, build the solution, deliver the impact." width="100%">
+  <img src="assets/hero.svg" alt="Banner (text in French). Kadidiatou Bagayoko. Student in Artificial Intelligence &amp; Data Science. Villiers-sur-Marne, France; kadibaga22@gmail.com; LinkedIn. Looking for a work-study placement (alternance) in Data &amp; AI, available now. Quote: understand the need, build the solution, deliver the impact." width="100%">
 </p>
 
 <p align="center">
@@ -38,7 +38,7 @@ I don't stop at analysis: I build complete solutions, from the business need to 
 Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.app/)
 
 <p align="center">
-  <img src="assets/flow.svg" alt="Diagram (text in French): from need to solution, through innovative digital strategies. Four steps linked by a gold thread, checked off one after another. 1, Need: process analysis and recommendations presented to the Consul (Consulate of Mali). 2, Cleaning: 397,884 transaction rows cleaned (e-commerce), quality audit of 5,234 contacts (RevOps). 3, Model / analysis: TF-IDF + Random Forest (TCIM), LLMs through the Hugging Face API (WMDP). 4, Dashboard: Streamlit + Plotly, KPIs and reporting for management." width="100%">
+  <img src="assets/flow.svg" alt="Diagram (text in French): from need to solution, through concrete data and AI strategies. Four steps linked by a gold thread, checked off one after another. 1, Need: process analysis and recommendations presented to the Consul (Consulate of Mali). 2, Cleaning: 397,884 transaction rows cleaned (e-commerce), quality audit of 5,234 contacts (RevOps). 3, Model / analysis: TF-IDF + Random Forest (TCIM), LLMs through the Hugging Face API (WMDP). 4, Dashboard: Streamlit + Plotly, KPIs and reporting for management." width="100%">
 </p>
 
 ## ◆ Experience

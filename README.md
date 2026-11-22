@@ -1,7 +1,7 @@
 <p align="right"><a href="README.en.md">English version</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Kadidiatou Bagayoko. Étudiante en Intelligence Artificielle &amp; Data Science. Villiers-sur-Marne, France ; kadibaga22@gmail.com ; LinkedIn. Passionnée par la data et l'IA, je recherche une alternance en Data &amp; IA, disponible dès maintenant. Citation : Comprendre le besoin, construire la solution, livrer l'impact." width="100%">
+  <img src="assets/hero.svg" alt="Kadidiatou Bagayoko. Étudiante en Intelligence Artificielle &amp; Data Science. Villiers-sur-Marne, France ; kadibaga22@gmail.com ; LinkedIn. Je recherche une alternance en Data &amp; IA, disponible dès maintenant. Citation : Comprendre le besoin, construire la solution, livrer l'impact." width="100%">
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@ Je ne m'arrête pas à l'analyse : je construis des solutions complètes, du bes
 Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.app/)
 
 <p align="center">
-  <img src="assets/flow.svg" alt="Du besoin à la solution, à travers des stratégies digitales innovantes. Quatre étapes reliées par un fil d'or, validées l'une après l'autre. 1, Besoin : analyse des processus et recommandations présentées au Consul (Consulat du Mali). 2, Nettoyage : 397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps). 3, Modèle / analyse : TF-IDF + Random Forest (TCIM), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
+  <img src="assets/flow.svg" alt="Du besoin à la solution, à travers des stratégies data et IA concrètes. Quatre étapes reliées par un fil d'or, validées l'une après l'autre. 1, Besoin : analyse des processus et recommandations présentées au Consul (Consulat du Mali). 2, Nettoyage : 397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps). 3, Modèle / analyse : TF-IDF + Random Forest (TCIM), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
 </p>
 
 ## ◆ Expériences

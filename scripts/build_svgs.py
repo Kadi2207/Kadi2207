@@ -372,7 +372,7 @@ GOLD_DEEP = "#A8741F"  # bout du trait lumineux sur beige (le doré clair #E2BD7
 NOM = "Kadidiatou Bagayoko"
 HERO_SOUS = [("Étudiante en Intelligence Artificielle ", B_INK), ("&", B_GOLD), (" Data Science", B_INK)]
 HERO_CONTACT = ["Villiers-sur-Marne, France", "kadibaga22@gmail.com", "LinkedIn"]
-HERO_PHRASE = "Passionnée par la data et l'IA, je recherche une alternance en Data & IA, disponible dès maintenant."
+HERO_PHRASE = "Je recherche une alternance en Data & IA, disponible dès maintenant."
 CITATION = ["Comprendre le besoin,", "construire la solution,", "livrer l'impact."]
 
 
@@ -498,7 +498,7 @@ def footer_svg():
 
 # ---------------------------------------------------------------- schéma « Du besoin à la solution » (fil d'or vertical)
 FLOW_TITRE = "Du besoin à la solution"
-FLOW_SOUS = "à travers des stratégies digitales innovantes"
+FLOW_SOUS = "à travers des stratégies data et IA concrètes"
 ETAPES = [
     ("Besoin", "Analyse des processus et recommandations présentées au Consul (Consulat du Mali)"),
     ("Nettoyage", "397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps)"),
