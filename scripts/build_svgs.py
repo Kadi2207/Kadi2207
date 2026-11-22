@@ -796,7 +796,7 @@ CHANTIERS = [
     ("Portfolio + assistant chatbot IA", "en cours", [
         "Développé avec Claude Code",
         "Connecté à une API de modèle de langage",
-        "Lien à venir",
+        "En ligne : kadidiatou-bagayoko.vercel.app",
     ]),
 ]
 
