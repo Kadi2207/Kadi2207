@@ -372,7 +372,7 @@ GOLD_DEEP = "#A8741F"  # bout du trait lumineux sur beige (le doré clair #E2BD7
 NOM = "Kadidiatou Bagayoko"
 HERO_SOUS = [("Étudiante en Intelligence Artificielle ", B_INK), ("&", B_GOLD), (" Data Science", B_INK)]
 HERO_CONTACT = ["Villiers-sur-Marne, France", "kadibaga22@gmail.com", "LinkedIn"]
-HERO_PHRASE = "Passionnée par la data et l'IA, je recherche une alternance en Data & IA à partir d'octobre 2026."
+HERO_PHRASE = "Passionnée par la data et l'IA, je recherche une alternance en Data & IA, disponible dès maintenant."
 CITATION = ["Comprendre le besoin,", "construire la solution,", "livrer l'impact."]
 
 
@@ -635,14 +635,14 @@ def contact_svg():
 # ---------------------------------------------------------------- chips (badges locaux, lisibles sur fond blanc et sombre)
 # style : « plein » (doré, texte bleu nuit), « point » (contour doré + point doré), « contour » ; icône simple-icons ou None
 CHIPS_DISPO = [
-    ("dispo", "Disponibilité octobre 2026", "plein"),
-    ("alternance", "Alternance 2026-2027 · à partir d'octobre", "point"),
-    ("major", "Major de promo B2 2025-2026 · ECE Paris", "point"),
+    ("dispo", "Disponible dès maintenant", "plein"),
+    ("alternance", "Alternance 2026-2027", "point"),
+    ("major", "Major de promo B2 2025-2026, ECE Paris", "point"),
 ]
 CHIPS_COMPETENCES = [("ml", "Machine Learning"), ("genai", "GenAI"), ("python", "Python"), ("sql", "SQL"), ("data-analysis", "Data Analysis")]
 STACK = [
     ("Data", [("python", "Python"), (None, "SQL"), ("pandas", "pandas"), (None, "matplotlib"), ("plotly", "Plotly"), ("streamlit", "Streamlit")]),
-    ("IA / ML", [(None, "TF-IDF + Random Forest"), ("huggingface", "API Hugging Face")]),
+    ("IA / ML", [(None, "TF-IDF + Random Forest"), ("huggingface", "API Hugging Face"), (None, "Sentence Transformers"), (None, "RAG")]),
     ("Dév", [("jupyter", "Notebooks"), ("claude", "Claude Code"), ("wordpress", "WordPress")]),
     ("Outils", [("hubspot", "HubSpot (compte gratuit)"), (None, "AWS (Cloud Foundations)")]),
 ]
@@ -789,7 +789,7 @@ def captures():
 CHANTIERS = [
     ("TCIM / Skills4Mind", "depuis avril 2026", [
         "Partie IA : classification automatique de données de santé",
-        "3 couches (règles, ML, arbitre), accuracy de 82,5 %",
+        "3 couches (règles, ML, arbitre), précision de 82,5 %",
         "RGPD / RBAC, chiffrement Fernet (AES-128 CBC + HMAC-SHA256)",
         "Présentation du projet sur demande",
     ]),
@@ -1002,7 +1002,7 @@ if __name__ == "__main__":
         "hero": ("hero.svg", hero_svg), "flow": ("flow.svg", flow_svg), "contact": ("contact.svg", contact_svg),
         "footer": ("footer.svg", lambda: (footer_svg(), {})), "building": ("building.svg", building_svg),
     }
-    cibles = a.cibles or [c for c in simples if c != "footer"] + ["chips", "cards", "captures"]
+    cibles = a.cibles or [c for c in simples if c not in ("footer", "building")] + ["chips", "captures"]
     built = []
     for c in cibles:
         if c in simples:

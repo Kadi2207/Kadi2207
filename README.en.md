@@ -1,13 +1,13 @@
 <p align="right"><a href="README.md">Version française</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Banner (text in French). Kadidiatou Bagayoko. Student in Artificial Intelligence &amp; Data Science. Villiers-sur-Marne, France; kadibaga22@gmail.com; LinkedIn. Passionate about data and AI, looking for a work-study placement (alternance) in Data &amp; AI from October 2026. Quote: understand the need, build the solution, deliver the impact." width="100%">
+  <img src="assets/hero.svg" alt="Banner (text in French). Kadidiatou Bagayoko. Student in Artificial Intelligence &amp; Data Science. Villiers-sur-Marne, France; kadibaga22@gmail.com; LinkedIn. Passionate about data and AI, looking for a work-study placement (alternance) in Data &amp; AI, available now. Quote: understand the need, build the solution, deliver the impact." width="100%">
 </p>
 
 <p align="center">
-  <img src="assets/chips/dispo.svg" alt="Disponibilité octobre 2026 (available from October 2026)">
-  <img src="assets/chips/alternance.svg" alt="Alternance 2026-2027 · à partir d'octobre (work-study 2026-2027, from October)">
-  <img src="assets/chips/major.svg" alt="Major de promo B2 2025-2026 · ECE Paris (top of the class, second year 2025-2026, ECE Paris)">
+  <img src="assets/chips/dispo.svg" alt="Disponible dès maintenant (available now)">
+  <img src="assets/chips/alternance.svg" alt="Alternance 2026-2027 (work-study 2026-2027)">
+  <img src="assets/chips/major.svg" alt="Major de promo B2 2025-2026, ECE Paris (top of the class, second year 2025-2026, ECE Paris)">
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a>
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> ◆ <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a>
 </p>
 
 > The visuals and the availability chips are in French; the text below is translated.
@@ -45,7 +45,7 @@ Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.a
 
 | Year | Organisation | Role | What I did |
 |---|---|---|---|
-| 2026, since April | TCIM / Skills4Mind | AI part (ongoing) | Automatic classification of health data (TF-IDF + Random Forest), 82.5% accuracy. Project presentation on request. |
+| 2026, since April | TCIM / Skills4Mind | AI part (ongoing) | Automatic classification of health data (TF-IDF + Random Forest), 82.5% precision. Project presentation on request. |
 | 2026, April to June | Consulate of Mali | Data & Digital Innovation intern | At the Consulate of Mali, I analysed processes, made data more reliable and presented optimisation recommendations to the Consul, which led to a 50% reduction in users' trips. *(estimate)* |
 | 2025, June to September | Femmes Audacieuses | Data analysis & Business | KPIs and reporting for management: +30% engagement. |
 
@@ -81,7 +81,7 @@ Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.a
 
 **Value**: automatic encryption of data classified as sensitive (Fernet, AES-128 CBC + HMAC-SHA256), intrusion detection on 4 attack vectors with alerts and account blocking, automated PDF report. Compliance score out of 100 (encryption 30%, traceability 30%, access control 20%, completeness 20%) recalculated in real time by SQL aggregation queries on PostgreSQL (after a migration from SQLite), and tracked in a Chart.js dashboard (KPIs, sensitivity breakdown, access by role).
 
-[Watch the video demo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing) · Project presentation on request
+[Watch the video demo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing). Project presentation on request.
 
 </details>
 
@@ -94,7 +94,7 @@ Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.a
 
 **Value**: a quick read of the activity: revenue of £8.91M on cleaned data, average basket of £481, United Kingdom at 82% of revenue.
 
-[GitHub repository](https://github.com/Kadi2207/ecommerce-dashboard-analytics) · see the screenshots below
+[GitHub repository](https://github.com/Kadi2207/ecommerce-dashboard-analytics), and the screenshots below.
 
 </details>
 
@@ -152,7 +152,7 @@ Real screenshots of the e-commerce dashboard (Streamlit + Plotly), cropped to th
 <img src="assets/chips/stack-python.svg" alt="Python"> <img src="assets/chips/stack-sql.svg" alt="SQL"> <img src="assets/chips/stack-pandas.svg" alt="pandas"> <img src="assets/chips/stack-matplotlib.svg" alt="matplotlib"> <img src="assets/chips/stack-plotly.svg" alt="Plotly"> <img src="assets/chips/stack-streamlit.svg" alt="Streamlit">
 
 **AI / ML**<br>
-<img src="assets/chips/stack-tf-idf-random-forest.svg" alt="TF-IDF + Random Forest"> <img src="assets/chips/stack-api-hugging-face.svg" alt="Hugging Face API">
+<img src="assets/chips/stack-tf-idf-random-forest.svg" alt="TF-IDF + Random Forest"> <img src="assets/chips/stack-api-hugging-face.svg" alt="Hugging Face API"> <img src="assets/chips/stack-sentence-transformers.svg" alt="Sentence Transformers"> <img src="assets/chips/stack-rag.svg" alt="RAG">
 
 **Dev**<br>
 <img src="assets/chips/stack-notebooks.svg" alt="Notebooks"> <img src="assets/chips/stack-claude-code.svg" alt="Claude Code"> <img src="assets/chips/stack-wordpress.svg" alt="WordPress">
@@ -176,7 +176,7 @@ Real screenshots of the e-commerce dashboard (Streamlit + Plotly), cropped to th
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> · <a href="https://github.com/Kadi2207">GitHub</a> · <a href="https://kadidiatou-bagayoko.vercel.app/">Portfolio</a>
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> ◆ <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> ◆ <a href="https://github.com/Kadi2207">GitHub</a> ◆ <a href="https://kadidiatou-bagayoko.vercel.app/">Portfolio</a>
 </p>
 
 <p align="center">

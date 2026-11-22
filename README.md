@@ -1,13 +1,13 @@
 <p align="right"><a href="README.en.md">English version</a></p>
 
 <p align="center">
-  <img src="assets/hero.svg" alt="Kadidiatou Bagayoko. Étudiante en Intelligence Artificielle &amp; Data Science. Villiers-sur-Marne, France ; kadibaga22@gmail.com ; LinkedIn. Passionnée par la data et l'IA, je recherche une alternance en Data &amp; IA à partir d'octobre 2026. Citation : Comprendre le besoin, construire la solution, livrer l'impact." width="100%">
+  <img src="assets/hero.svg" alt="Kadidiatou Bagayoko. Étudiante en Intelligence Artificielle &amp; Data Science. Villiers-sur-Marne, France ; kadibaga22@gmail.com ; LinkedIn. Passionnée par la data et l'IA, je recherche une alternance en Data &amp; IA, disponible dès maintenant. Citation : Comprendre le besoin, construire la solution, livrer l'impact." width="100%">
 </p>
 
 <p align="center">
-  <img src="assets/chips/dispo.svg" alt="Disponibilité octobre 2026">
-  <img src="assets/chips/alternance.svg" alt="Alternance 2026-2027 · à partir d'octobre">
-  <img src="assets/chips/major.svg" alt="Major de promo B2 2025-2026 · ECE Paris">
+  <img src="assets/chips/dispo.svg" alt="Disponible dès maintenant">
+  <img src="assets/chips/alternance.svg" alt="Alternance 2026-2027">
+  <img src="assets/chips/major.svg" alt="Major de promo B2 2025-2026, ECE Paris">
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a>
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> ◆ <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a>
 </p>
 
 ## ◆ À propos
@@ -43,7 +43,7 @@ Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.
 
 | Année | Structure | Rôle | Ce que j'ai fait |
 |---|---|---|---|
-| 2026, depuis avril | TCIM / Skills4Mind | Partie IA (en cours) | Classification automatique de données de santé (TF-IDF + Random Forest), accuracy de 82,5 %. Présentation du projet sur demande. |
+| 2026, depuis avril | TCIM / Skills4Mind | Partie IA (en cours) | Classification automatique de données de santé (TF-IDF + Random Forest), précision de 82,5 %. Présentation du projet sur demande. |
 | 2026, avril à juin | Consulat du Mali | Stagiaire Data & Innovation Digitale | Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. *(estimation)* |
 | 2025, juin à septembre | Femmes Audacieuses | Analyse de données & Business | KPIs et reporting pour la direction : +30 % d'engagement. |
 
@@ -79,7 +79,7 @@ Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.
 
 **Valeur** : chiffrement automatique des données classées sensibles (Fernet, AES-128 CBC + HMAC-SHA256), détection d'intrusion sur 4 vecteurs d'attaque avec alertes et blocage de comptes, rapport PDF automatisé. Score de conformité sur 100 (chiffrement 30 %, traçabilité 30 %, contrôle d'accès 20 %, complétude 20 %) recalculé en temps réel par requêtes SQL d'agrégation sur PostgreSQL (après migration depuis SQLite), et suivi dans un dashboard Chart.js (KPI, répartition de la sensibilité, accès par rôle).
 
-[Voir la démo vidéo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing) · Présentation du projet sur demande
+[Voir la démo vidéo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing). Présentation du projet sur demande.
 
 </details>
 
@@ -92,7 +92,7 @@ Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.
 
 **Valeur** : une lecture rapide de l'activité : chiffre d'affaires de £8,91 M sur données nettoyées, panier moyen de £481, Royaume-Uni à 82 % du chiffre d'affaires.
 
-[Dépôt GitHub](https://github.com/Kadi2207/ecommerce-dashboard-analytics) · voir les captures ci-dessous
+[Dépôt GitHub](https://github.com/Kadi2207/ecommerce-dashboard-analytics), et les captures ci-dessous.
 
 </details>
 
@@ -150,7 +150,7 @@ Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur l
 <img src="assets/chips/stack-python.svg" alt="Python"> <img src="assets/chips/stack-sql.svg" alt="SQL"> <img src="assets/chips/stack-pandas.svg" alt="pandas"> <img src="assets/chips/stack-matplotlib.svg" alt="matplotlib"> <img src="assets/chips/stack-plotly.svg" alt="Plotly"> <img src="assets/chips/stack-streamlit.svg" alt="Streamlit">
 
 **IA / ML**<br>
-<img src="assets/chips/stack-tf-idf-random-forest.svg" alt="TF-IDF + Random Forest"> <img src="assets/chips/stack-api-hugging-face.svg" alt="API Hugging Face">
+<img src="assets/chips/stack-tf-idf-random-forest.svg" alt="TF-IDF + Random Forest"> <img src="assets/chips/stack-api-hugging-face.svg" alt="API Hugging Face"> <img src="assets/chips/stack-sentence-transformers.svg" alt="Sentence Transformers"> <img src="assets/chips/stack-rag.svg" alt="RAG">
 
 **Dév**<br>
 <img src="assets/chips/stack-notebooks.svg" alt="Notebooks"> <img src="assets/chips/stack-claude-code.svg" alt="Claude Code"> <img src="assets/chips/stack-wordpress.svg" alt="WordPress">
@@ -174,7 +174,7 @@ Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur l
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> · <a href="https://github.com/Kadi2207">GitHub</a> · <a href="https://kadidiatou-bagayoko.vercel.app/">Portfolio</a>
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> ◆ <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> ◆ <a href="https://github.com/Kadi2207">GitHub</a> ◆ <a href="https://kadidiatou-bagayoko.vercel.app/">Portfolio</a>
 </p>
 
 <p align="center">
