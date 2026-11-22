@@ -33,7 +33,7 @@ Je développe et conçois des solutions Data & IA.
 
 Je ne m'arrête pas à l'analyse : je construis des solutions complètes, du besoin métier jusqu'au déploiement.
 
-Portfolio : lien à venir
+Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.app/)
 
 <p align="center">
   <img src="assets/flow.svg" alt="Du besoin à la solution, à travers des stratégies digitales innovantes. Quatre étapes reliées par un fil d'or, validées l'une après l'autre. 1, Besoin : analyse des processus et recommandations présentées au Consul (Consulat du Mali). 2, Nettoyage : 397 884 lignes de transactions nettoyées (e-commerce), audit qualité de 5 234 contacts (RevOps). 3, Modèle / analyse : TF-IDF + Random Forest (TCIM), LLMs via l'API Hugging Face (WMDP). 4, Dashboard : Streamlit + Plotly, KPIs et reporting pour la direction." width="100%">
@@ -174,7 +174,7 @@ Captures réelles du dashboard e-commerce (Streamlit + Plotly), recadrées sur l
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> · <a href="https://github.com/Kadi2207">GitHub</a> · Portfolio : lien à venir
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> · <a href="https://github.com/Kadi2207">GitHub</a> · <a href="https://kadidiatou-bagayoko.vercel.app/">Portfolio</a>
 </p>
 
 <p align="center">

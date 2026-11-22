@@ -35,7 +35,7 @@ I design and build Data & AI solutions.
 
 I don't stop at analysis: I build complete solutions, from the business need to deployment.
 
-Portfolio: link coming soon
+Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.app/)
 
 <p align="center">
   <img src="assets/flow.svg" alt="Diagram (text in French): from need to solution, through innovative digital strategies. Four steps linked by a gold thread, checked off one after another. 1, Need: process analysis and recommendations presented to the Consul (Consulate of Mali). 2, Cleaning: 397,884 transaction rows cleaned (e-commerce), quality audit of 5,234 contacts (RevOps). 3, Model / analysis: TF-IDF + Random Forest (TCIM), LLMs through the Hugging Face API (WMDP). 4, Dashboard: Streamlit + Plotly, KPIs and reporting for management." width="100%">
@@ -176,7 +176,7 @@ Real screenshots of the e-commerce dashboard (Streamlit + Plotly), cropped to th
 </p>
 
 <p align="center">
-  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> · <a href="https://github.com/Kadi2207">GitHub</a> · Portfolio: link coming soon
+  <a href="https://linkedin.com/in/kadi-bagayoko">LinkedIn</a> · <a href="mailto:kadibaga22@gmail.com">kadibaga22@gmail.com</a> · <a href="https://github.com/Kadi2207">GitHub</a> · <a href="https://kadidiatou-bagayoko.vercel.app/">Portfolio</a>
 </p>
 
 <p align="center">
