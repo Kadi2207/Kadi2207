@@ -79,7 +79,7 @@ Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.a
 
 **Method**: 3-layer hybrid classification: deterministic rules, a scikit-learn model (TF-IDF + Random Forest with 300 trees, trained on 197 fictional sentences), then a decision where a triggered rule overrides the model. Recall favoured by design: in a sensitive context, a missed record costs more than a false positive. Random Forest chosen for its explainability and the size of the corpus. Flask application on PostgreSQL with bcrypt, TOTP 2FA, role-based access control and an audit log.
 
-**Value**: diagnoses and medications classified as sensitive are encrypted automatically (Fernet, AES-128 CBC + HMAC-SHA256). Intrusion detection on 4 attack vectors, with alerts and account blocking. Compliance score out of 100 (encryption 30%, traceability 30%, access control 20%, completeness 20%) recalculated in real time by SQL aggregation queries, and tracked in a Chart.js dashboard. Documented limits: the notes field is not encrypted yet and the PDF report export is being fixed.
+**Value**: diagnoses, medications and notes classified as sensitive are encrypted automatically (Fernet, AES-128 CBC + HMAC-SHA256). Intrusion detection on 4 attack vectors, with alerts and account blocking. Compliance score out of 100 (encryption 30%, traceability 30%, access control 20%, completeness 20%) recalculated in real time by SQL aggregation queries, tracked in a Chart.js dashboard and exportable as a PDF report. Documented limit: a record is saved first, then encrypted right after its classification.
 
 [GitHub repository](https://github.com/Kadi2207/ai-health-data-security) and [video demo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing)
 
