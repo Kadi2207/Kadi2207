@@ -45,14 +45,14 @@ Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.a
 
 | Year | Organisation | Role | What I did |
 |---|---|---|---|
-| 2026, since April | TCIM / Skills4Mind | AI part (ongoing) | Automatic classification of health data (TF-IDF + Random Forest), 82.5% precision. Project presentation on request. |
+| 2026, since April | TCIM / Skills4Mind | AI part (ongoing) | Automatic classification of health data (TF-IDF + Random Forest), 82.5% accuracy on 40 test texts. [GitHub repository](https://github.com/Kadi2207/ai-health-data-security) |
 | 2026, April to June | Consulate of Mali | Data & Digital Innovation intern | At the Consulate of Mali, I analysed processes, made data more reliable and presented optimisation recommendations to the Consul, which led to a 50% reduction in users' trips. *(estimate)* |
 | 2025, June to September | Femmes Audacieuses | Data analysis & Business | KPIs and reporting for management: +30% engagement. |
 
 ## ◆ Projects
 
 <p align="center">
-  <img src="assets/projet-tcim.svg" alt="Featured project (text in French), since April 2026: TCIM, securing health data. Areas: Machine Learning, Data Engineering, Automation, Dashboard. The need: automatically detect sensitive medical data, without human intervention. What I built: a TF-IDF + Random Forest model (scikit-learn) trained on about 190 annotated medical texts, within a 3-layer decision: rules, model, arbiter; data classified as sensitive is encrypted automatically. The result: detection without human intervention, a compliance score out of 100 recalculated in real time and an automated PDF report. Figures: 82.5% precision, 300 trees, project graded 19.75/20." width="100%">
+  <img src="assets/projet-tcim.svg" alt="Featured project (text in French), since April 2026: TCIM, securing health data. Areas: Machine Learning, Data Engineering, Automation, Dashboard. The need: automatically detect sensitive medical data, without human intervention. What I built: a TF-IDF + Random Forest model (scikit-learn) trained on 197 annotated examples, within a 3-layer decision: rules, model, arbiter; diagnoses and medications classified as sensitive are encrypted automatically. The result: 82.5% accuracy on 40 test texts, intrusion detection on 4 attack vectors and a compliance score out of 100 recalculated in real time. Figures: 82.5% accuracy, 300 trees, 197 annotated examples." width="100%">
 </p>
 
 <p align="center">
@@ -73,15 +73,15 @@ Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.a
 </details>
 
 <details>
-<summary><b>TCIM, securing health data</b>: 82.5% precision, project graded 19.75/20</summary>
+<summary><b>TCIM, AI applied to health data security</b>: 82.5% accuracy on 40 test texts (small fictional corpus of 197 examples)</summary>
 
-**Context**: since April 2026, AI part of the TCIM / Skills4Mind project. The goal is to automatically spot sensitive medical data, on synthetic data generated with Faker (50 patients, 66 accounts).
+**Context**: since April 2026, internship at Skills4Mind. Automatically spot sensitive medical data and protect it, on synthetic data generated with Faker (50 patients, 66 accounts).
 
-**Method**: supervised scikit-learn model (TF-IDF + Random Forest with 300 trees) trained on about 190 annotated medical texts, within a 3-layer decision: deterministic rules, ML model, arbiter. Recall favoured by design: in a sensitive context, a missed record costs more than a false positive. Random Forest chosen for its explainability and the size of the corpus.
+**Method**: 3-layer hybrid classification: deterministic rules, a scikit-learn model (TF-IDF + Random Forest with 300 trees, trained on 197 fictional sentences), then a decision where a triggered rule overrides the model. Recall favoured by design: in a sensitive context, a missed record costs more than a false positive. Random Forest chosen for its explainability and the size of the corpus. Flask application on PostgreSQL with bcrypt, TOTP 2FA, role-based access control and an audit log.
 
-**Value**: automatic encryption of data classified as sensitive (Fernet, AES-128 CBC + HMAC-SHA256), intrusion detection on 4 attack vectors with alerts and account blocking, automated PDF report. Compliance score out of 100 (encryption 30%, traceability 30%, access control 20%, completeness 20%) recalculated in real time by SQL aggregation queries on PostgreSQL (after a migration from SQLite), and tracked in a Chart.js dashboard (KPIs, sensitivity breakdown, access by role).
+**Value**: diagnoses and medications classified as sensitive are encrypted automatically (Fernet, AES-128 CBC + HMAC-SHA256). Intrusion detection on 4 attack vectors, with alerts and account blocking. Compliance score out of 100 (encryption 30%, traceability 30%, access control 20%, completeness 20%) recalculated in real time by SQL aggregation queries, and tracked in a Chart.js dashboard. Documented limits: the notes field is not encrypted yet and the PDF report export is being fixed.
 
-[Watch the video demo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing). Project presentation on request.
+[GitHub repository](https://github.com/Kadi2207/ai-health-data-security) and [video demo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing)
 
 </details>
 

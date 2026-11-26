@@ -43,14 +43,14 @@ Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.
 
 | Année | Structure | Rôle | Ce que j'ai fait |
 |---|---|---|---|
-| 2026, depuis avril | TCIM / Skills4Mind | Partie IA (en cours) | Classification automatique de données de santé (TF-IDF + Random Forest), précision de 82,5 %. Présentation du projet sur demande. |
+| 2026, depuis avril | TCIM / Skills4Mind | Partie IA (en cours) | Classification automatique de données de santé (TF-IDF + Random Forest), exactitude (accuracy) de 82,5 % sur 40 textes de test. [Dépôt GitHub](https://github.com/Kadi2207/ai-health-data-security) |
 | 2026, avril à juin | Consulat du Mali | Stagiaire Data & Innovation Digitale | Au Consulat du Mali, j'ai analysé les processus, fiabilisé les données et présenté des recommandations d'optimisation au Consul, avec à la clé une réduction de 50 % des déplacements des usagers. *(estimation)* |
 | 2025, juin à septembre | Femmes Audacieuses | Analyse de données & Business | KPIs et reporting pour la direction : +30 % d'engagement. |
 
 ## ◆ Projets
 
 <p align="center">
-  <img src="assets/projet-tcim.svg" alt="Projet en vedette, depuis avril 2026 : TCIM, sécurisation de données de santé. Volets : Machine Learning, Data Engineering, Automatisation, Dashboard. Le besoin : détecter automatiquement les données médicales sensibles, sans intervention humaine. Ce que j'ai construit : un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur environ 190 textes médicaux annotés, dans une décision à 3 couches : règles, modèle, arbitre ; les données classées sensibles sont chiffrées automatiquement. Le résultat : une détection sans intervention humaine, un score de conformité sur 100 recalculé en temps réel et un rapport PDF automatisé. Chiffres : 82,5 % de précision, 300 arbres, projet noté 19,75/20." width="100%">
+  <img src="assets/projet-tcim.svg" alt="Projet en vedette, depuis avril 2026 : TCIM, sécurisation de données de santé. Volets : Machine Learning, Data Engineering, Automatisation, Dashboard. Le besoin : détecter automatiquement les données médicales sensibles, sans intervention humaine. Ce que j'ai construit : un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur 197 exemples annotés, dans une décision à 3 couches : règles, modèle, arbitre ; le diagnostic et les médicaments classés sensibles sont chiffrés automatiquement. Le résultat : une exactitude de 82,5 % sur 40 textes de test, une détection d'intrusion sur 4 vecteurs d'attaque et un score de conformité sur 100 recalculé en temps réel. Chiffres : 82,5 % d'exactitude (accuracy), 300 arbres, 197 exemples annotés." width="100%">
 </p>
 
 <p align="center">
@@ -71,15 +71,15 @@ Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.
 </details>
 
 <details>
-<summary><b>TCIM, sécurisation de données de santé</b> : 82,5 % de précision, projet noté 19,75/20</summary>
+<summary><b>TCIM, IA appliquée à la sécurité des données de santé</b> : exactitude (accuracy) de 82,5 % sur 40 textes de test (petit corpus fictif de 197 exemples)</summary>
 
-**Contexte** : depuis avril 2026, partie IA du projet TCIM / Skills4Mind. Il s'agit de repérer automatiquement les données médicales sensibles, sur des données synthétiques générées avec Faker (50 patients, 66 comptes).
+**Contexte** : depuis avril 2026, stage chez Skills4Mind. Repérer automatiquement les données médicales sensibles et les protéger, sur des données synthétiques générées avec Faker (50 patients, 66 comptes).
 
-**Méthode** : modèle supervisé scikit-learn (TF-IDF + Random Forest de 300 arbres) entraîné sur environ 190 textes médicaux annotés, dans une décision à 3 couches : règles déterministes, modèle ML, arbitre. Rappel privilégié par choix : dans un contexte sensible, une donnée manquée coûte plus cher qu'un faux positif. Random Forest choisi pour son explicabilité et la taille du corpus.
+**Méthode** : classification hybride à 3 couches : règles déterministes, modèle scikit-learn (TF-IDF + Random Forest de 300 arbres, entraîné sur 197 phrases fictives), puis une décision où une règle déclenchée prime sur le modèle. Rappel privilégié par choix : dans un contexte sensible, une donnée manquée coûte plus cher qu'un faux positif. Random Forest choisi pour son explicabilité et la taille du corpus. Application Flask sur PostgreSQL avec bcrypt, 2FA TOTP, contrôle d'accès par rôle et journal d'audit.
 
-**Valeur** : chiffrement automatique des données classées sensibles (Fernet, AES-128 CBC + HMAC-SHA256), détection d'intrusion sur 4 vecteurs d'attaque avec alertes et blocage de comptes, rapport PDF automatisé. Score de conformité sur 100 (chiffrement 30 %, traçabilité 30 %, contrôle d'accès 20 %, complétude 20 %) recalculé en temps réel par requêtes SQL d'agrégation sur PostgreSQL (après migration depuis SQLite), et suivi dans un dashboard Chart.js (KPI, répartition de la sensibilité, accès par rôle).
+**Valeur** : le diagnostic et les médicaments classés sensibles sont chiffrés automatiquement (Fernet, AES-128 CBC + HMAC-SHA256). Détection d'intrusion sur 4 vecteurs d'attaque, avec alertes et blocage de comptes. Score de conformité sur 100 (chiffrement 30 %, traçabilité 30 %, contrôle d'accès 20 %, complétude 20 %) recalculé en temps réel par requêtes SQL d'agrégation, et suivi dans un dashboard Chart.js. Limites documentées : le champ notes n'est pas encore chiffré et l'export PDF du rapport est en cours de correction.
 
-[Voir la démo vidéo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing). Présentation du projet sur demande.
+[Dépôt GitHub](https://github.com/Kadi2207/ai-health-data-security) et [démo vidéo](https://drive.google.com/file/d/13N5upENpWyv9IF96Au_A_JO1EgVglR6O/view?usp=sharing)
 
 </details>
 

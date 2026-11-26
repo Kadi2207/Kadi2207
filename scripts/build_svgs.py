@@ -789,9 +789,9 @@ def captures():
 CHANTIERS = [
     ("TCIM / Skills4Mind", "depuis avril 2026", [
         "Partie IA : classification automatique de données de santé",
-        "3 couches (règles, ML, arbitre), précision de 82,5 %",
+        "3 couches (règles, ML, arbitre), exactitude de 82,5 % sur 40 textes de test",
         "RGPD / RBAC, chiffrement Fernet (AES-128 CBC + HMAC-SHA256)",
-        "Présentation du projet sur demande",
+        "Dépôt : github.com/Kadi2207/ai-health-data-security",
     ]),
     ("Portfolio + assistant chatbot IA", "en cours", [
         "Développé avec Claude Code",
@@ -834,12 +834,12 @@ TCIM_SUR = "PROJET EN VEDETTE  ·  DEPUIS AVRIL 2026"
 TCIM_VOLETS = ["Machine Learning", "Data Engineering", "Automatisation", "Dashboard"]
 TCIM_RECIT = [
     ("LE BESOIN", "Détecter automatiquement les données médicales sensibles, sans intervention humaine."),
-    ("CE QUE J'AI CONSTRUIT", "Un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur environ 190 textes médicaux annotés, "
-     "dans une décision à 3 couches : règles, modèle, arbitre. Les données classées sensibles sont chiffrées automatiquement."),
-    ("LE RÉSULTAT", "Une détection sans intervention humaine, un score de conformité sur 100 recalculé en temps réel "
-     "et un rapport PDF automatisé."),
+    ("CE QUE J'AI CONSTRUIT", "Un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur 197 exemples annotés, "
+     "dans une décision à 3 couches : règles, modèle, arbitre. Le diagnostic et les médicaments classés sensibles sont chiffrés automatiquement."),
+    ("LE RÉSULTAT", "Une exactitude de 82,5 % sur 40 textes de test, une détection d'intrusion sur 4 vecteurs d'attaque "
+     "et un score de conformité sur 100 recalculé en temps réel."),
 ]
-TCIM_CHIFFRES = [("82,5 %", "de précision"), ("300", "arbres (Random Forest)"), ("19,75/20", "note du projet")]
+TCIM_CHIFFRES = [("82,5 %", "exactitude (accuracy)"), ("300", "arbres (Random Forest)"), ("197", "exemples annotés")]
 DEMO = [("demo-video", "Voir la démo vidéo"), ("demo-video-en", "Watch the video demo")]
 
 
