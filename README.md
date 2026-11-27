@@ -50,7 +50,7 @@ Portfolio : [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.
 ## ◆ Projets
 
 <p align="center">
-  <img src="assets/projet-tcim.svg" alt="Projet en vedette, depuis avril 2026 : TCIM, sécurisation de données de santé. Volets : Machine Learning, Data Engineering, Automatisation, Dashboard. Le besoin : détecter automatiquement les données médicales sensibles, sans intervention humaine. Ce que j'ai construit : un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur 197 exemples annotés, dans une décision à 3 couches : règles, modèle, arbitre ; le diagnostic et les médicaments classés sensibles sont chiffrés automatiquement. Le résultat : une exactitude de 82,5 % sur 40 textes de test, une détection d'intrusion sur 4 vecteurs d'attaque et un score de conformité sur 100 recalculé en temps réel. Chiffres : 82,5 % d'exactitude (accuracy), 300 arbres, 197 exemples annotés." width="100%">
+  <img src="assets/projet-tcim.svg" alt="Projet en vedette, depuis avril 2026 : TCIM, sécurisation de données de santé. Volets : Machine Learning, Data Engineering, Automatisation, Dashboard. Le besoin : détecter automatiquement les données médicales sensibles, sans intervention humaine. Ce que j'ai construit : un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur 197 exemples annotés, dans une décision à 3 couches : règles, modèle, arbitre ; le diagnostic, les médicaments et les notes classés sensibles sont chiffrés automatiquement. Le résultat : une exactitude de 82,5 % sur 40 textes de test, une détection d'intrusion sur 4 vecteurs d'attaque et un score de conformité sur 100 recalculé en temps réel. Chiffres : 82,5 % d'exactitude (accuracy), 300 arbres, 197 exemples annotés." width="100%">
 </p>
 
 <p align="center">

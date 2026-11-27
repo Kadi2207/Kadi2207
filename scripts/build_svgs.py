@@ -835,7 +835,7 @@ TCIM_VOLETS = ["Machine Learning", "Data Engineering", "Automatisation", "Dashbo
 TCIM_RECIT = [
     ("LE BESOIN", "Détecter automatiquement les données médicales sensibles, sans intervention humaine."),
     ("CE QUE J'AI CONSTRUIT", "Un modèle TF-IDF + Random Forest (scikit-learn) entraîné sur 197 exemples annotés, "
-     "dans une décision à 3 couches : règles, modèle, arbitre. Le diagnostic et les médicaments classés sensibles sont chiffrés automatiquement."),
+     "dans une décision à 3 couches : règles, modèle, arbitre. Le diagnostic, les médicaments et les notes classés sensibles sont chiffrés automatiquement."),
     ("LE RÉSULTAT", "Une exactitude de 82,5 % sur 40 textes de test, une détection d'intrusion sur 4 vecteurs d'attaque "
      "et un score de conformité sur 100 recalculé en temps réel."),
 ]

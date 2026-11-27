@@ -52,7 +52,7 @@ Portfolio: [kadidiatou-bagayoko.vercel.app](https://kadidiatou-bagayoko.vercel.a
 ## ◆ Projects
 
 <p align="center">
-  <img src="assets/projet-tcim.svg" alt="Featured project (text in French), since April 2026: TCIM, securing health data. Areas: Machine Learning, Data Engineering, Automation, Dashboard. The need: automatically detect sensitive medical data, without human intervention. What I built: a TF-IDF + Random Forest model (scikit-learn) trained on 197 annotated examples, within a 3-layer decision: rules, model, arbiter; diagnoses and medications classified as sensitive are encrypted automatically. The result: 82.5% accuracy on 40 test texts, intrusion detection on 4 attack vectors and a compliance score out of 100 recalculated in real time. Figures: 82.5% accuracy, 300 trees, 197 annotated examples." width="100%">
+  <img src="assets/projet-tcim.svg" alt="Featured project (text in French), since April 2026: TCIM, securing health data. Areas: Machine Learning, Data Engineering, Automation, Dashboard. The need: automatically detect sensitive medical data, without human intervention. What I built: a TF-IDF + Random Forest model (scikit-learn) trained on 197 annotated examples, within a 3-layer decision: rules, model, arbiter; diagnoses, medications and notes classified as sensitive are encrypted automatically. The result: 82.5% accuracy on 40 test texts, intrusion detection on 4 attack vectors and a compliance score out of 100 recalculated in real time. Figures: 82.5% accuracy, 300 trees, 197 annotated examples." width="100%">
 </p>
 
 <p align="center">
